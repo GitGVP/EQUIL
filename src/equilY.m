@@ -2,13 +2,16 @@ function LY = equilY(L, LX)
   r_fine = linspace(0,1,0.5*1e4); 
   r_fine = r_fine(2:end);
   if isequal(L.P.residuals_fun, @residuals_rotation)
-      [dbetapardr, dbetapardB, d2betapardB2, d2betapardrdB] = deal(zeros(size(r_fine)));
+      [~, ...
+        dbetapardr, ~, ~, ...
+        ~, d2betapardrdB, ~] = L.P.equation_of_state(LX.kinetic_profiles,r_fine.',ones(numel(r_fine), numel(L.omega)),ones(numel(r_fine), numel(L.omega)));
+      dbetapardr = mean(dbetapardr,2).';
+      d2betapardrdB = mean(d2betapardrdB,2).';
   else
-      [dbetapardr, dbetapardB, d2betapardB2, d2betapardrdB] = L.P.equation_of_state(LX.betafun(r_fine.'),LX.betapfun(r_fine.'),...
+      [dbetapardr, ~, ~, d2betapardrdB] = L.P.equation_of_state(LX.betafun(r_fine.'),LX.betapfun(r_fine.'),...
         LX.Ahfun(r_fine.'),LX.Ahpfun(r_fine.'),ones(numel(r_fine), numel(L.omega)),zeros(numel(r_fine), numel(L.omega)));
       dbetapardr = mean(dbetapardr,2).';
       d2betapardrdB = mean(d2betapardrdB,2).';
-      d3betapardrd2B = zeros(size(dbetapardr)); % TODO
   end
   % made anisotropic
   LY.t2p_fine = - 2 * r_fine ./ LX.qfun(r_fine) .^ 2 + r_fine .^ 2 .* LX.qpfun(r_fine) ./ LX.qfun(r_fine) .^ 3 - dbetapardr;

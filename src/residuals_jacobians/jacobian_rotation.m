@@ -27,11 +27,10 @@ function J = jacobian_rotation(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1,P2,
 	mb = reshape(linspace(1,Nb,Nb), [1,1,Nb]);
 	BB = 1 + epsilon.*sum(Bs.*cos(mb.*omega),3);
 	RR = 1 - delta.*epsilon.^2 + epsilon.^3.*P.*cos(omega) + epsilon.*r.*cos(omega) + epsilon.^2.*sum(cos((-1 + ms).*omega).*S,3);
-	dBBdr = epsilon.*sum(Bsp.*cos(mb.*omega),3);
     [dbetapardB0, ...
         dbetapardr, dbetapardB, dbetapardR, ...
         d2betapardB2, d2betapardrdB, d2betapardRdB,d2betapardrdR,d2betapardR2,...
-		d3betapardrdB2,d3betapardB3,d3betapardBdR2,d3betapardB2dR,d3betapardrdRdB] = equation_of_state(kinetic_profiles,BB,dBBdr);
+		d3betapardrdB2,d3betapardB3,d3betapardBdR2,d3betapardB2dR,d3betapardrdRdB] = equation_of_state(kinetic_profiles,r,RR,BB);
     Ntheta = numel(omega);
     mF   = [0,1,2:(Ns+1)];
     rowsF = [1,2,(2 + Nb + (2:(Ns+1)))];

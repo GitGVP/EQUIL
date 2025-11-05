@@ -17,22 +17,33 @@ function LX = equilX(L)
 
   LX.qfun = @(r) L.P.q0 * (1+0.5*L.P.s0*r.^2);
   LX.qpfun = @(r) L.P.q0*L.P.s0*r;
-  LX.betafun = @(r) L.P.beta * (1 - r.^2) + betapedfun(r);
-  LX.betapfun = @(r) -2 * L.P.beta * r + betappedfun(r);
+  
+  
+  betafun = @(r) L.P.beta * (1 - r.^2) + betapedfun(r);
+  betapfun = @(r) -2 * L.P.beta * r + betappedfun(r);
 
 % % test anisotropic, constant beta profile
 %betafun = @(r) beta * ones(size(r));
 %betapfun = @(r) zeros(size(r));
 
-  LX.Ahfun = @(r) L.P.A0 * ones(size(r));
-  LX.Ahpfun = @(r) zeros(size(r));
+  %LX.Ahfun = @(r) L.P.A0 * ones(size(r));
+  %LX.Ahpfun = @(r) zeros(size(r));
 
   LX.q_vec = LX.qfun(L.r_q);
   LX.qp_vec = LX.qpfun(L.r_q);
-  LX.beta_vec = LX.betafun(L.r_q);
-  LX.betap_vec = LX.betapfun(L.r_q);
-  LX.Ah_vec = LX.Ahfun(L.r_q);
-  LX.Ahp_vec = LX.Ahpfun(L.r_q);
-  
-  LX.kinetic_profiles = struct('betap', LX.betapfun);
+  %LX.beta_vec = LX.betafun(L.r_q);
+  %LX.betap_vec = LX.betapfun(L.r_q);
+  %LX.Ah_vec = LX.Ahfun(L.r_q);
+  %LX.Ahp_vec = LX.Ahpfun(L.r_q);
+  switch func2str(L.P.equation_of_state)
+      case 'isotropic'
+          LX.kinetic_profiles = struct('beta', betafun,'betap', betapfun);
+      case 'parallel_rotating' 
+          mach2fun = @(r) L.P.mach20;
+          mach2pfun = @(r) 0;
+          LX.kinetic_profiles = struct('beta', betafun,'betap', betapfun,...
+              'mach2',mach2fun, 'mach2p',mach2pfun);
+      otherwise
+          fprintf('Equation of state not implemented!\n')
+  end
 end

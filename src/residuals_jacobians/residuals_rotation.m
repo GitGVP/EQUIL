@@ -29,11 +29,9 @@ function R = residuals_rotation(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1,P2
 	RR = 1 - delta.*epsilon.^2 + epsilon.^3.*P.*cos(omega) + epsilon.*r.*cos(omega) + epsilon.^2.*sum(cos((-1 + ms).*omega).*S,3);
 	BB = 1 + epsilon.*sum(Bs.*cos(mb.*omega),3);
 
-	dBBdr = epsilon.*sum(Bsp.*cos(mb.*omega),3);
 	[dbetapardB0, ...
         dbetapardr, dbetapardB, dbetapardR, ...
-        d2betapardB2, d2betapardrdB, d2betapardRdB,~,~,...
-		~, ~,~,~,~] = equation_of_state(kinetic_profiles,BB,dBBdr);
+        d2betapardB2, d2betapardrdB, d2betapardRdB] = equation_of_state(kinetic_profiles,r,RR,BB);
 
 	T1 = -(epsilon.^2.*P.*sin(omega)) - r.*sin(omega) + epsilon.*sum(-((-1 + ms).*S.*sin((-1 + ms).*omega)),3);
 	T2 = epsilon.^2.*P.*cos(omega) + r.*cos(omega) - epsilon.*sum((-1 + ms).*cos((-1 + ms).*omega).*S,3);

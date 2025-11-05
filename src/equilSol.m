@@ -31,10 +31,14 @@ function P = equilP(varargin)
  % input default parameters
  P.debug = 0;
 
- P.beta = 0;
+
  P.q0 = 1;
  P.s0 = 0.5;
+ 
+ % kinetic profiles' defaults
+ P.beta = 0;
  P.A0 = 1;
+ P.mach20 = 0;
  
  % overwrites
  for k = 1:2:length(varargin)
