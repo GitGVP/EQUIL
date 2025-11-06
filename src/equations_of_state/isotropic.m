@@ -19,7 +19,7 @@ function [dbetapardB0, dbetapardr, dbetapardB, dbetapardR, d2betapardB2, ...
         d3betapardBdR2 = zeros(size(RR));
         d3betapardB2dR = zeros(size(RR));
         d3betapardrdRdB = zeros(size(RR));
-        if nargout > 13 % postprocessing 
+        if nargout > 13 % postprocessing
             betapar   = beta;
             betaperp  = beta;
         end

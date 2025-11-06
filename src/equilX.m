@@ -26,9 +26,6 @@ function LX = equilX(L)
 %betafun = @(r) beta * ones(size(r));
 %betapfun = @(r) zeros(size(r));
 
-  %LX.Ahfun = @(r) L.P.A0 * ones(size(r));
-  %LX.Ahpfun = @(r) zeros(size(r));
-
   LX.q_vec = LX.qfun(L.r_q);
   LX.qp_vec = LX.qpfun(L.r_q);
   %LX.beta_vec = LX.betafun(L.r_q);
@@ -43,6 +40,13 @@ function LX = equilX(L)
           mach2pfun = @(r) 0;
           LX.kinetic_profiles = struct('beta', betafun,'betap', betapfun,...
               'mach2',mach2fun, 'mach2p',mach2pfun);
+      case 'biMaxwellian'
+          Bcfun = @(r) L.P.Bc0*ones(size(r));
+          Bcpfun = @(r) zeros(size(r));
+          Ahfun = @(r) L.P.A0*ones(size(r));
+          Ahpfun = @(r) zeros(size(r));
+          LX.kinetic_profiles = struct('beta', betafun,'betap', betapfun,...
+              'Ah',Ahfun, 'Ahp',Ahpfun, 'Bc', Bcfun, 'Bcp',Bcpfun);
       otherwise
           fprintf('Equation of state not implemented!\n')
   end

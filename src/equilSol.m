@@ -38,6 +38,7 @@ function P = equilP(varargin)
  % kinetic profiles' defaults
  P.beta = 0;
  P.A0 = 1;
+ P.Bc0 = 1+0.3; 
  P.mach20 = 0;
  
  % overwrites
