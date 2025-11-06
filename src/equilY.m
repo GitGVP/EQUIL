@@ -2,11 +2,13 @@ function LY = equilY(L, LX)
   r_fine = linspace(0,1,0.5*1e4); 
   r_fine = r_fine(2:end);
   if isequal(L.P.residuals_fun, @residuals_rotation)
-      [~, ...
-        dbetapardr, ~, ~, ...
-        ~, d2betapardrdB, ~] = L.P.equation_of_state(LX.kinetic_profiles,r_fine.',ones(numel(r_fine), numel(L.omega)),ones(numel(r_fine), numel(L.omega)));
+      [~, dbetapardr, ~, ~, ~, ...
+    d2betapardrdB, ~, ~, ~, d3betapardrdB2, ...
+    ~, ~, ~, ~, ~, ...
+    ~] = L.P.equation_of_state(LX.kinetic_profiles,r_fine.',ones(numel(r_fine), numel(L.omega)),ones(numel(r_fine), numel(L.omega)));
       dbetapardr = mean(dbetapardr,2).';
       d2betapardrdB = mean(d2betapardrdB,2).';
+      d3betapardrdB2 = mean(d3betapardrdB2,2).';
   else
       [dbetapardr, ~, ~, d2betapardrdB] = L.P.equation_of_state(LX.betafun(r_fine.'),LX.betapfun(r_fine.'),...
         LX.Ahfun(r_fine.'),LX.Ahpfun(r_fine.'),ones(numel(r_fine), numel(L.omega)),zeros(numel(r_fine), numel(L.omega)));
@@ -41,10 +43,10 @@ function LY = equilY(L, LX)
   LY.delta1p_ana = LX.qfun(r_fine).^2 ./ r_fine .^ 3 .* cumtrapz(r_fine, delta1_RHS);
   LY.delta1_ana = cumtrapz(r_fine, LY.delta1p_ana);
   
-%   %NLO elongation
-%   S2_1_RHS = (r_fine.*(6.*LY.deltap_fine.*LX.qpfun(r_fine).*r_fine.^2.*(LY.deltap_fine - 2.*LY.S3p_fine) + 2.*LX.qfun(r_fine).*(-6.*LY.deltap_fine.^2.*r_fine + r_fine.^3 + 2.*LY.deltap_fine.*(r_fine.^2 - 8.*LY.S3_fine) - 2.*r_fine.*(-2.*LY.deltap_fine + r_fine).*LY.S3p_fine) + LX.qfun(r_fine).^3.*(d3betapardrd2B.*r_fine.^2 - 2.*d2betapardrdB.*(4.*LY.S3_fine + r_fine.*(-3.*LY.deltap_fine + r_fine + 3.*LY.S3p_fine)) + 2.*dbetapardr.*(8.*LY.S3_fine + r_fine.*(-6.*LY.deltap_fine + r_fine + 6.*LY.S3p_fine)))))./(4.*LX.qfun(r_fine).^3);
-%   S2_1_RHS_fun = @(r) interp1(r_fine, S2_1_RHS, r, 'spline');
-%   [LY.S2_1_fine, LY.S2_1p_fine] = solve_S_eq(r_fine, 0,LX.qfun,LX.qpfun, 2, S2_1_RHS_fun);
+%    %NLO elongation
+%    S2_1_RHS = (r_fine.*(6.*LY.deltap_fine.*LX.qpfun(r_fine).*r_fine.^2.*(LY.deltap_fine - 2.*LY.S3p_fine) + 2.*LX.qfun(r_fine).*(-6.*LY.deltap_fine.^2.*r_fine + r_fine.^3 + 2.*LY.deltap_fine.*(r_fine.^2 - 8.*LY.S3_fine) - 2.*r_fine.*(-2.*LY.deltap_fine + r_fine).*LY.S3p_fine) + LX.qfun(r_fine).^3.*(d3betapardrdB2.*r_fine.^2 - 2.*d2betapardrdB.*(4.*LY.S3_fine + r_fine.*(-3.*LY.deltap_fine + r_fine + 3.*LY.S3p_fine)) + 2.*dbetapardr.*(8.*LY.S3_fine + r_fine.*(-6.*LY.deltap_fine + r_fine + 6.*LY.S3p_fine)))))./(4.*LX.qfun(r_fine).^3);
+%    S2_1_RHS_fun = @(r) interp1(r_fine, S2_1_RHS, r, 'spline');
+%    [LY.S2_1_fine, LY.S2_1p_fine] = solve_S_eq(r_fine, 0,LX.qfun,LX.qpfun, 2, S2_1_RHS_fun);
   
   LY.r_fine = r_fine;
   LY.B1_ana =  - L.r_q;

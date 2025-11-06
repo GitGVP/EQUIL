@@ -23,8 +23,11 @@ function LX = equilX(L)
   betapfun = @(r) -2 * L.P.beta * r + betappedfun(r);
 
 % % test anisotropic, constant beta profile
-%betafun = @(r) beta * ones(size(r));
-%betapfun = @(r) zeros(size(r));
+  %betafun = @(r) L.P.beta * ones(size(r));
+  %betapfun = @(r) zeros(size(r));
+
+  %betafun = @(r) L.P.beta * (1 - r.^2) .* r;
+  %betapfun = @(r) -2 * L.P.beta * r.^2 + L.P.beta * (1 - r.^2);
 
   LX.q_vec = LX.qfun(L.r_q);
   LX.qp_vec = LX.qpfun(L.r_q);

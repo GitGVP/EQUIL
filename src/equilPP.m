@@ -32,7 +32,7 @@ function LY = equilPP(L, LX, LY)
   %% bp and li (MEQ conventions)
   RR = 1 - delta.*LX.eps_val.^2 + LX.eps_val.^3.*P_hat.*cos(L.omega) + LX.eps_val.*L.r_q.*cos(L.omega) + LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*S,3);
   BB = 1 + LX.eps_val.*sum(Bs.*cos(mb.*L.omega),3);
-  [dbetapardB0, ~, ~, ~, ~, ...
+  [dbetapardB0, ~, dbetapardB, ~, ~, ...
     ~, ~, ~, ~, ~, ...
     ~, ~, ~, ~, betapar, ...
     betaperp] = L.P.equation_of_state(LX.kinetic_profiles,L.r_q,RR,BB);
@@ -49,6 +49,8 @@ function LY = equilPP(L, LX, LY)
   LY.bp_liu = 8 * pi * Intp / Intphi^2;
   LY.li_liu = 8 * pi * Intq / Intphi^2; % unsure about this 8, maybe 4.
   
+  
+  LY.gavg = mean((BB.*(1 - dbetapardB0.*LX.eps_val.^2 + LX.eps_val.^2.*t2))./(BB - dbetapardB.*LX.eps_val.^2),2);
   % augment with r=0 point where required
   r_plt = [0; L.r_q];
   delta = [0; delta];
