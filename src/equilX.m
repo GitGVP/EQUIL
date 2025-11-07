@@ -38,6 +38,11 @@ function LX = equilX(L)
   switch func2str(L.P.equation_of_state)
       case 'isotropic'
           LX.kinetic_profiles = struct('beta', betafun,'betap', betapfun);
+      case 'isotropic_rotating' 
+          mach2fun = @(r) L.P.mach20;
+          mach2pfun = @(r) 0;
+          LX.kinetic_profiles = struct('beta', betafun,'betap', betapfun,...
+              'mach2',mach2fun, 'mach2p',mach2pfun);
       case 'parallel_rotating' 
           mach2fun = @(r) L.P.mach20;
           mach2pfun = @(r) 0;
