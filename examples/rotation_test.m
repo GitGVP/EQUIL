@@ -8,27 +8,37 @@ eps_val = 0.1;
 s0 = 2;
 
 [L, LX] = equilSol('beta',0.3, 's0', s0, 'debug', 4,...
-    'residuals_fun',@residuals_rotation,'jacobian_fun', @jacobian_rotation, ...
+    'residuals_fun',@residuals_vec,'jacobian_fun', @jacobian_vec, ...
     'equation_of_state', @isotropic_rotating,'Ns', 2,'mach20',1,'Nb',10);
 LX.eps_val = eps_val;
 
 
-%LX.Sbc(1) = 0;
-%LX.S2bc = 0;
+LX.Sbc(1) = 0;
+LX.S2bc = 0;
 %LX.Sbc(2) = 0;
 %LX.S3bc = 0;
 LY = equilY(L, LX);
 
 figure;
-subplot(2,1,1);
+subplot(4,1,1);
 hold on;
 plot(L.r_q, LY.gavg-1, '-','LineWidth',2)
 ylabel('$(\langle RB_\phi\rangle-R_0B_0)/R_0B_0$','Interpreter','latex','FontSize',14);
 grid on;
-subplot(2,1,2);
+subplot(4,1,2);
 hold on;
 plot(LY.r_fine, LY.delta_fine, '-','LineWidth',2)
 plot(LY.r_plt, LY.delta, '.')
+grid on;
+subplot(4,1,3);
+hold on;
+plot(LY.r_fine, LY.deltap_fine, '-','LineWidth',2)
+plot(L.r_q, LY.deltap, '.')
+grid on;
+subplot(4,1,4);
+hold on;
+plot(LY.r_fine, LY.S2_fine, '-','LineWidth',2)
+plot(LY.r_plt, squeeze(LY.S(:,:,1)), '.')
 grid on;
 
 figure; axis equal;hold on;
