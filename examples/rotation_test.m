@@ -1,20 +1,66 @@
-%% TODO: do the higher order s0=0 expantion for parallel_rotating!
-% Still seems like the elongation coupling is too high order in r even in
-% the isotropic case
+%% Now TODO: understand the differences in with the vectorial FB
 
-%% Actual rotation test
-
-eps_val = 0.1;
+eps_val = 0.2;
 s0 = 2;
 
-[L, LX] = equilSol('beta',0.3, 's0', s0, 'debug', 4,...
+[L, LX] = equilSol('beta',0.1, 's0', s0, 'debug', 4,...
     'residuals_fun',@residuals_vec,'jacobian_fun', @jacobian_vec, ...
-    'equation_of_state', @isotropic_rotating,'Ns', 2,'mach20',1,'Nb',10);
+    'equation_of_state', @isotropic_rotating,'mach20',0,'Nb',1, 'Ns',2);
 LX.eps_val = eps_val;
 
 
-LX.Sbc(1) = 0;
-LX.S2bc = 0;
+%LX.Sbc(1) = 0;
+%LX.S2bc = 0;
+%LX.Sbc(2) = 0;
+%LX.S3bc = 0;
+LY = equilY(L, LX);
+
+[L2, LX2] = equilSol('beta',0.1, 's0', s0, 'debug', 4,...
+    'residuals_fun',@residuals_rotation,'jacobian_fun', @jacobian_rotation, ...
+    'equation_of_state', @isotropic_rotating,'mach20',0,'Nb',1, 'Ns',2);
+LX2.eps_val = eps_val;
+
+
+%LX.Sbc(1) = 0;
+%LX.S2bc = 0;
+%LX.Sbc(2) = 0;
+%LX.S3bc = 0;
+LY2 = equilY(L2, LX2);
+
+
+figure;
+subplot(4,1,1);
+hold on;
+plot(L.r_q, LY.gavg-LY2.gavg, '-','LineWidth',2)
+ylabel('$(\langle RB_\phi\rangle-R_0B_0)/R_0B_0$','Interpreter','latex','FontSize',14);
+grid on;
+subplot(4,1,2);
+hold on;
+plot(LY.r_plt, LY.delta-LY2.delta, '.')
+grid on;
+subplot(4,1,3);
+hold on;
+plot(L.r_q, LY.deltap-LY2.deltap, '.')
+grid on;
+subplot(4,1,4);
+hold on;
+plot(LY.r_plt, squeeze(LY.S(:,:,1))-squeeze(LY2.S(:,:,1)), '.')
+grid on;
+
+
+%% Actual rotation test
+
+eps_val = 0.3;
+s0 = 2;
+
+[L, LX] = equilSol('beta',0.2, 's0', s0, 'debug', 4,...
+    'residuals_fun',@residuals_vec,'jacobian_fun', @jacobian_vec, ...
+    'equation_of_state', @isotropic_rotating,'mach20',1,'Nb',1, 'Ns',2);
+LX.eps_val = eps_val;
+
+
+%LX.Sbc(1) = 0;
+%LX.S2bc = 0;
 %LX.Sbc(2) = 0;
 %LX.S3bc = 0;
 LY = equilY(L, LX);
