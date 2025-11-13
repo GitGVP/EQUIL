@@ -32,7 +32,7 @@ function [dbetapardB0, dbetapardr, dbetapardB, dbetapardR, d2betapardB2, ...
         d3betapardrdRdB = zeros(size(RR));
         if nargout > 13 % postprocessing
             betapar = (BB.*beta)./(Ah.*(BB - Bc) + Bc);
-            betapar(idx) = (BB(idx).*(2.*Ah(idx).^2.*sqrt(Ah(idx).*(1 - BB(idx)./Bc(idx))).*(BB(idx) - Bc(idx)).^2 + Ah(idx).*(BB(idx) - Bc(idx)).*Bc(idx) - Bc(idx).^2).*beta(idx))./(Ah(idx).^2.*(BB(idx) - Bc(idx)).^2.*Bc(idx) - Bc(idx).^3);
+            betapar(idx) = (BB(idx).*(1 + Ah(idx).*(1 - BB(idx)./Bc(idx)) - 2.*(Ah(idx).*(1 - BB(idx)./Bc(idx))).^2.5).*beta(idx))./((1 - Ah(idx).^2.*(-1 + BB(idx)./Bc(idx)).^2).*Bc(idx));
             betaperp = betapar - BB.*(-(((-1 + Ah).*Bc.*beta)./(Ah.*(BB - Bc) + Bc).^2));
             betaperp(idx) = betapar(idx) - BB(idx).*(-(((-1 + Ah(idx)).*Bc(idx).*beta(idx))./(Ah(idx).*(BB(idx) - Bc(idx)) + Bc(idx)).^2));
         end

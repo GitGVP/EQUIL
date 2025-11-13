@@ -76,7 +76,7 @@ for k = 1:n_om
 
     % preallocate
     [delta0_ana, delta_num, delta1_ana,...
-        delta1_num,t2_num,S2_num] = deal(zeros(nsim, L.Nq));
+        delta1_num,t2_num,S2_num,deltap_num] = deal(zeros(nsim, L.Nq));
 
 
     % initial run (use last eps = 0.4 initial state already present)
@@ -96,6 +96,7 @@ for k = 1:n_om
     
     t2_num(1,:) = LY.t2;
     S2_num(1,:) = squeeze(LY.S(2:end,:,1));
+    deltap_num(1,:) = LY.deltap;
 
     % sweep eps decreasing (as in original script)
     for ii = 1:nsim-1
@@ -117,7 +118,8 @@ for k = 1:n_om
         % for profile plots
         t2_num(ii+1,:) = LY.t2;
         S2_num(ii+1,:) = squeeze(LY.S(2:end,:,1));
-        
+        deltap_num(ii+1,:) = LY.deltap;
+
     end
 
     % save per-om results
@@ -191,3 +193,7 @@ h = plot(L.r_q, LY.S2_ana + 0.4 * interp1(LY.r_fine, LY.S2_1_fine, L.r_q, 'splin
           'LineWidth',2,'Color',[1 0.35 0.5]);
 legend(h, {'$S_{2,0} + \epsilon S_{2,1}$'}, 'Interpreter','latex','FontSize',12,'Box','off')
 sgtitle(suptitle_str, 'Interpreter', 'latex');
+
+
+figure;
+plot_profile_panel(L.r_q, LY.deltap_ana, deltap_num, cmap, col_inds, "$\Delta'$ profiles", "$\hat\Delta_0$");

@@ -133,7 +133,8 @@ function LY = equilY(L, LX)
         end
     end
     %update = gmres(Jv, residuals, [],gmres_tol, 100);
-    x = x - update;
+    % try with damping
+    x = x - L.P.damping*update;
     res_norm = norm(residuals);
     res_norms(k) = res_norm;
     if L.P.debug > 1

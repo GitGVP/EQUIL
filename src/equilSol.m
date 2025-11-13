@@ -30,7 +30,7 @@ function P = equilP(varargin)
  P.nk = 30; % Newton iterations
  % input default parameters
  P.debug = 0;
-
+ P.damping = 1;
 
  P.q0 = 1;
  P.s0 = 0.5;
