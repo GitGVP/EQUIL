@@ -1,7 +1,7 @@
 function LY = equilY(L, LX)
   r_fine = linspace(0,1,0.5*1e4); 
   r_fine = r_fine(2:end);
-  if isequal(L.P.residuals_fun, @residuals_rotation) || isequal(L.P.residuals_fun, @residuals_vec)
+  if true %isequal(L.P.residuals_fun, @residuals_rotation) || isequal(L.P.residuals_fun, @residuals_vec)
       [~, dbetapardr, ~, ~, ~, ...
     d2betapardrdB, ~, ~, ~, d3betapardrdB2, ...
     ~, ~, ~, ~, ~, ...
@@ -65,7 +65,7 @@ function LY = equilY(L, LX)
   base_offset = base_offset + L.Nq;
 
   % Assign B1
-  profiles_q(base_offset + (1:L.Nq)) = LY.B1_ana;
+  profiles_q(base_offset + (1:L.Nq)) = 0;%LY.B1_ana;
   base_offset = base_offset + L.Nq;
 
   % Remaining B coefficients (B2 through B_Nb) are already zeros from preallocation
@@ -98,7 +98,7 @@ function LY = equilY(L, LX)
   % Newton iterations
   for k = 1:L.P.nk
     %Compute residuals and Jacobian at quadrature points
-    if isequal(L.P.residuals_fun, @residuals_rotation) || isequal(L.P.residuals_fun, @residuals_vec)
+    if true%isequal(L.P.residuals_fun, @residuals_rotation) || isequal(L.P.residuals_fun, @residuals_vec)
         residuals = L.P.residuals_fun(L.r_q,x,LX.eps_val,L.omega,...
             LX.kinetic_profiles,LX.q_vec,LX.qp_vec, L.P0,L.P1,L.P2,L.M_profiles,L.dof_count,L.P.Nb,LX.Sbc,L.P.equation_of_state);
         J = L.P.jacobian_fun(L.r_q,x,LX.eps_val,L.omega,...

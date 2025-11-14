@@ -262,10 +262,11 @@ colorbar
 
 
 % Compacted: loop over betas and plot n_beta-by-1 subplots
-addpath('/home/vanparys/Documents/PhD/Codes/meq')
+addpath('/home/vanparys/Documents/PhD/Codes/meq.main')
 
 % user controls
-betas = [0, 0.25, 0.5, 1];        % change/expand this vector to ramp beta
+%betas = [0, 0.25, 0.5, 1];        % change/expand this vector to ramp beta
+betas = [0.5];
 n_beta = numel(betas);
 nx = struct('iterq',50,'nr',66,'nz',64,'ifield',true);  % fbt args
 
@@ -277,7 +278,9 @@ for i = 1:n_beta
 
     % 1) compute equilibrium solution for requested beta
     [Le, LXe] = equilSol('beta', beta_val, 's0', 5, 'debug', 4, ...
-                         'jacobian_fun', @jacobian_noEL_2, 'Ns', 2);
+                         'residuals_fun',@residuals_Bmod,...
+                         'jacobian_fun', @jacobian_Bmod, 'Ns', 2,'Nb',10);
+    eps_val = 0.37225;
     LXe.eps_val = 0.37225;
     LXe.Sbc(1) = 0; LXe.S2bc = 0; LXe.Sbc(2) = 0; LXe.S3bc = 0;
     LYe = equilY(Le, LXe);
@@ -333,5 +336,162 @@ xlabel('$\hat r$', 'Interpreter', 'latex', 'Fontsize',12)
 ylabel('$\Delta$', 'Interpreter', 'latex', 'Fontsize',12)
 grid on;
 legend({'$\Delta_{num}$','$\Delta_0$' ,'$\Delta_0 + \epsilon \Delta_1$'}, 'Interpreter','latex','FontSize',12,'Box','off', 'Location', 'Northwest')
+
+
+figure; hold on;
+contourf(L.rrx, L.zzx, sqrt(LY.Btx.^2+LY.Brx.^2+LY.Bzx.^2), linspace(0.8,1.8,10))
+axis equal;
+contourf(LYe.RR*LY.rA, LYe.ZZ*LY.rA, LYe.BB*LY.TQ(1)/LY.rA, linspace(0.8,1.8,10),'w')
+contour(L.rrx, L.zzx, sqrt(LY.Btx.^2+LY.Brx.^2+LY.Bzx.^2), linspace(0.8,1.8,10), 'k')
+plot(LY.rA,LY.zA,'go')
+
+
+
+figure; hold on;
+contourf(L.rrx, L.zzx, sqrt(LY.Btx.^2+LY.Brx.^2+LY.Bzx.^2), linspace(0.6,1.8,12))
+axis equal;
+contourf(LYe.RR*LY.rA, LYe.ZZ*LY.rA, sqrt(LYe.BB2)*LY.TQ(1)/LY.rA, linspace(0.6,1.8,12),'w')
+contour(L.rrx, L.zzx, sqrt(LY.Btx.^2+LY.Brx.^2+LY.Bzx.^2), linspace(0.6,1.8,12), 'k')
+plot(LY.rA,LY.zA,'go')
+
+
+
+
+
+% check if equilPP would give me the same contours if I input it with the
+% FBT t2:
+t2_FBT = (LY.TQ / LY.TQ(1)-1)/eps_val^2;
+
+figure; hold on;
+plot(LYe.psiN,  LYe.t2(2:end) )
+plot(L.pQ.^2, t2_FBT)
+
+
+
+%% Fit the T profile
+
+n_knots = 12;
+
+% try to reget the same as before first, and then change
+[L3, LX3] = fbt('ana',1,0, 'iterq', nx.iterq, 'nr', nx.nr, 'nz', nx.nz, ...
+                  'ifield', nx.ifield,...
+                  'fbtagcon',repmat({'ag'},1,2*n_knots),...
+                  'bfct',@bfsp, 'bfp', bfpsp(linspace(0,1,n_knots),linspace(0,1,n_knots), 'n'));
+
+
+TQ_EQUIL = LY.TQ(end) * (1+ eps_val^2 * (LYe.t2(2:end)-LYe.t2(end)));
+pparequil = eps_val^2 * mean(LYe.betapar,2) / ( mu0 / (LY.TQ(1)/LY.rA)^2);
+
+figure; hold on;
+plot(LYe.psiN, TQ_EQUIL)
+plot(L.pQ.^2, LY.TQ)
+
+
+figure; hold on;
+plot(LYe.psiN, pparequil(2:end))
+plot(L.pQ.^2, LY.PQ)
+
+TQ_target = spline(LYe.psiN,TQ_EQUIL, L.pQ.^2).';
+PQ_target = spline(LYe.psiN, pparequil(2:end),L.pQ.^2).';
+
+hqTQ_target = (TQ_target.^2 - LY.rBt^2) / 2;
+
+[~, IgQg] = L3.bfct(2, L3.bfp, L3.pQ(:).^2, LY.FA, LY.FB);
+[~,~,aPg,ahqTg] = L3.bfct(3,L3.bfp,ones(2*n_knots,1)/n_knots,LY.FA,LY.FB,L3.fPg,L3.fTg,L3.idsx);
+
+% Reshape IgQg to [nQ, nD, ng]
+nQ = length(L.pQ);
+ng = 2*n_knots; % Total basis functions
+IgQg_reshaped = reshape(IgQg, [nQ, 1, ng]);
+IgQg_second = IgQg_reshaped(:, :, n_knots+1:end);
+IgQg_first = IgQg_reshaped(:, :, 1:n_knots);
+
+% Reshape for the linear solve
+A1full = sum(IgQg.*reshape(ahqTg,1,1,ng),3);  % [nQ, 24]
+A = A1full(:, n_knots+1:end);
+b = hqTQ_target;           % [nQ, 1]
+coefficients_second = A \ b;
+A2full = sum(IgQg.*reshape(aPg,1,1,ng),3);  % [nQ, 24]
+A2 = A2full(:,1:n_knots);
+b2 = PQ_target;
+coefficients_first = A2\ b2;
+
+% Now set the second half of LX3.ag to these coefficients
+LX3.ag(n_knots+1:end) = coefficients_second;
+LX3.ag(1:n_knots) = coefficients_first;
+
+
+% Verify the solution by computing TQ with the new coefficients
+[~,~,PQ_verified,TQ_verified,~,~,~] = meqprof(L3.fPg, L3.fTg,LX3.ag, L3.pQ(:).^2, ...
+                                    LY.FA, LY.FB, LY.rBt, L3.bfct, L3.bfp, ...
+                                    L3.idsx, L3.smalldia);
+
+% Plot to verify
+figure; hold on;
+plot(L3.pQ.^2, TQ_verified, 'b-', 'DisplayName', 'Reconstructed TQ');
+plot(L.pQ.^2, TQ_target, 'r--', 'DisplayName', 'Target TQ');
+legend;
+title('Verification of Coefficient Reconstruction');
+
+
+figure; hold on;
+plot(L3.pQ.^2, PQ_verified, 'b-', 'DisplayName', 'Reconstructed PQ');
+plot(L.pQ.^2, PQ_target, 'r--', 'DisplayName', 'Target PQ');
+legend;
+title('Verification of Coefficient Reconstruction');
+
+
+LY3 = fbtt(L3, LX3);
+
+
+figure; hold on;
+plot(LYe.psiN, TQ_EQUIL)
+plot(L3.pQ.^2, LY3.TQ)
+
+
+figure; hold on;
+plot(LYe.psiN, pparequil(2:end))
+plot(L3.pQ.^2, LY3.PQ)
+
+figure; hold on;
+contourf(L3.rrx, L3.zzx, sqrt(LY3.Btx.^2+LY3.Brx.^2+LY3.Bzx.^2), linspace(0.6,1.8,12))
+axis equal;
+contourf(LYe.RR*LY3.rA, LYe.ZZ*LY3.rA, sqrt(LYe.BB2)*LY3.TQ(1)/LY3.rA, linspace(0.6,1.8,12),'w')
+contour(L3.rrx, L3.zzx, sqrt(LY3.Btx.^2+LY3.Brx.^2+LY3.Bzx.^2), linspace(0.6,1.8,12), 'k')
+plot(LY3.rA,LY3.zA,'go')
+
+
+
+figure;hold on;
+plot(Le.r_q, LXe.q_vec, '.')
+plot(L.pQ.^2, 1./LY.iqQ, 'x')
+plot(L3.pQ.^2, 1./LY3.iqQ, 'o')
+xlabel('$\hat r, \psi_N$', 'Interpreter', 'latex', 'Fontsize',12)
+ylabel('$q$', 'Interpreter', 'latex', 'Fontsize',12)
+
+
+q_interp = interp1(L.pQ.^2, 1./LY.iqQ, LYe.psiN, 'pchip');  % 150x1
+
+order_max = 10;
+orders = 2:2:order_max; 
+
+K = numel(orders);
+X = zeros(numel(r), K);
+for k = 1:K
+    X(:,k) = Le.r_q.^(orders(k));
+end
+y = q_interp - 1;                % 150x1
+
+coeffs = X \ y;                   % least-squares
+
+q_fit = @(rr) 1 + sum( (rr(:).^(orders)) .* (reshape(coeffs,1,[])) , 2 );
+qp_fit = @(rr) sum( orders .*(rr(:).^(orders-1)) .* (reshape(coeffs,1,[])) , 2 );
+
+q_fitted = q_fit(r);             % 150x1, fitted values on Le.r_q
+
+figure;hold on;
+plot(Le.r_q, LXe.qfun(Le.r_q), '-')
+plot(Le.r_q, q_fitted, '.')
+plot(L.pQ.^2, 1./LY.iqQ, 'x')
 
 
