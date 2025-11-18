@@ -1,5 +1,9 @@
-%% Here I want to check that we get similar results with anamak.
-% try to match the pressure and TT' profiles
+%% TODO: organize this better
+% - There is the q fitting part: try to get more and more accurate q
+% profiles
+% - There is the MEQ inputs preparation as well, maybe make this process
+% iterative (to converge I guess on FA and FB) so that the profiles are the
+% same and then recheck if the q profiles match.
 
 
 % Can compare shaping, q profile, pressure profiles etc.
@@ -456,7 +460,7 @@ plot(L3.pQ.^2, LY3.PQ)
 figure; hold on;
 contourf(L3.rrx, L3.zzx, sqrt(LY3.Btx.^2+LY3.Brx.^2+LY3.Bzx.^2), linspace(0.6,1.8,12))
 axis equal;
-contourf(LYe.RR*LY3.rA, LYe.ZZ*LY3.rA, sqrt(LYe.BB2)*LY3.TQ(1)/LY3.rA, linspace(0.6,1.8,12),'w')
+contourf(LYe.RR*LY3.rA, LYe.ZZ*LY3.rA, LYe.BB*LY3.TQ(1)/LY3.rA, linspace(0.6,1.8,12),'w')
 contour(L3.rrx, L3.zzx, sqrt(LY3.Btx.^2+LY3.Brx.^2+LY3.Bzx.^2), linspace(0.6,1.8,12), 'k')
 plot(LY3.rA,LY3.zA,'go')
 
@@ -495,3 +499,20 @@ plot(Le.r_q, q_fitted, '.')
 plot(L.pQ.^2, 1./LY.iqQ, 'x')
 
 
+
+figure;axis equal; hold on;
+
+FNfull = nan(size(L3.rrx));
+mask = L3.zzx <= LY3.zA;
+FNfull(mask) = (LY3.Fx(mask)-LY3.FA) ./ (LY3.FB-LY3.FA);
+
+% contours of flux and iso-psi from equilibrium solver
+contour(L3.rrx, L3.zzx, FNfull, linspace(0,1,11), 'LineWidth',2, 'ShowText','on');
+contour(LY3.rA*LYe.RR(:,1:end/2), LY3.zA + LY3.rA*LYe.ZZ(:,1:end/2), ...
+        [0;LYe.psiN].*ones(size(LYe.RR(:,1:end/2))), linspace(0,1,11), ...
+        'LineWidth',2, 'ShowText','on');
+xlabel('$R$ [m]', 'Interpreter', 'latex', 'Fontsize',12)
+ylabel('$Z$ [m]', 'Interpreter', 'latex', 'Fontsize',12) 
+
+title(sprintf('$\\beta_{p,\\mathrm{LIU}} = %.1f$, $l_{i,\\mathrm{LIU}} = %.1f$, $l_{i,\\mathrm{FBT}} = %.1f$', ...
+LYe.bp_liu, LYe.li_liu, LY3.li), 'Interpreter', 'latex');

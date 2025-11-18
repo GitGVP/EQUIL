@@ -18,7 +18,7 @@
 
 eps_val = 0.35;
 s0 = 2.5;
-beta = 0.8; %0.65 has been found to be the max for this shaping/shear/rotation
+beta = 0.65; %0.65 has been found to be the max for this shaping/shear/rotation
 mach20 = 1; %
 
 % try much less elongation
@@ -46,7 +46,7 @@ LY2 = equilY(L2, LX2);
 
 [L3, LX3] = equilSol('beta',0, 's0', s0, 'debug', 4,...
     'residuals_fun',@residuals_rotation,'jacobian_fun', @jacobian_rotation, ...
-    'equation_of_state', @isotropic,'Ns', 4,'Nb',1);
+    'equation_of_state', @isotropic,'Ns', 4,'Nb',10);
 LX3.eps_val = eps_val;
 LX3.Sbc(1) = -0.5;
 LX3.S2bc = -0.5;
