@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    261422,       6768]
-NotebookOptionsPosition[    254856,       6664]
-NotebookOutlinePosition[    255327,       6682]
-CellTagsIndexPosition[    255284,       6679]
+NotebookDataLength[    270238,       6949]
+NotebookOptionsPosition[    263380,       6842]
+NotebookOutlinePosition[    263851,       6860]
+CellTagsIndexPosition[    263808,       6857]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -28,9 +28,10 @@ This file produces the MATLAB functions for the residuals and the Jacobian.\
 
 Cell[CellGroupData[{
 
-Cell["Legacy", "Chapter",
- CellChangeTimes->{{3.971769199389572*^9, 
-  3.971769200054615*^9}},ExpressionUUID->"12ff18b5-0f15-4ce5-ba9b-\
+Cell["Through Ghat", "Chapter",
+ CellChangeTimes->{{3.971769199389572*^9, 3.971769200054615*^9}, {
+  3.973071116394071*^9, 
+  3.973071118967496*^9}},ExpressionUUID->"12ff18b5-0f15-4ce5-ba9b-\
 04aac4c57ab2"],
 
 Cell[BoxData[{
@@ -49,7 +50,7 @@ Cell[BoxData[{
        RowBox[{
         RowBox[{"body", "/.", " ", 
          RowBox[{"idx", "->", "#"}]}], "&"}], "/@", "vals"}], "]"}]}]}]}], 
-  "\[IndentingNewLine]"}], "\n", 
+  "\n"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"replaceSumIndexToValue", "[", 
    RowBox[{"expr_", ",", "idx_Symbol", ",", "val_"}], "]"}], ":=", 
@@ -347,48 +348,18 @@ Cell[BoxData[{
     " ", 
     RowBox[{"O", "[", "1", "]"}]}], " ", "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{
-   RowBox[{"Grot", " ", "=", 
-    RowBox[{
-     RowBox[{"-", " ", 
-      SuperscriptBox["\[Epsilon]", 
-       RowBox[{"-", "2"}]]}], " ", 
-     RowBox[{"\[Rho]R\[CapitalOmega]2", "[", 
-      RowBox[{"r", ",", "\[Omega]"}], "]"}], 
-     SuperscriptBox["\[Epsilon]", 
-      RowBox[{"-", "1"}]], " ", 
-     RowBox[{"D", "[", 
-      RowBox[{
-       RowBox[{"R", "[", 
-        RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "r"}], "]"}], " ", 
-     "\[Epsilon]"}]}], ";"}], 
-  RowBox[{"(*", 
+  RowBox[{"Grot", " ", "=", 
    RowBox[{
-    RowBox[{
-     FractionBox[
-      SuperscriptBox[
-       RowBox[{"R", "[", 
-        RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], 
-      SuperscriptBox[
-       RowBox[{"J", "[", 
-        RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"]], "\[Epsilon]", 
-     RowBox[{"(", 
-      RowBox[{
-       RowBox[{
-        RowBox[{"D", "[", 
-         RowBox[{
-          RowBox[{"R", "[", 
-           RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "r"}], "]"}], 
-        RowBox[{"g\[Theta]\[Theta]", "[", 
-         RowBox[{"r", ",", "\[Omega]"}], "]"}]}], "-", 
-       RowBox[{
-        RowBox[{"D", "[", 
-         RowBox[{
-          RowBox[{"R", "[", 
-           RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "\[Omega]"}], "]"}], 
-        RowBox[{"gr\[Theta]", "[", 
-         RowBox[{"r", ",", "\[Omega]"}], "]"}]}]}], ")"}]}], ";"}], 
-   "*)"}]}], "\[IndentingNewLine]", 
+    RowBox[{"-", " ", 
+     SuperscriptBox["\[Epsilon]", 
+      RowBox[{"-", "2"}]]}], " ", 
+    RowBox[{"\[Rho]R\[CapitalOmega]2", "[", 
+     RowBox[{"r", ",", "\[Omega]"}], "]"}], 
+    RowBox[{"D", "[", 
+     RowBox[{
+      RowBox[{"R", "[", 
+       RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "r"}], "]"}]}]}], " ", 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"GKr", " ", "=", " ", 
    RowBox[{
@@ -426,95 +397,278 @@ Cell[BoxData[{
        RowBox[{"f", "[", "r", "]"}]}], ",", "\[Omega]"}], "]"}]}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"GA\[Omega]", " ", "=", 
-   RowBox[{
-    RowBox[{"-", 
+  RowBox[{
+   RowBox[{"Gt", "=", 
+    RowBox[{
      SuperscriptBox["\[Epsilon]", 
-      RowBox[{"-", "2"}]]}], 
-    FractionBox[
-     RowBox[{"gr\[Theta]", "[", 
-      RowBox[{"r", ",", "\[Omega]"}], "]"}], 
-     RowBox[{"g\[Theta]\[Theta]", "[", 
-      RowBox[{"r", ",", "\[Omega]"}], "]"}]], 
-    RowBox[{"(", 
-     RowBox[{
+      RowBox[{"-", "2"}]], 
+     FractionBox[
       RowBox[{
-       FractionBox["1", 
-        RowBox[{"1", "-", 
-         RowBox[{"\[Sigma]", "[", 
-          RowBox[{"r", ",", "\[Omega]"}], "]"}]}]], 
-       RowBox[{"(", 
+       RowBox[{"g", "[", 
+        RowBox[{"r", ",", "\[Omega]"}], "]"}], 
+       RowBox[{"D", "[", 
         RowBox[{
-         RowBox[{"D", "[", 
-          RowBox[{
-           RowBox[{"\[Beta]bar", "[", 
-            RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "\[Omega]"}], "]"}], 
-         "-", 
-         RowBox[{
-          FractionBox[
-           SuperscriptBox[
-            RowBox[{"Bhat", "[", 
-             RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], "2"], 
-          RowBox[{"D", "[", 
-           RowBox[{
-            RowBox[{"\[Sigma]", "[", 
-             RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "\[Omega]"}], 
-           "]"}]}]}], ")"}]}], "+", 
+         RowBox[{"g", "[", 
+          RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "r"}], "]"}]}], 
+      SuperscriptBox[
+       RowBox[{"R", "[", 
+        RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"]]}]}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+     "Testing", " ", "this", " ", "from", " ", "vectorial", " ", "FB", 
+      "\[IndentingNewLine]", "GA\[Omega]"}], " ", "=", 
+     RowBox[{
+      RowBox[{"-", 
+       SuperscriptBox["\[Epsilon]", 
+        RowBox[{"-", "2"}]]}], 
       FractionBox[
+       RowBox[{"gr\[Theta]", "[", 
+        RowBox[{"r", ",", "\[Omega]"}], "]"}], 
+       RowBox[{"g\[Theta]\[Theta]", "[", 
+        RowBox[{"r", ",", "\[Omega]"}], "]"}]], 
+      RowBox[{"(", 
        RowBox[{
-        RowBox[{"g", "[", 
-         RowBox[{"r", ",", "\[Omega]"}], "]"}], 
-        RowBox[{"D", "[", 
+        RowBox[{
+         FractionBox["1", 
+          RowBox[{"1", "-", 
+           RowBox[{"\[Sigma]", "[", 
+            RowBox[{"r", ",", "\[Omega]"}], "]"}]}]], 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"D", "[", 
+            RowBox[{
+             RowBox[{"\[Beta]bar", "[", 
+              RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "\[Omega]"}], "]"}],
+            "-", 
+           RowBox[{
+            FractionBox[
+             SuperscriptBox[
+              RowBox[{"Bhat", "[", 
+               RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], "2"], 
+            RowBox[{"D", "[", 
+             RowBox[{
+              RowBox[{"\[Sigma]", "[", 
+               RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "\[Omega]"}], 
+             "]"}]}]}], ")"}]}], "+", 
+        FractionBox[
          RowBox[{
           RowBox[{"g", "[", 
-           RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "\[Omega]"}], "]"}]}], 
-       
-       SuperscriptBox[
-        RowBox[{"R", "[", 
-         RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"]]}], ")"}]}]}], 
-  ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"Gt", "=", 
-   RowBox[{
-    SuperscriptBox["\[Epsilon]", 
-     RowBox[{"-", "2"}]], 
-    FractionBox[
+           RowBox[{"r", ",", "\[Omega]"}], "]"}], 
+          RowBox[{"D", "[", 
+           RowBox[{
+            RowBox[{"g", "[", 
+             RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "\[Omega]"}], 
+           "]"}]}], 
+         SuperscriptBox[
+          RowBox[{"R", "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"]]}], ")"}]}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"GAr", " ", "=", " ", 
      RowBox[{
-      RowBox[{"g", "[", 
-       RowBox[{"r", ",", "\[Omega]"}], "]"}], 
-      RowBox[{"D", "[", 
+      SuperscriptBox["\[Epsilon]", 
+       RowBox[{"-", "2"}]], 
+      FractionBox["1", 
+       RowBox[{"1", "-", 
+        RowBox[{"\[Sigma]", "[", 
+         RowBox[{"r", ",", "\[Omega]"}], "]"}]}]], 
+      RowBox[{"(", 
        RowBox[{
-        RowBox[{"g", "[", 
-         RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "r"}], "]"}]}], 
-     SuperscriptBox[
-      RowBox[{"R", "[", 
-       RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"]]}]}], 
-  ";"}], "\[IndentingNewLine]", 
+        RowBox[{"D", "[", 
+         RowBox[{
+          RowBox[{"\[Beta]bar", "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "r"}], "]"}], "-", 
+        RowBox[{
+         FractionBox[
+          SuperscriptBox[
+           RowBox[{"Bhat", "[", 
+            RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], "2"], 
+         RowBox[{"D", "[", 
+          RowBox[{
+           RowBox[{"\[Sigma]", "[", 
+            RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "r"}], "]"}]}]}], 
+       ")"}]}]}], ";"}], " ", "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"GAr", " ", "=", " ", 
    RowBox[{
-    SuperscriptBox["\[Epsilon]", 
-     RowBox[{"-", "2"}]], 
     FractionBox["1", 
-     RowBox[{"1", "-", 
-      RowBox[{"\[Sigma]", "[", 
-       RowBox[{"r", ",", "\[Omega]"}], "]"}]}]], 
+     RowBox[{"2", " ", 
+      SuperscriptBox["\[Epsilon]", "2"], " ", 
+      RowBox[{"g\[Theta]\[Theta]", "[", 
+       RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+      RowBox[{"J", "[", 
+       RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+      SuperscriptBox[
+       RowBox[{"R", "[", 
+        RowBox[{"r", ",", "\[Omega]"}], "]"}], "3"]}]], 
     RowBox[{"(", 
      RowBox[{
-      RowBox[{"D", "[", 
-       RowBox[{
-        RowBox[{"\[Beta]bar", "[", 
-         RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "r"}], "]"}], "-", 
       RowBox[{
-       FractionBox[
-        SuperscriptBox[
-         RowBox[{"Bhat", "[", 
-          RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], "2"], 
-       RowBox[{"D", "[", 
+       SuperscriptBox[
+        RowBox[{"g", "[", 
+         RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], " ", 
+       RowBox[{"(", 
         RowBox[{
-         RowBox[{"\[Sigma]", "[", 
-          RowBox[{"r", ",", "\[Omega]"}], "]"}], ",", "r"}], "]"}]}]}], 
-     ")"}]}]}], ";"}], "\[IndentingNewLine]", 
+         RowBox[{"2", " ", 
+          RowBox[{"gr\[Theta]", "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+          RowBox[{"R", "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+          RowBox[{"\[Sigma]", "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+          RowBox[{
+           SuperscriptBox["J", 
+            TagBox[
+             RowBox[{"(", 
+              RowBox[{"0", ",", "1"}], ")"}],
+             Derivative],
+            MultilineFunction->None], "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}]}], "+", 
+         RowBox[{
+          RowBox[{"J", "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"R", "[", 
+              RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"-", "2"}], " ", 
+                RowBox[{"gr\[Theta]", "[", 
+                 RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+                RowBox[{
+                 SuperscriptBox["\[Sigma]", 
+                  TagBox[
+                   RowBox[{"(", 
+                    RowBox[{"0", ",", "1"}], ")"}],
+                   Derivative],
+                  MultilineFunction->None], "[", 
+                 RowBox[{"r", ",", "\[Omega]"}], "]"}]}], "+", 
+               RowBox[{
+                RowBox[{"\[Sigma]", "[", 
+                 RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"-", "2"}], " ", 
+                   RowBox[{
+                    SuperscriptBox["gr\[Theta]", 
+                    TagBox[
+                    RowBox[{"(", 
+                    RowBox[{"0", ",", "1"}], ")"}],
+                    Derivative],
+                    MultilineFunction->None], "[", 
+                    RowBox[{"r", ",", "\[Omega]"}], "]"}]}], "+", 
+                  RowBox[{
+                   SuperscriptBox["g\[Theta]\[Theta]", 
+                    TagBox[
+                    RowBox[{"(", 
+                    RowBox[{"1", ",", "0"}], ")"}],
+                    Derivative],
+                    MultilineFunction->None], "[", 
+                   RowBox[{"r", ",", "\[Omega]"}], "]"}]}], ")"}]}]}], 
+              ")"}]}], "-", 
+            RowBox[{"2", " ", 
+             RowBox[{"g\[Theta]\[Theta]", "[", 
+              RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+             RowBox[{"\[Sigma]", "[", 
+              RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+             RowBox[{
+              SuperscriptBox["R", 
+               TagBox[
+                RowBox[{"(", 
+                 RowBox[{"1", ",", "0"}], ")"}],
+                Derivative],
+               MultilineFunction->None], "[", 
+              RowBox[{"r", ",", "\[Omega]"}], "]"}]}]}], ")"}]}]}], ")"}]}], 
+      "+", 
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"R", "[", 
+         RowBox[{"r", ",", "\[Omega]"}], "]"}], "3"], " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          SuperscriptBox[
+           RowBox[{"Bhat", "[", 
+            RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"-", "2"}], " ", 
+             RowBox[{"gr\[Theta]", "[", 
+              RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+             RowBox[{"\[Sigma]", "[", 
+              RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+             RowBox[{
+              SuperscriptBox["J", 
+               TagBox[
+                RowBox[{"(", 
+                 RowBox[{"0", ",", "1"}], ")"}],
+                Derivative],
+               MultilineFunction->None], "[", 
+              RowBox[{"r", ",", "\[Omega]"}], "]"}]}], "+", 
+            RowBox[{
+             RowBox[{"J", "[", 
+              RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"2", " ", 
+                RowBox[{"gr\[Theta]", "[", 
+                 RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+                RowBox[{
+                 SuperscriptBox["\[Sigma]", 
+                  TagBox[
+                   RowBox[{"(", 
+                    RowBox[{"0", ",", "1"}], ")"}],
+                   Derivative],
+                  MultilineFunction->None], "[", 
+                 RowBox[{"r", ",", "\[Omega]"}], "]"}]}], "+", 
+               RowBox[{
+                RowBox[{"\[Sigma]", "[", 
+                 RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"2", " ", 
+                   RowBox[{
+                    SuperscriptBox["gr\[Theta]", 
+                    TagBox[
+                    RowBox[{"(", 
+                    RowBox[{"0", ",", "1"}], ")"}],
+                    Derivative],
+                    MultilineFunction->None], "[", 
+                    RowBox[{"r", ",", "\[Omega]"}], "]"}]}], "-", 
+                  RowBox[{
+                   SuperscriptBox["g\[Theta]\[Theta]", 
+                    TagBox[
+                    RowBox[{"(", 
+                    RowBox[{"1", ",", "0"}], ")"}],
+                    Derivative],
+                    MultilineFunction->None], "[", 
+                   RowBox[{"r", ",", "\[Omega]"}], "]"}]}], ")"}]}]}], 
+              ")"}]}]}], ")"}]}], "+", 
+         RowBox[{"2", " ", 
+          RowBox[{"g\[Theta]\[Theta]", "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+          RowBox[{"J", "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}], " ", 
+          RowBox[{
+           SuperscriptBox["\[Beta]perp", 
+            TagBox[
+             RowBox[{"(", 
+              RowBox[{"1", ",", "0"}], ")"}],
+             Derivative],
+            MultilineFunction->None], "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}]}]}], ")"}]}]}], ")"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GA\[Omega]", "=", "0"}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"Gred", " ", "=", " ", 
    RowBox[{
@@ -525,63 +679,28 @@ Cell[BoxData[{
    RowBox[{"Gred", " ", "+", " ", "GK\[Omega]"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{
-   RowBox[{"Bp2", " ", "=", " ", 
-    RowBox[{
-     SuperscriptBox["\[Epsilon]", "2"], 
-     SuperscriptBox[
-      RowBox[{"f", "[", "r", "]"}], "2"], 
-     FractionBox[
-      RowBox[{"g\[Theta]\[Theta]", "[", 
-       RowBox[{"r", ",", "\[Omega]"}], "]"}], 
-      SuperscriptBox[
-       RowBox[{"J", "[", 
-        RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"]]}]}], ";"}], 
-  "\[IndentingNewLine]", 
-  RowBox[{"(*", 
+  RowBox[{"Bp2", " ", "=", " ", 
    RowBox[{
-    RowBox[{"Bp", " ", "=", "  ", 
-     RowBox[{"\[Epsilon]", " ", 
-      RowBox[{"f", "[", "r", "]"}], 
-      FractionBox[
-       RowBox[{"Sqrt", "[", 
-        RowBox[{"g\[Theta]\[Theta]", "[", 
-         RowBox[{"r", ",", "\[Omega]"}], "]"}], "]"}], 
-       RowBox[{"J", "[", 
-        RowBox[{"r", ",", "\[Omega]"}], "]"}]]}]}], ";", 
-    "\[IndentingNewLine]", 
-    RowBox[{"Bt", " ", "=", " ", 
-     FractionBox[
-      RowBox[{"g", "[", 
-       RowBox[{"r", ",", "\[Omega]"}], "]"}], 
-      RowBox[{"R", "[", 
-       RowBox[{"r", ",", "\[Omega]"}], "]"}]]}], ";"}], 
-   "*)"}]}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"Bt2", " ", "=", " ", 
+    SuperscriptBox["\[Epsilon]", "2"], 
+    SuperscriptBox[
+     RowBox[{"f", "[", "r", "]"}], "2"], 
     FractionBox[
+     RowBox[{"g\[Theta]\[Theta]", "[", 
+      RowBox[{"r", ",", "\[Omega]"}], "]"}], 
      SuperscriptBox[
-      RowBox[{"g", "[", 
-       RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], 
-     SuperscriptBox[
-      RowBox[{"R", "[", 
-       RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"]]}], ";"}], 
-  "\[IndentingNewLine]", 
-  RowBox[{"(*", 
-   RowBox[{
-    RowBox[{"resB", " ", "=", " ", 
-     RowBox[{
-      SuperscriptBox["\[Epsilon]", 
-       RowBox[{"-", "1"}]], 
-      RowBox[{"(", 
-       RowBox[{
-        SuperscriptBox[
-         RowBox[{"Bhat", "[", 
-          RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], "-", 
-        RowBox[{"(", 
-         RowBox[{"Bp2", "+", "Bt2"}], ")"}]}], ")"}]}]}], ";"}], 
-   "*)"}]}], "\[IndentingNewLine]", 
+      RowBox[{"J", "[", 
+       RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"]]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Bt2", " ", "=", " ", 
+   FractionBox[
+    SuperscriptBox[
+     RowBox[{"g", "[", 
+      RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], 
+    SuperscriptBox[
+     RowBox[{"R", "[", 
+      RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"]]}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"resB", " ", "=", " ", 
    RowBox[{
@@ -589,11 +708,10 @@ Cell[BoxData[{
      RowBox[{"-", "1"}]], 
     RowBox[{"(", 
      RowBox[{
-      RowBox[{"Bhat", "[", 
-       RowBox[{"r", ",", "\[Omega]"}], "]"}], "-", 
-      RowBox[{"Sqrt", "[", 
-       RowBox[{"Bp2", "+", "Bt2"}], "]"}]}], ")"}]}]}], 
-  ";"}], "\[IndentingNewLine]", 
+      SuperscriptBox[
+       RowBox[{"Bhat", "[", 
+        RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], "-", "Bp2", "-", "Bt2"}],
+      ")"}]}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"resPfirst", " ", "=", " ", 
    RowBox[{
@@ -901,8 +1019,11 @@ Cell[BoxData[{
   ";"}]}], "Input",
  CellChangeTimes->{{3.9713258708457336`*^9, 3.9713258712471533`*^9}, {
   3.972107730809898*^9, 3.972107774346313*^9}, {3.972107835295965*^9, 
-  3.972107865742607*^9}},
- CellLabel->"In[56]:=",ExpressionUUID->"f175b666-efe7-44ec-a86a-af0515a5e112"],
+  3.972107865742607*^9}, {3.973053671343286*^9, 3.97305367433531*^9}, {
+  3.97307096081177*^9, 3.973071016857523*^9}, {3.973071052722721*^9, 
+  3.973071058781857*^9}, {3.973071925153969*^9, 3.9730719297798157`*^9}, {
+  3.973073036021943*^9, 3.973073036576394*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"f175b666-efe7-44ec-a86a-af0515a5e112"],
 
 Cell[BoxData[{
  RowBox[{
@@ -981,8 +1102,7 @@ Cell[BoxData[{
                   ")"}]}]}]}], "]"}]}]}], "]"}]}], "]"}], ",", 
         RowBox[{"Normal", "[", "rules", "]"}]}], "]"}], ",", "Nothing"}], 
      "]"}]}]}], ";"}]}], "Input",
- CellLabel->
-  "In[111]:=",ExpressionUUID->"b5b10eaa-820a-4f2e-b73f-4d93ac53e477"],
+ CellLabel->"In[56]:=",ExpressionUUID->"b5b10eaa-820a-4f2e-b73f-4d93ac53e477"],
 
 Cell[CellGroupData[{
 
@@ -1000,43 +1120,46 @@ Cell[BoxData[
  CellChangeTimes->{{3.9718448970443077`*^9, 3.971844897795727*^9}, {
    3.9721078869995604`*^9, 3.9721078872393007`*^9}, 3.9721088217973337`*^9, 
    3.972108860740898*^9},
- CellLabel->
-  "In[150]:=",ExpressionUUID->"f11c63f4-4b48-445f-9157-874cf70acde0"],
+ CellLabel->"In[59]:=",ExpressionUUID->"f11c63f4-4b48-445f-9157-874cf70acde0"],
 
 Cell[BoxData[
- FractionBox[
-  RowBox[{"BB", "-", 
-   SqrtBox[
-    RowBox[{"T13", " ", "T33", " ", 
-     RowBox[{"(", 
-      RowBox[{
-       FractionBox[
-        RowBox[{
-         SuperscriptBox["r", "2"], " ", "T12", " ", "T18", " ", 
-         SuperscriptBox["\[Epsilon]", "2"]}], 
-        SuperscriptBox[
-         RowBox[{"q", "[", "r", "]"}], "2"]], "+", 
-       FractionBox["1", 
+ RowBox[{
+  RowBox[{"-", 
+   FractionBox[
+    RowBox[{
+     SuperscriptBox["r", "2"], " ", "T11", " ", "T24", " ", "T25", " ", 
+     "\[Epsilon]"}], 
+    RowBox[{
+     SuperscriptBox["RR", "2"], " ", 
+     SuperscriptBox[
+      RowBox[{"q", "[", "r", "]"}], "2"]}]]}], "+", 
+  FractionBox[
+   RowBox[{
+    SuperscriptBox["BB", "2"], " ", 
+    RowBox[{"(", 
+     RowBox[{"1", "-", 
+      FractionBox["T24", 
+       RowBox[{
+        SuperscriptBox["RR", "2"], " ", 
         SuperscriptBox[
          RowBox[{"(", 
-          RowBox[{
-           RowBox[{"-", "1"}], "+", 
-           FractionBox[
+          RowBox[{"BB", "-", 
+           RowBox[{
+            SuperscriptBox["\[Epsilon]", "2"], " ", 
             RowBox[{
-             SuperscriptBox["\[Epsilon]", "2"], " ", 
-             RowBox[{
-              SuperscriptBox["betapar", 
-               TagBox[
-                RowBox[{"(", 
-                 RowBox[{"0", ",", "1", ",", "0"}], ")"}],
-                Derivative],
-               MultilineFunction->None], "[", 
-              RowBox[{"r", ",", "BB", ",", "T19"}], "]"}]}], "BB"]}], ")"}], 
-         "2"]]}], ")"}]}]]}], "\[Epsilon]"]], "Output",
- CellChangeTimes->{3.9718449395812883`*^9, 3.972107889672125*^9, 
-  3.972108822221753*^9, 3.972108861706049*^9},
- CellLabel->
-  "Out[150]=",ExpressionUUID->"49af6b27-6bcf-4b4e-a1b5-82b0cc112717"]
+             SuperscriptBox["betapar", 
+              TagBox[
+               RowBox[{"(", 
+                RowBox[{"0", ",", "1", ",", "0"}], ")"}],
+               Derivative],
+              MultilineFunction->None], "[", 
+             RowBox[{"r", ",", "BB", ",", "RR"}], "]"}]}]}], ")"}], "2"]}]]}],
+      ")"}]}], "\[Epsilon]"]}]], "Output",
+ CellChangeTimes->{
+  3.9718449395812883`*^9, 3.972107889672125*^9, 3.972108822221753*^9, 
+   3.972108861706049*^9, {3.973071201847577*^9, 3.973071216058385*^9}, 
+   3.973072078800699*^9, 3.9730732050495*^9},
+ CellLabel->"Out[59]=",ExpressionUUID->"af8a2f2a-cbcb-494a-a96d-2e719eabff32"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1047,9 +1170,10 @@ Cell[BoxData[
  CellLabel->"In[60]:=",ExpressionUUID->"fa747c99-c3ae-43d7-9e71-4b40fe5ec5bf"],
 
 Cell[BoxData[
- RowBox[{"{", "31", "}"}]], "Output",
- CellChangeTimes->{3.971844974790329*^9},
- CellLabel->"Out[60]=",ExpressionUUID->"6fda91a5-1157-46fa-af84-00c177159bf0"]
+ RowBox[{"{", "50", "}"}]], "Output",
+ CellChangeTimes->{3.971844974790329*^9, 3.9730712019522467`*^9, 
+  3.9730720789024477`*^9},
+ CellLabel->"Out[60]=",ExpressionUUID->"5c74d29e-adfc-43be-8f33-7fb8b078f7c0"]
 }, Open  ]],
 
 Cell[BoxData[{
@@ -1290,8 +1414,7 @@ Cell[BoxData[{
    RowBox[{"Join", "[", 
     RowBox[{"jact2Delta", ",", "JBtot", ",", "JStot", ",", "2"}], "]"}]}], 
   ";"}]}], "Input",
- CellLabel->
-  "In[115]:=",ExpressionUUID->"f10eb990-cbd2-4462-8fa7-2b2f8acb121d"],
+ CellLabel->"In[60]:=",ExpressionUUID->"f10eb990-cbd2-4462-8fa7-2b2f8acb121d"],
 
 Cell[CellGroupData[{
 
@@ -1411,46 +1534,65 @@ Cell[BoxData[
                 RowBox[{"\[Epsilon]", "^", "exp"}], "*", "Tk"}]}]}]}], 
             "]"}]}], "]"}], ",", "sorted"}], "]"}]}]}]}], "]"}]}], 
   ";"}]], "Input",
- CellLabel->
-  "In[132]:=",ExpressionUUID->"909b58a7-6a27-4b7e-93d9-42552fd79665"],
+ CellLabel->"In[77]:=",ExpressionUUID->"909b58a7-6a27-4b7e-93d9-42552fd79665"],
 
 Cell[CellGroupData[{
 
 Cell[BoxData["\<\"Finished Cases, Flatten\"\>"], "Print",
- CellChangeTimes->{3.972107993931369*^9},
+ CellChangeTimes->{3.972107993931369*^9, 3.9730713348673477`*^9, 
+  3.97307219801548*^9, 3.9730733400327053`*^9},
  CellLabel->
   "During evaluation of \
-In[132]:=",ExpressionUUID->"f1eb9e30-06a7-4acd-ab55-6eb5c564f668"],
+In[77]:=",ExpressionUUID->"050001f5-da18-4703-994a-f39b4a2be32d"],
 
 Cell[BoxData["\<\"Finished Tally\"\>"], "Print",
- CellChangeTimes->{3.972108006424842*^9},
+ CellChangeTimes->{3.972107993931369*^9, 3.9730713348673477`*^9, 
+  3.97307219801548*^9, 3.9730733646986094`*^9},
  CellLabel->
   "During evaluation of \
-In[132]:=",ExpressionUUID->"55b1fd23-e7e8-493c-9fef-95044c6e798c"],
+In[77]:=",ExpressionUUID->"29159454-9531-4ea1-b1e7-6db1b506fd50"],
 
 Cell[BoxData["\<\"Finished filtering\"\>"], "Print",
- CellChangeTimes->{3.972108015992387*^9},
+ CellChangeTimes->{3.972107993931369*^9, 3.9730713348673477`*^9, 
+  3.97307219801548*^9, 3.973073383542869*^9},
  CellLabel->
   "During evaluation of \
-In[132]:=",ExpressionUUID->"aa141ce3-5b40-4f71-9765-67557e3e2235"],
+In[77]:=",ExpressionUUID->"07831423-7e34-4bc2-8692-a028a24f71f9"],
 
 Cell[BoxData["\<\"Finished sorting\"\>"], "Print",
- CellChangeTimes->{3.9721080166683397`*^9},
+ CellChangeTimes->{3.972107993931369*^9, 3.9730713348673477`*^9, 
+  3.97307219801548*^9, 3.973073384838619*^9},
  CellLabel->
   "During evaluation of \
-In[132]:=",ExpressionUUID->"7f50bb61-b2cf-44f2-bf8a-8a544834b742"],
+In[77]:=",ExpressionUUID->"3a9048aa-6acc-45ab-8130-b149af38fb21"],
 
 Cell[BoxData["\<\"Finished 25 replacement rules\"\>"], "Print",
- CellChangeTimes->{3.972108024422348*^9},
+ CellChangeTimes->{3.972107993931369*^9, 3.9730713348673477`*^9, 
+  3.97307219801548*^9, 3.97307339029284*^9},
  CellLabel->
   "During evaluation of \
-In[132]:=",ExpressionUUID->"34d56459-4bf9-4639-8550-50996b69f6d4"],
+In[77]:=",ExpressionUUID->"5d499e7f-202a-434f-9db3-a2d9f2f02ffb"],
 
 Cell[BoxData["\<\"Finished 25 replacement rules\"\>"], "Print",
- CellChangeTimes->{3.9721080548564262`*^9},
+ CellChangeTimes->{3.972107993931369*^9, 3.9730713348673477`*^9, 
+  3.97307219801548*^9, 3.973073421422933*^9},
  CellLabel->
   "During evaluation of \
-In[132]:=",ExpressionUUID->"c27e5f12-d34c-4c7c-89cc-9d3323fbb998"]
+In[77]:=",ExpressionUUID->"bb2b3116-b7df-444a-8b4a-e3fbb19bdaa7"],
+
+Cell[BoxData["\<\"Finished 25 replacement rules\"\>"], "Print",
+ CellChangeTimes->{3.972107993931369*^9, 3.9730713348673477`*^9, 
+  3.97307219801548*^9, 3.973073448740954*^9},
+ CellLabel->
+  "During evaluation of \
+In[77]:=",ExpressionUUID->"060759e5-4164-45da-afad-6fb6face1796"],
+
+Cell[BoxData["\<\"Finished 25 replacement rules\"\>"], "Print",
+ CellChangeTimes->{3.972107993931369*^9, 3.9730713348673477`*^9, 
+  3.97307219801548*^9, 3.9730734708638773`*^9},
+ CellLabel->
+  "During evaluation of \
+In[77]:=",ExpressionUUID->"25f23eb4-a62b-4631-bba6-6704a7fb2fc3"]
 }, Open  ]]
 }, Open  ]],
 
@@ -1469,8 +1611,7 @@ Cell[BoxData[
          RowBox[{"r", ",", "\[Omega]"}], "]"}], "->", " ", "BB"}]}], "}"}]}], 
     "/.", " ", 
     RowBox[{"Normal", "[", "rulesJac", "]"}]}]}], ";"}]], "Input",
- CellLabel->
-  "In[133]:=",ExpressionUUID->"ceeca0e5-fab8-41fd-91b9-79f64c41977c"],
+ CellLabel->"In[78]:=",ExpressionUUID->"ceeca0e5-fab8-41fd-91b9-79f64c41977c"],
 
 Cell[BoxData[{
  RowBox[{
@@ -1498,8 +1639,7 @@ Cell[BoxData[{
        RowBox[{"Bhat", "[", 
         RowBox[{"r", ",", "\[Omega]"}], "]"}], "->", " ", "BB"}]}], "}"}]}]}],
    ";"}]}], "Input",
- CellLabel->
-  "In[134]:=",ExpressionUUID->"185fabbe-fc91-4825-a79b-91c7714754d4"],
+ CellLabel->"In[79]:=",ExpressionUUID->"185fabbe-fc91-4825-a79b-91c7714754d4"],
 
 Cell[BoxData[{
  RowBox[{
@@ -1625,8 +1765,7 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{"jacTrial", "=", 
    RowBox[{"jacNew", "/.", " ", "filteredRulesList"}]}], ";"}]}], "Input",
- CellLabel->
-  "In[136]:=",ExpressionUUID->"d650a1c9-41fc-4e71-b4bc-88eaca8bd3f9"],
+ CellLabel->"In[81]:=",ExpressionUUID->"d650a1c9-41fc-4e71-b4bc-88eaca8bd3f9"],
 
 Cell[BoxData[
  RowBox[{
@@ -1825,8 +1964,7 @@ Cell[BoxData[
         MultilineFunction->None], "[", 
        RowBox[{"0", ",", "1", ",", "1"}], "]"}], "->", "dbetapardB0"}]}], 
     "}"}]}], ";"}]], "Input",
- CellLabel->
-  "In[140]:=",ExpressionUUID->"1aea2b24-9f7c-4d43-a547-52051b3807fc"],
+ CellLabel->"In[85]:=",ExpressionUUID->"1aea2b24-9f7c-4d43-a547-52051b3807fc"],
 
 Cell[BoxData[
  RowBox[{
@@ -2197,8 +2335,7 @@ Cell[BoxData[
            RowBox[{"\"\<KroneckerDelta(kp,kp)\>\"", "->", "\"\<1\>\""}]}], 
           "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
       RowBox[{"StringTrim", "[", "str", "]"}]}]}], "]"}]}], "\n"}]], "Input",
- CellLabel->
-  "In[141]:=",ExpressionUUID->"2d53f09e-5294-4fad-aaa6-ac36da884748"],
+ CellLabel->"In[86]:=",ExpressionUUID->"2d53f09e-5294-4fad-aaa6-ac36da884748"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2343,9 +2480,8 @@ reshape(P1 * S_flat, N, 1, []);\\n\\tSpp = reshape(P2 * S_flat, N, 1, []);\\n\
        ";", "\[IndentingNewLine]", 
       RowBox[{"WriteString", "[", 
        RowBox[{
-       "stream", ",", 
-        "\"\<\\tmb = reshape(linspace(1,Nb,Nb), [1,1,Nb]);\\n\>\""}], "]"}], 
-      ";", "\[IndentingNewLine]", 
+       "stream", ",", "\"\<\\tmb = reshape(0:(Nb-1), [1,1,Nb]);\\n\>\""}], 
+       "]"}], ";", "\[IndentingNewLine]", 
       RowBox[{"WriteString", "[", 
        RowBox[{"stream", ",", 
         RowBox[{"\"\<\\tRR = \>\"", "<>", 
@@ -2441,11 +2577,11 @@ equation_of_state(kinetic_profiles,r,RR,BB);\\n\\n\>\""}], "]"}], ";",
         "\"\<\\trowsF = [1, 2, (2 + Nb + (2:(Ns+1)))];\\n\>\""}], "]"}], ";", 
       "\n", 
       RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tmB = 1:Nb;\\n\>\""}], "]"}], ";", "\n", 
-      
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\trowsB = 3 + mB;\\n\>\""}], "]"}], ";", 
+       RowBox[{"stream", ",", "\"\<\\tmB = 0:(Nb-1);\\n\>\""}], "]"}], ";", 
       "\n", 
+      RowBox[{"WriteString", "[", 
+       RowBox[{"stream", ",", "\"\<\\trowsB = 3 + (1:Nb);\\n\>\""}], "]"}], 
+      ";", "\n", 
       RowBox[{"WriteString", "[", 
        RowBox[{
        "stream", ",", 
@@ -2474,45 +2610,50 @@ equation_of_state(kinetic_profiles,r,RR,BB);\\n\\n\>\""}], "]"}], ";",
        RowBox[{
        "\"\<Wrote MATLAB file \[OpenCurlyDoubleQuote]\>\"", ",", "fileName", 
         ",", "\"\<\[CloseCurlyDoubleQuote] with <\>\"", ",", "funcName", ",", 
-        "\"\<>.\>\""}], "]"}], ";"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
- RowBox[{
+        "\"\<>.\>\""}], "]"}], ";"}]}], "]"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.973071746223357*^9, 3.9730717474877357`*^9}},
+ CellLabel->"In[87]:=",ExpressionUUID->"c4dac5c0-5979-41d5-887c-8eaf5b88cd01"],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
   RowBox[{
-   RowBox[{"WriteJac", "[", 
-    RowBox[{"fileName_String", ",", "funcName_String", ",", "jacExpr_"}], 
-    "]"}], ":=", 
-   RowBox[{"Module", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"stream", ",", "argsStr", ",", "dimsJac"}], "}"}], ",", 
+   RowBox[{
+    RowBox[{"WriteJac", "[", 
+     RowBox[{"fileName_String", ",", "funcName_String", ",", "jacExpr_"}], 
+     "]"}], ":=", 
+    RowBox[{"Module", "[", 
      RowBox[{
-      RowBox[{"argsStr", "=", 
-       RowBox[{"StringRiffle", "[", 
+      RowBox[{"{", 
+       RowBox[{"stream", ",", "argsStr", ",", "dimsJac"}], "}"}], ",", 
+      RowBox[{
+       RowBox[{"argsStr", "=", 
+        RowBox[{"StringRiffle", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+           "\"\<r\>\"", ",", "\"\<x\>\"", ",", "\"\<epsilon\>\"", ",", 
+            "\"\<omega\>\"", ",", "\"\<kinetic_profiles\>\"", ",", 
+            "\"\<q\>\"", ",", "\"\<qp\>\"", ",", "\"\<P0\>\"", ",", 
+            "\"\<P1\>\"", ",", "\"\<P2\>\"", ",", "\"\<dof_count\>\"", ",", 
+            "\"\<Nb\>\"", ",", "\"\<Sbc\>\"", ",", "\"\<P_templates\>\"", 
+            ",", "\"\<M_extended\>\"", ",", "\"\<equation_of_state\>\""}], 
+           "}"}], ",", "\"\<,\>\""}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"dimsJac", "=", 
+        RowBox[{"Dimensions", "[", "jacExpr", "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"stream", "=", 
+        RowBox[{"OpenWrite", "[", "fileName", "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", 
+         RowBox[{
+         "\"\<function J = \>\"", "<>", "funcName", "<>", "\"\<(\>\"", "<>", 
+          "argsStr", "<>", "\"\<)\\n\>\""}]}], "]"}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"WriteString", "[", 
         RowBox[{
-         RowBox[{"{", 
-          RowBox[{
-          "\"\<r\>\"", ",", "\"\<x\>\"", ",", "\"\<epsilon\>\"", ",", 
-           "\"\<omega\>\"", ",", "\"\<kinetic_profiles\>\"", ",", "\"\<q\>\"",
-            ",", "\"\<qp\>\"", ",", "\"\<P0\>\"", ",", "\"\<P1\>\"", ",", 
-           "\"\<P2\>\"", ",", "\"\<dof_count\>\"", ",", "\"\<Nb\>\"", ",", 
-           "\"\<Sbc\>\"", ",", "\"\<P_templates\>\"", ",", 
-           "\"\<M_extended\>\"", ",", "\"\<equation_of_state\>\""}], "}"}], 
-         ",", "\"\<,\>\""}], "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"dimsJac", "=", 
-       RowBox[{"Dimensions", "[", "jacExpr", "]"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"stream", "=", 
-       RowBox[{"OpenWrite", "[", "fileName", "]"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", 
-        RowBox[{
-        "\"\<function J = \>\"", "<>", "funcName", "<>", "\"\<(\>\"", "<>", 
-         "argsStr", "<>", "\"\<)\\n\>\""}]}], "]"}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{
-       "stream", ",", 
-        "\"\<\\tNq = numel(r);\n\\tNs = numel(Sbc);\n\\tnRes = 3+Nb+Ns;\n\
+        "stream", ",", 
+         "\"\<\\tNq = numel(r);\n\\tNs = numel(Sbc);\n\\tnRes = 3+Nb+Ns;\n\
 \\tt2_c    = x(1:dof_count);\n\\tdelta_c = x(dof_count+1:2*dof_count);\n\
 \\tP_c = x(2*dof_count+1:3*dof_count);\n\\tBs_c    = \
 reshape(x(3*dof_count+1:(3+Nb)*dof_count), [dof_count, 1, Nb]);\n\\tBs_flat   \
@@ -2535,498 +2676,505 @@ d2betapardRdB,d2betapardrdR,d2betapardR2,...\n\
 \\t\\td3betapardrdB2,d3betapardB3,d3betapardBdR2,d3betapardB2dR,\
 d3betapardrdRdB] = equation_of_state(kinetic_profiles,r,RR,BB);\n    Ntheta = \
 numel(omega);\n    mF   = [0,1,2:(Ns+1)];\n    rowsF = [1,2,(2 + Nb + \
-(2:(Ns+1)))];\n    mB   = 1:Nb;\n    rowsB = 3 + mB;\n    nmF = numel(mF);\n  \
-  nmB = numel(mB);\\n\>\""}], "]"}], ";", "\[IndentingNewLine]", 
-      RowBox[{"(*", 
-       RowBox[{"Tn", " ", "definitions", " ", "from", " ", "invRules"}], 
-       "*)"}], "\[IndentingNewLine]", 
-      RowBox[{"Do", "[", 
-       RowBox[{
-        RowBox[{"With", "[", 
-         RowBox[{
-          RowBox[{"{", 
-           RowBox[{"idx", "=", 
-            RowBox[{"StringReplace", "[", 
-             RowBox[{
-              RowBox[{"ToString", "[", 
+(2:(Ns+1)))];\n    mB   = 0:(Nb-1);\n    rowsB = 3 + (1:Nb); \n    nmF = \
+numel(mF);\n    nmB = numel(mB);\\n\>\""}], "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{"Tn", " ", "definitions", " ", "from", " ", "invRules"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Do", "[", 
+        RowBox[{
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"idx", "=", 
+             RowBox[{"StringReplace", "[", 
+              RowBox[{
+               RowBox[{"ToString", "[", 
+                RowBox[{"filteredRulesList", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"i", ",", "1"}], "]"}], "]"}], "]"}], ",", 
+               RowBox[{"\"\<T\>\"", "->", "\"\<\>\""}]}], "]"}]}], "}"}], ",", 
+           RowBox[{"WriteString", "[", 
+            RowBox[{"stream", ",", 
+             RowBox[{"\"\<\\tT\>\"", "<>", "idx", "<>", "\"\< = \>\"", "<>", 
+              RowBox[{"ToMatlab", "[", 
                RowBox[{"filteredRulesList", "[", 
                 RowBox[{"[", 
-                 RowBox[{"i", ",", "1"}], "]"}], "]"}], "]"}], ",", 
-              RowBox[{"\"\<T\>\"", "->", "\"\<\>\""}]}], "]"}]}], "}"}], ",", 
-          
-          RowBox[{"WriteString", "[", 
-           RowBox[{"stream", ",", 
-            RowBox[{"\"\<\\tT\>\"", "<>", "idx", "<>", "\"\< = \>\"", "<>", 
-             RowBox[{"ToMatlab", "[", 
-              RowBox[{"filteredRulesList", "[", 
-               RowBox[{"[", 
-                RowBox[{"i", ",", "2"}], "]"}], "]"}], "]"}], "<>", 
-             "\"\<;\\n\>\""}]}], "]"}]}], "]"}], ",", 
-        RowBox[{"{", 
-         RowBox[{"i", ",", 
-          RowBox[{"Length", "[", "filteredRulesList", "]"}]}], "}"}]}], "]"}],
-       ";", "\[IndentingNewLine]", 
-      RowBox[{"(*", 
-       RowBox[{"jacTotal", " ", "prealloc"}], "*)"}], 
-      RowBox[{"WriteString", "[", 
-       RowBox[{
-       "stream", ",", 
-        "\"\<\\tjacTotal = zeros(3,nRes,nRes,Nq); % (which deriv, which \
+                 RowBox[{"i", ",", "2"}], "]"}], "]"}], "]"}], "<>", 
+              "\"\<;\\n\>\""}]}], "]"}]}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", 
+           RowBox[{"Length", "[", "filteredRulesList", "]"}]}], "}"}]}], 
+        "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{"jacTotal", " ", "prealloc"}], "*)"}], 
+       RowBox[{"WriteString", "[", 
+        RowBox[{
+        "stream", ",", 
+         "\"\<\\tjacTotal = zeros(3,nRes,nRes,Nq); % (which deriv, which \
 equation, which profile)\\n\\n\>\""}], "]"}], ";", "\[IndentingNewLine]", 
-      RowBox[{"(*", 
-       RowBox[{
+       RowBox[{"(*", 
         RowBox[{
-         RowBox[{"--", 
-          RowBox[{"-", "resF"}]}], " ", 
-         RowBox[{"modes", "--"}]}], "-"}], "*)"}], 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\t% --- resF modes ---\\n\>\""}], "]"}], 
-      ";", "\n", 
-      RowBox[{"(*", 
-       RowBox[{
-        RowBox[{"scalar", " ", "3", "x3", " ", "blocks"}], "->", 
+         RowBox[{
+          RowBox[{"--", 
+           RowBox[{"-", "resF"}]}], " ", 
+          RowBox[{"modes", "--"}]}], "-"}], "*)"}], 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\t% --- resF modes ---\\n\>\""}], "]"}], 
+       ";", "\n", 
+       RowBox[{"(*", 
         RowBox[{
-         RowBox[{"j11F", "..."}], " ", "j33F"}]}], "*)"}], 
-      "\[IndentingNewLine]", 
-      RowBox[{"Do", "[", 
-       RowBox[{
+         RowBox[{"scalar", " ", "3", "x3", " ", "blocks"}], "->", 
+         RowBox[{
+          RowBox[{"j11F", "..."}], " ", "j33F"}]}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"Do", "[", 
         RowBox[{
-         RowBox[{"Do", "[", 
-          RowBox[{
+         RowBox[{
+          RowBox[{"Do", "[", 
            RowBox[{
-            RowBox[{"If", "[", 
-             RowBox[{
+            RowBox[{
+             RowBox[{"If", "[", 
               RowBox[{
-               RowBox[{"jacExpr", "[", 
-                RowBox[{"[", 
-                 RowBox[{"d", ",", "j", ",", "1"}], "]"}], "]"}], "=!=", 
-               "0"}], ",", 
-              RowBox[{
-               RowBox[{"WriteString", "[", 
-                RowBox[{"stream", ",", 
-                 RowBox[{"\"\<\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-                  RowBox[{"ToString", "[", "d", "]"}], "<>", 
-                  RowBox[{"ToString", "[", "j", "]"}], "<>", "\"\<F = \>\"", "<>", 
-                  RowBox[{"ToMatlab", "[", 
-                   RowBox[{"jacExpr", "[", 
+               RowBox[{
+                RowBox[{"jacExpr", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"d", ",", "j", ",", "1"}], "]"}], "]"}], "=!=", 
+                "0"}], ",", 
+               RowBox[{
+                RowBox[{"WriteString", "[", 
+                 RowBox[{"stream", ",", 
+                  RowBox[{"\"\<\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                   RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                   RowBox[{"ToString", "[", "j", "]"}], "<>", "\"\<F = \>\"", 
+                   "<>", 
+                   RowBox[{"ToMatlab", "[", 
+                    RowBox[{"jacExpr", "[", 
                     RowBox[{"[", 
                     RowBox[{"d", ",", "j", ",", "1"}], "]"}], "]"}], "]"}], 
-                  "<>", "\"\<;\\n\>\""}]}], "]"}], ";", "\[IndentingNewLine]", 
-               RowBox[{"WriteString", "[", 
-                RowBox[{"stream", ",", 
-                 RowBox[{"\"\<\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-                  RowBox[{"ToString", "[", "d", "]"}], "<>", 
-                  RowBox[{"ToString", "[", "j", "]"}], "<>", 
-                  "\"\<F_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
-                  RowBox[{"ToString", "[", "d", "]"}], "<>", 
-                  RowBox[{"ToString", "[", "j", "]"}], "<>", 
-                  "\"\<F, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
-               "\[IndentingNewLine]", 
-               RowBox[{"WriteString", "[", 
-                RowBox[{"stream", ",", 
-                 RowBox[{"\"\<\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
-                  RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<,\>\"", "<>", 
-                  RowBox[{"ToString", "[", "j", "]"}], "<>", 
-                  "\"\<, rowsF, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
-                  RowBox[{"ToString", "[", "d", "]"}], "<>", 
-                  RowBox[{"ToString", "[", "j", "]"}], "<>", 
-                  "\"\<F_FFT(:, mF+1).',\>\"", "<>", 
-                  "\"\< [1,1,nmF, Nq]);\\n\\n\>\""}]}], "]"}], ";"}]}], "]"}],
-             ";"}], ",", 
-           RowBox[{"{", 
-            RowBox[{"j", ",", "1", ",", "3"}], "}"}]}], "]"}], ";"}], ",", 
-        RowBox[{"{", 
-         RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", 
-      "\[IndentingNewLine]", "\n", 
-      RowBox[{"(*", 
-       RowBox[{"derivatives", " ", "wrt", " ", "B_l", " ", 
-        RowBox[{"(", "bundle", ")"}]}], "*)"}], "\[IndentingNewLine]", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{
-       "stream", ",", "\"\<\\t% derivatives wrt B_l (bundle)\\n\>\""}], "]"}],
+                   "<>", "\"\<;\\n\>\""}]}], "]"}], ";", 
+                "\[IndentingNewLine]", 
+                RowBox[{"WriteString", "[", 
+                 RowBox[{"stream", ",", 
+                  RowBox[{"\"\<\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                   RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                   RowBox[{"ToString", "[", "j", "]"}], "<>", 
+                   "\"\<F_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
+                   RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                   RowBox[{"ToString", "[", "j", "]"}], "<>", 
+                   "\"\<F, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
+                "\[IndentingNewLine]", 
+                RowBox[{"WriteString", "[", 
+                 RowBox[{"stream", ",", 
+                  RowBox[{"\"\<\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
+                   RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<,\>\"", "<>", 
+                   RowBox[{"ToString", "[", "j", "]"}], "<>", 
+                   "\"\<, rowsF, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
+                   
+                   RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                   RowBox[{"ToString", "[", "j", "]"}], "<>", 
+                   "\"\<F_FFT(:, mF+1).',\>\"", "<>", 
+                   "\"\< [1,1,nmF, Nq]);\\n\\n\>\""}]}], "]"}], ";"}]}], 
+              "]"}], ";"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"j", ",", "1", ",", "3"}], "}"}]}], "]"}], ";"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", 
+       "\[IndentingNewLine]", "\n", 
+       RowBox[{"(*", 
+        RowBox[{"derivatives", " ", "wrt", " ", "B_l", " ", 
+         RowBox[{"(", "bundle", ")"}]}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{
+        "stream", ",", "\"\<\\t% derivatives wrt B_l (bundle)\\n\>\""}], 
+        "]"}], ";", "\n", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\tfor lp = 0:Nb-1\\n\>\""}], "]"}], ";", 
+       "\n", 
+       RowBox[{"Do", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"jacExpr", "[", 
+              RowBox[{"[", 
+               RowBox[{"d", ",", "4", ",", "1"}], "]"}], "]"}], "=!=", "0"}], 
+            ",", 
+            RowBox[{"(*", 
+             RowBox[{"j", 
+              RowBox[{"{", "d", "}"}], "3", "lpF", " ", "as", " ", "a", " ", 
+              "MATLAB", " ", "variable", " ", "that", " ", "is", " ", 
+              "overwritten", " ", "each", " ", "lp", " ", "iteration"}], 
+             "*)"}], 
+            RowBox[{
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<3lpF = \>\"", 
+                "<>", 
+                RowBox[{"ToMatlab", "[", 
+                 RowBox[{"jacExpr", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"d", ",", "4", ",", "1"}], "]"}], "]"}], "]"}], 
+                "<>", "\"\<;\\n\>\""}]}], "]"}], ";", "\[IndentingNewLine]", 
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3lpF_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3lpF, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
+             "\[IndentingNewLine]", 
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<, 3+lp+1, rowsF, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3lpF_FFT(:, mF+1).', [1,1,nmF, Nq]);\\n\>\""}]}], "]"}], 
+             ";"}]}], "]"}], ";"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\tend\\n\\n\>\""}], "]"}], ";", 
+       "\[IndentingNewLine]", "\n", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{"derivatives", " ", "wrt", " ", "S_k", " ", 
+          RowBox[{"(", "bundle", ")"}]}], ",", 
+         RowBox[{
+          RowBox[{"S", " ", "modes", " ", "indexed", " ", "k"}], "=", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"2", ".."}], "Ns"}], "+", "1"}]}]}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{
+        "stream", ",", 
+         "\"\<\\t% derivatives wrt S_k (bundle), S modes indexed k=2..Ns+1\\n\
+\>\""}], "]"}], ";", "\n", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\tfor kp = 2:(Ns+1)\\n\>\""}], "]"}], 
        ";", "\n", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tfor lp = 1:Nb\\n\>\""}], "]"}], ";", 
-      "\n", 
-      RowBox[{"Do", "[", 
-       RowBox[{
+       RowBox[{"Do", "[", 
         RowBox[{
-         RowBox[{"If", "[", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"jacExpr", "[", 
-             RowBox[{"[", 
-              RowBox[{"d", ",", "4", ",", "1"}], "]"}], "]"}], "=!=", "0"}], 
-           ",", 
-           RowBox[{"(*", 
-            RowBox[{"j", 
-             RowBox[{"{", "d", "}"}], "3", "lpF", " ", "as", " ", "a", " ", 
-             "MATLAB", " ", "variable", " ", "that", " ", "is", " ", 
-             "overwritten", " ", "each", " ", "lp", " ", "iteration"}], 
-            "*)"}], 
-           RowBox[{
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<3lpF = \>\"", "<>", 
-               RowBox[{"ToMatlab", "[", 
-                RowBox[{"jacExpr", "[", 
-                 RowBox[{"[", 
-                  RowBox[{"d", ",", "4", ",", "1"}], "]"}], "]"}], "]"}], 
-               "<>", "\"\<;\\n\>\""}]}], "]"}], ";", "\[IndentingNewLine]", 
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3lpF_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3lpF, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
-            "\[IndentingNewLine]", 
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<, 3+lp, rowsF, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3lpF_FFT(:, mF+1).', [1,1,nmF, Nq]);\\n\>\""}]}], "]"}], 
-            ";"}]}], "]"}], ";"}], ",", 
-        RowBox[{"{", 
-         RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tend\\n\\n\>\""}], "]"}], ";", 
-      "\[IndentingNewLine]", "\n", 
-      RowBox[{"(*", 
-       RowBox[{
-        RowBox[{"derivatives", " ", "wrt", " ", "S_k", " ", 
-         RowBox[{"(", "bundle", ")"}]}], ",", 
-        RowBox[{
-         RowBox[{"S", " ", "modes", " ", "indexed", " ", "k"}], "=", 
          RowBox[{
-          RowBox[{
-           RowBox[{"2", ".."}], "Ns"}], "+", "1"}]}]}], "*)"}], 
-      "\[IndentingNewLine]", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{
-       "stream", ",", 
-        "\"\<\\t% derivatives wrt S_k (bundle), S modes indexed \
-k=2..Ns+1\\n\>\""}], "]"}], ";", "\n", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tfor kp = 2:(Ns+1)\\n\>\""}], "]"}], ";",
-       "\n", 
-      RowBox[{"Do", "[", 
-       RowBox[{
-        RowBox[{
-         RowBox[{"If", "[", 
-          RowBox[{
+          RowBox[{"If", "[", 
            RowBox[{
-            RowBox[{"jacExpr", "[", 
-             RowBox[{"[", 
-              RowBox[{"d", ",", "5", ",", "1"}], "]"}], "]"}], "=!=", "0"}], 
-           ",", 
-           RowBox[{"(*", 
-            RowBox[{"j", 
-             RowBox[{"{", "d", "}"}], "3", "kpF", " ", "is", " ", "a", " ", 
-             "MATLAB", " ", "variable", " ", "that", " ", "depends", " ", 
-             "on", " ", "kp", " ", "and", " ", "is", " ", "overwritten", " ", 
-             "each", " ", "loop"}], "*)"}], 
-           RowBox[{
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<3kpF = \>\"", "<>", 
-               RowBox[{"ToMatlab", "[", 
-                RowBox[{"jacExpr", "[", 
-                 RowBox[{"[", 
-                  RowBox[{"d", ",", "5", ",", "1"}], "]"}], "]"}], "]"}], 
-               "<>", "\"\<;\\n\>\""}]}], "]"}], ";", "\[IndentingNewLine]", 
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3kpF_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3kpF, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
-            "\[IndentingNewLine]", 
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<, \>\"", "<>", 
-               "\"\<3 + Nb + (kp - 1)\>\"", "<>", 
-               "\"\<, rowsF, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3kpF_FFT(:, mF+1).', [1,1,nmF, Nq]);\\n\\n\>\""}]}], 
-             "]"}], ";"}]}], "]"}], ";"}], ",", 
-        RowBox[{"{", 
-         RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tend\\n\\n\>\""}], "]"}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"(*", 
-       RowBox[{
-        RowBox[{"--", 
-         RowBox[{"-", 
-          RowBox[{"resP", "--"}]}]}], "-"}], "*)"}], 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\t% --- resP ---\\n\>\""}], "]"}], ";", 
-      "\n", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tgamma = 3;\\n\>\""}], "]"}], ";", "\n", 
-      
-      RowBox[{"(*", 
-       RowBox[{
-        RowBox[{
-         RowBox[{"scalar", " ", "d"}], "=", 
-         RowBox[{
-          RowBox[{"1", ".."}], "3"}]}], ",", 
-        RowBox[{"j", "=", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"1", ".."}], "3"}], "->", 
-          RowBox[{
-          "mean", " ", "assignments", " ", "with", " ", "expression", " ", 
-           "inline"}]}]}]}], "*)"}], "\[IndentingNewLine]", 
-      RowBox[{"Do", "[", 
-       RowBox[{
-        RowBox[{
-         RowBox[{"Do", "[", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"If", "[", 
-             RowBox[{
-              RowBox[{
-               RowBox[{"jacExpr", "[", 
-                RowBox[{"[", 
-                 RowBox[{"d", ",", "j", ",", "2"}], "]"}], "]"}], "=!=", 
-               "0"}], ",", 
-              RowBox[{
-               RowBox[{"WriteString", "[", 
-                RowBox[{"stream", ",", 
-                 RowBox[{"\"\<\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
-                  RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<,\>\"", "<>", 
-                  RowBox[{"ToString", "[", "j", "]"}], "<>", 
-                  "\"\<, gamma, :) = mean(\>\"", "<>", 
-                  RowBox[{"ToMatlab", "[", 
-                   RowBox[{"jacExpr", "[", 
-                    RowBox[{"[", 
-                    RowBox[{"d", ",", "j", ",", "2"}], "]"}], "]"}], "]"}], 
-                  "<>", "\"\<, 2);\\n\>\""}]}], "]"}], ";"}]}], "]"}], ";"}], 
-           ",", 
-           RowBox[{"{", 
-            RowBox[{"j", ",", "1", ",", "3"}], "}"}]}], "]"}], ";"}], ",", 
-        RowBox[{"{", 
-         RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
-      RowBox[{"(*", 
-       RowBox[{"S", " ", "for", " ", "resP"}], "*)"}], "\[IndentingNewLine]", 
-      
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tfor kp = 2:(Ns+1)\\n\>\""}], "]"}], ";",
-       "\n", 
-      RowBox[{"Do", "[", 
-       RowBox[{
-        RowBox[{
-         RowBox[{"If", "[", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"jacExpr", "[", 
-             RowBox[{"[", 
-              RowBox[{"d", ",", "5", ",", "2"}], "]"}], "]"}], "=!=", "0"}], 
-           ",", 
-           RowBox[{
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<, \>\"", "<>", 
-               "\"\<3 + Nb + (kp - 1)\>\"", "<>", 
-               "\"\<, gamma, :) = mean(\>\"", "<>", 
-               RowBox[{"ToMatlab", "[", 
-                RowBox[{"jacExpr", "[", 
-                 RowBox[{"[", 
-                  RowBox[{"d", ",", "5", ",", "2"}], "]"}], "]"}], "]"}], 
-               "<>", "\"\<, 2);\\n\>\""}]}], "]"}], ";"}]}], "]"}], ";"}], 
-        ",", 
-        RowBox[{"{", 
-         RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tend\\n\\n\>\""}], "]"}], ";", "\n", 
-      RowBox[{"(*", 
-       RowBox[{
+            RowBox[{
+             RowBox[{"jacExpr", "[", 
+              RowBox[{"[", 
+               RowBox[{"d", ",", "5", ",", "1"}], "]"}], "]"}], "=!=", "0"}], 
+            ",", 
+            RowBox[{"(*", 
+             RowBox[{"j", 
+              RowBox[{"{", "d", "}"}], "3", "kpF", " ", "is", " ", "a", " ", 
+              "MATLAB", " ", "variable", " ", "that", " ", "depends", " ", 
+              "on", " ", "kp", " ", "and", " ", "is", " ", "overwritten", " ",
+               "each", " ", "loop"}], "*)"}], 
+            RowBox[{
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<3kpF = \>\"", 
+                "<>", 
+                RowBox[{"ToMatlab", "[", 
+                 RowBox[{"jacExpr", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"d", ",", "5", ",", "1"}], "]"}], "]"}], "]"}], 
+                "<>", "\"\<;\\n\>\""}]}], "]"}], ";", "\[IndentingNewLine]", 
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3kpF_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3kpF, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
+             "\[IndentingNewLine]", 
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<, \>\"", 
+                "<>", "\"\<3 + Nb + (kp - 1)\>\"", "<>", 
+                "\"\<, rowsF, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3kpF_FFT(:, mF+1).', [1,1,nmF, Nq]);\\n\\n\>\""}]}], 
+              "]"}], ";"}]}], "]"}], ";"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\tend\\n\\n\>\""}], "]"}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
         RowBox[{
          RowBox[{"--", 
-          RowBox[{"-", "resB"}]}], " ", 
-         RowBox[{"modes", "--"}]}], "-"}], "*)"}], 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\t% --- resB modes ---\\n\>\""}], "]"}], 
-      ";", "\n", 
-      RowBox[{"(*", 
-       RowBox[{
-        RowBox[{"scalar", " ", "3", "x3", " ", "blocks"}], "->", 
+          RowBox[{"-", 
+           RowBox[{"resP", "--"}]}]}], "-"}], "*)"}], 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\t% --- resP ---\\n\>\""}], "]"}], ";", 
+       "\n", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\tgamma = 3;\\n\>\""}], "]"}], ";", "\n", 
+       RowBox[{"(*", 
         RowBox[{
-         RowBox[{"j11B", "..."}], " ", "j33B", " ", "assigned", " ", "per", 
-         " ", "m"}]}], "*)"}], "\[IndentingNewLine]", 
-      RowBox[{"Do", "[", 
-       RowBox[{
-        RowBox[{
-         RowBox[{"Do", "[", 
+         RowBox[{
+          RowBox[{"scalar", " ", "d"}], "=", 
+          RowBox[{
+           RowBox[{"1", ".."}], "3"}]}], ",", 
+         RowBox[{"j", "=", 
           RowBox[{
            RowBox[{
-            RowBox[{"If", "[", 
-             RowBox[{
+            RowBox[{"1", ".."}], "3"}], "->", 
+           RowBox[{
+           "mean", " ", "assignments", " ", "with", " ", "expression", " ", 
+            "inline"}]}]}]}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Do", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Do", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"If", "[", 
               RowBox[{
-               RowBox[{"jacExpr", "[", 
-                RowBox[{"[", 
-                 RowBox[{"d", ",", "j", ",", "3"}], "]"}], "]"}], "=!=", 
-               "0"}], ",", 
+               RowBox[{
+                RowBox[{"jacExpr", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"d", ",", "j", ",", "2"}], "]"}], "]"}], "=!=", 
+                "0"}], ",", 
+               RowBox[{
+                RowBox[{"WriteString", "[", 
+                 RowBox[{"stream", ",", 
+                  RowBox[{"\"\<\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
+                   RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<,\>\"", "<>", 
+                   RowBox[{"ToString", "[", "j", "]"}], "<>", 
+                   "\"\<, gamma, :) = mean(\>\"", "<>", 
+                   RowBox[{"ToMatlab", "[", 
+                    RowBox[{"jacExpr", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"d", ",", "j", ",", "2"}], "]"}], "]"}], "]"}], 
+                   "<>", "\"\<, 2);\\n\>\""}]}], "]"}], ";"}]}], "]"}], ";"}],
+             ",", 
+            RowBox[{"{", 
+             RowBox[{"j", ",", "1", ",", "3"}], "}"}]}], "]"}], ";"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
+       RowBox[{"(*", 
+        RowBox[{"S", " ", "for", " ", "resP"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\tfor kp = 2:(Ns+1)\\n\>\""}], "]"}], 
+       ";", "\n", 
+       RowBox[{"Do", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"jacExpr", "[", 
+              RowBox[{"[", 
+               RowBox[{"d", ",", "5", ",", "2"}], "]"}], "]"}], "=!=", "0"}], 
+            ",", 
+            RowBox[{
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<, \>\"", 
+                "<>", "\"\<3 + Nb + (kp - 1)\>\"", "<>", 
+                "\"\<, gamma, :) = mean(\>\"", "<>", 
+                RowBox[{"ToMatlab", "[", 
+                 RowBox[{"jacExpr", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"d", ",", "5", ",", "2"}], "]"}], "]"}], "]"}], 
+                "<>", "\"\<, 2);\\n\>\""}]}], "]"}], ";"}]}], "]"}], ";"}], 
+         ",", 
+         RowBox[{"{", 
+          RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\tend\\n\\n\>\""}], "]"}], ";", "\n", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"--", 
+           RowBox[{"-", "resB"}]}], " ", 
+          RowBox[{"modes", "--"}]}], "-"}], "*)"}], 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\t% --- resB modes ---\\n\>\""}], "]"}], 
+       ";", "\n", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{"scalar", " ", "3", "x3", " ", "blocks"}], "->", 
+         RowBox[{
+          RowBox[{"j11B", "..."}], " ", "j33B", " ", "assigned", " ", "per", 
+          " ", "m"}]}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Do", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Do", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"If", "[", 
               RowBox[{
-               RowBox[{"WriteString", "[", 
-                RowBox[{"stream", ",", 
-                 RowBox[{"\"\<\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-                  RowBox[{"ToString", "[", "d", "]"}], "<>", 
-                  RowBox[{"ToString", "[", "j", "]"}], "<>", "\"\<B = \>\"", "<>", 
-                  RowBox[{"ToMatlab", "[", 
-                   RowBox[{"jacExpr", "[", 
+               RowBox[{
+                RowBox[{"jacExpr", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"d", ",", "j", ",", "3"}], "]"}], "]"}], "=!=", 
+                "0"}], ",", 
+               RowBox[{
+                RowBox[{"WriteString", "[", 
+                 RowBox[{"stream", ",", 
+                  RowBox[{"\"\<\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                   RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                   RowBox[{"ToString", "[", "j", "]"}], "<>", "\"\<B = \>\"", 
+                   "<>", 
+                   RowBox[{"ToMatlab", "[", 
+                    RowBox[{"jacExpr", "[", 
                     RowBox[{"[", 
                     RowBox[{"d", ",", "j", ",", "3"}], "]"}], "]"}], "]"}], 
-                  "<>", "\"\<;\\n\>\""}]}], "]"}], ";", "\[IndentingNewLine]", 
-               RowBox[{"WriteString", "[", 
-                RowBox[{"stream", ",", 
-                 RowBox[{"\"\<\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-                  RowBox[{"ToString", "[", "d", "]"}], "<>", 
-                  RowBox[{"ToString", "[", "j", "]"}], "<>", 
-                  "\"\<B_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
-                  RowBox[{"ToString", "[", "d", "]"}], "<>", 
-                  RowBox[{"ToString", "[", "j", "]"}], "<>", 
-                  "\"\<B, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
-               "\[IndentingNewLine]", 
-               RowBox[{"WriteString", "[", 
-                RowBox[{"stream", ",", 
-                 RowBox[{"\"\<\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
-                  RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<,\>\"", "<>", 
-                  RowBox[{"ToString", "[", "j", "]"}], "<>", 
-                  "\"\<, rowsB, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
-                  RowBox[{"ToString", "[", "d", "]"}], "<>", 
-                  RowBox[{"ToString", "[", "j", "]"}], "<>", 
-                  "\"\<B_FFT(:, mB+1).', [1,1,nmB, Nq]);\\n\\n\>\""}]}], 
-                "]"}], ";"}]}], "]"}], ";"}], ",", 
-           RowBox[{"{", 
-            RowBox[{"j", ",", "1", ",", "3"}], "}"}]}], "]"}], ";"}], ",", 
-        RowBox[{"{", 
-         RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", 
-      "\[IndentingNewLine]", "\n", 
-      RowBox[{"(*", 
-       RowBox[{"derivatives", " ", "wrt", " ", "B_l", " ", 
-        RowBox[{"(", "bundle", ")"}], " ", "for", " ", "resB"}], "*)"}], 
-      "\[IndentingNewLine]", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{
-       "stream", ",", "\"\<\\t% derivatives wrt B_l (bundle)\\n\>\""}], "]"}],
-       ";", "\n", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tfor lp = 1:Nb\\n\>\""}], "]"}], ";", 
-      "\n", 
-      RowBox[{"Do", "[", 
-       RowBox[{
+                   "<>", "\"\<;\\n\>\""}]}], "]"}], ";", 
+                "\[IndentingNewLine]", 
+                RowBox[{"WriteString", "[", 
+                 RowBox[{"stream", ",", 
+                  RowBox[{"\"\<\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                   RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                   RowBox[{"ToString", "[", "j", "]"}], "<>", 
+                   "\"\<B_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
+                   RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                   RowBox[{"ToString", "[", "j", "]"}], "<>", 
+                   "\"\<B, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
+                "\[IndentingNewLine]", 
+                RowBox[{"WriteString", "[", 
+                 RowBox[{"stream", ",", 
+                  RowBox[{"\"\<\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
+                   RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<,\>\"", "<>", 
+                   RowBox[{"ToString", "[", "j", "]"}], "<>", 
+                   "\"\<, rowsB, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
+                   
+                   RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                   RowBox[{"ToString", "[", "j", "]"}], "<>", 
+                   "\"\<B_FFT(:, mB+1).', [1,1,nmB, Nq]);\\n\\n\>\""}]}], 
+                 "]"}], ";"}]}], "]"}], ";"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"j", ",", "1", ",", "3"}], "}"}]}], "]"}], ";"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", 
+       "\[IndentingNewLine]", "\n", 
+       RowBox[{"(*", 
+        RowBox[{"derivatives", " ", "wrt", " ", "B_l", " ", 
+         RowBox[{"(", "bundle", ")"}], " ", "for", " ", "resB"}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"WriteString", "[", 
         RowBox[{
-         RowBox[{"If", "[", 
-          RowBox[{
-           RowBox[{
-            RowBox[{"jacExpr", "[", 
-             RowBox[{"[", 
-              RowBox[{"d", ",", "4", ",", "3"}], "]"}], "]"}], "=!=", "0"}], 
-           ",", 
-           RowBox[{
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<3lpB = \>\"", "<>", 
-               RowBox[{"ToMatlab", "[", 
-                RowBox[{"jacExpr", "[", 
-                 RowBox[{"[", 
-                  RowBox[{"d", ",", "4", ",", "3"}], "]"}], "]"}], "]"}], 
-               "<>", "\"\<;\\n\>\""}]}], "]"}], ";", "\[IndentingNewLine]", 
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3lpB_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3lpB, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
-            "\[IndentingNewLine]", 
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<, 3+lp, rowsB, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3lpB_FFT(:, mB+1).', [1,1,nmB, Nq]);\\n\>\""}]}], "]"}], 
-            ";"}]}], "]"}], ";"}], ",", 
-        RowBox[{"{", 
-         RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tend\\n\\n\>\""}], "]"}], ";", 
-      "\[IndentingNewLine]", "\n", 
-      RowBox[{"(*", 
-       RowBox[{
-        RowBox[{"derivatives", " ", "wrt", " ", "S_k", " ", 
-         RowBox[{"(", "bundle", ")"}], " ", "for", " ", "resB"}], ",", 
-        RowBox[{"k", "=", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"2", ".."}], "Ns"}], "+", "1"}]}]}], "*)"}], 
-      "\[IndentingNewLine]", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{
-       "stream", ",", 
-        "\"\<\\t% derivatives wrt S_k (bundle), k=2..Ns+1\\n\>\""}], "]"}], 
-      ";", "\n", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tfor kp = 2:(Ns+1)\\n\>\""}], "]"}], ";",
+        "stream", ",", "\"\<\\t% derivatives wrt B_l (bundle)\\n\>\""}], 
+        "]"}], ";", "\n", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\tfor lp = 0:Nb-1\\n\>\""}], "]"}], ";", 
        "\n", 
-      RowBox[{"Do", "[", 
-       RowBox[{
+       RowBox[{"Do", "[", 
         RowBox[{
-         RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"jacExpr", "[", 
+              RowBox[{"[", 
+               RowBox[{"d", ",", "4", ",", "3"}], "]"}], "]"}], "=!=", "0"}], 
+            ",", 
+            RowBox[{
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<3lpB = \>\"", 
+                "<>", 
+                RowBox[{"ToMatlab", "[", 
+                 RowBox[{"jacExpr", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"d", ",", "4", ",", "3"}], "]"}], "]"}], "]"}], 
+                "<>", "\"\<;\\n\>\""}]}], "]"}], ";", "\[IndentingNewLine]", 
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3lpB_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3lpB, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
+             "\[IndentingNewLine]", 
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<, 3+lp+1, rowsB, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3lpB_FFT(:, mB+1).', [1,1,nmB, Nq]);\\n\>\""}]}], "]"}], 
+             ";"}]}], "]"}], ";"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\tend\\n\\n\>\""}], "]"}], ";", 
+       "\[IndentingNewLine]", "\n", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{"derivatives", " ", "wrt", " ", "S_k", " ", 
+          RowBox[{"(", "bundle", ")"}], " ", "for", " ", "resB"}], ",", 
+         RowBox[{"k", "=", 
           RowBox[{
            RowBox[{
-            RowBox[{"jacExpr", "[", 
-             RowBox[{"[", 
-              RowBox[{"d", ",", "5", ",", "3"}], "]"}], "]"}], "=!=", "0"}], 
-           ",", 
+            RowBox[{"2", ".."}], "Ns"}], "+", "1"}]}]}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{
+        "stream", ",", 
+         "\"\<\\t% derivatives wrt S_k (bundle), k=2..Ns+1\\n\>\""}], "]"}], 
+       ";", "\n", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\tfor kp = 2:(Ns+1)\\n\>\""}], "]"}], 
+       ";", "\n", 
+       RowBox[{"Do", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"If", "[", 
            RowBox[{
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<3kpB = \>\"", "<>", 
-               RowBox[{"ToMatlab", "[", 
-                RowBox[{"jacExpr", "[", 
-                 RowBox[{"[", 
-                  RowBox[{"d", ",", "5", ",", "3"}], "]"}], "]"}], "]"}], 
-               "<>", "\"\<;\\n\>\""}]}], "]"}], ";", "\[IndentingNewLine]", 
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3kpB_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3kpB, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
-            "\[IndentingNewLine]", 
-            RowBox[{"WriteString", "[", 
-             RowBox[{"stream", ",", 
-              RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<, \>\"", "<>", 
-               "\"\<3 + Nb + (kp - 1)\>\"", "<>", 
-               "\"\<, rowsB, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
-               RowBox[{"ToString", "[", "d", "]"}], "<>", 
-               "\"\<3kpB_FFT(:, mB+1).', [1,1,nmB, Nq]);\\n\>\""}]}], "]"}], 
-            ";"}]}], "]"}], ";"}], ",", 
-        RowBox[{"{", 
-         RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<\\tend\\n\>\""}], "]"}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{
-       "stream", ",", 
-        "\"\<\\t%% Construct J\n    totalDofs = dof_count * (3 + Nb) + \
+            RowBox[{
+             RowBox[{"jacExpr", "[", 
+              RowBox[{"[", 
+               RowBox[{"d", ",", "5", ",", "3"}], "]"}], "]"}], "=!=", "0"}], 
+            ",", 
+            RowBox[{
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<3kpB = \>\"", 
+                "<>", 
+                RowBox[{"ToMatlab", "[", 
+                 RowBox[{"jacExpr", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"d", ",", "5", ",", "3"}], "]"}], "]"}], "]"}], 
+                "<>", "\"\<;\\n\>\""}]}], "]"}], ";", "\[IndentingNewLine]", 
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3kpB_FFT = real(fft(\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3kpB, [], 2)) / Ntheta;\\n\>\""}]}], "]"}], ";", 
+             "\[IndentingNewLine]", 
+             RowBox[{"WriteString", "[", 
+              RowBox[{"stream", ",", 
+               RowBox[{"\"\<\\t\\t\>\"", "<>", "\"\<jacTotal(\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", "\"\<, \>\"", 
+                "<>", "\"\<3 + Nb + (kp - 1)\>\"", "<>", 
+                "\"\<, rowsB, :) = reshape(\>\"", "<>", "\"\<j\>\"", "<>", 
+                RowBox[{"ToString", "[", "d", "]"}], "<>", 
+                "\"\<3kpB_FFT(:, mB+1).', [1,1,nmB, Nq]);\\n\>\""}]}], "]"}], 
+             ";"}]}], "]"}], ";"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"d", ",", "1", ",", "3"}], "}"}]}], "]"}], ";", "\n", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<\\tend\\n\>\""}], "]"}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{
+        "stream", ",", 
+         "\"\<\\t%% Construct J\n    totalDofs = dof_count * (3 + Nb) + \
 (dof_count-1) *Ns;\n    nCols = (3+ Nb + Ns)^2 * Nq;\n    % precomputed: \
 M_extended (totalDofs x nCols), P_templates{d} with fields i,j,v_template\n   \
  J = spalloc(totalDofs, totalDofs, 1 * nnz(M_extended));  % or a tighter nnz \
@@ -3041,20 +3189,21 @@ vP_scaled = P_templates{d}.v_template .* jacTotal_flat(P_templates{d}.i);\n\n \
        % Create sparse scaled-P and accumulate J via M_extended * P_scaled\n  \
       P_scaled = sparse(P_templates{d}.i, P_templates{d}.j, vP_scaled, nCols, \
 totalDofs);\n        J = J + M_extended * P_scaled;\n    end\\n\>\""}], "]"}],
-       ";", "\[IndentingNewLine]", 
-      RowBox[{"WriteString", "[", 
-       RowBox[{"stream", ",", "\"\<end\\n\>\""}], "]"}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"Close", "[", "stream", "]"}], ";", "\[IndentingNewLine]", 
-      RowBox[{"Print", "[", 
-       RowBox[{
-       "\"\<Wrote MATLAB file \\\"\>\"", ",", "fileName", ",", 
-        "\"\<\\\" with <\>\"", ",", "funcName", ",", "\"\<>.\>\""}], "]"}], 
-      ";"}]}], "]"}]}], ";"}]}], "Input",
+        ";", "\[IndentingNewLine]", 
+       RowBox[{"WriteString", "[", 
+        RowBox[{"stream", ",", "\"\<end\\n\>\""}], "]"}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Close", "[", "stream", "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"Print", "[", 
+        RowBox[{
+        "\"\<Wrote MATLAB file \\\"\>\"", ",", "fileName", ",", 
+         "\"\<\\\" with <\>\"", ",", "funcName", ",", "\"\<>.\>\""}], "]"}], 
+       ";"}]}], "]"}]}], ";"}]}]], "Input",
  CellChangeTimes->{{3.9713259207330713`*^9, 3.971325942120055*^9}, 
-   3.972107958824109*^9},
- CellLabel->
-  "In[142]:=",ExpressionUUID->"3a171766-a2e6-461d-b428-94800d11fd11"],
+   3.972107958824109*^9, {3.9730713970508013`*^9, 3.973071431566853*^9}, 
+   3.9730714800356493`*^9, {3.973071543586255*^9, 3.973071551258081*^9}, {
+   3.973071593517479*^9, 3.9730716494942207`*^9}, 3.973071721461549*^9},
+ CellLabel->"In[89]:=",ExpressionUUID->"3a171766-a2e6-461d-b428-94800d11fd11"],
 
 Cell[CellGroupData[{
 
@@ -3063,19 +3212,20 @@ Cell[BoxData[{
   RowBox[{"WriteRes", "[", 
    RowBox[{
    "\"\</home/vanparys/Documents/PhD/Codes/EQUIL/src/residuals_jacobians/\
-residuals_Bmod.m\>\"", ",", "\"\<residuals_Bmod\>\""}], "]"}], 
+residuals_hyb.m\>\"", ",", "\"\<residuals_hyb\>\""}], "]"}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"WriteJac", "[", 
    RowBox[{
    "\"\</home/vanparys/Documents/PhD/Codes/EQUIL/src/residuals_jacobians/\
-jacobian_Bmod.m\>\"", ",", "\"\<jacobian_Bmod\>\"", ",", "jacNew"}], "]"}], 
+jacobian_hyb.m\>\"", ",", "\"\<jacobian_hyb_tmp\>\"", ",", "jacNew"}], "]"}], 
   ";"}]}], "Input",
  CellChangeTimes->{{3.971325938658431*^9, 3.971325938891644*^9}, {
   3.9721079724955797`*^9, 3.972107986063225*^9}, {3.972108171811227*^9, 
-  3.9721081762424717`*^9}, {3.972108273456286*^9, 3.972108294373475*^9}},
- CellLabel->
-  "In[147]:=",ExpressionUUID->"98963d76-34b4-4c29-a052-fa927dad4f66"],
+  3.9721081762424717`*^9}, {3.972108273456286*^9, 3.972108294373475*^9}, {
+  3.973071762212183*^9, 3.973071777460217*^9}, {3.9730731589514933`*^9, 
+  3.973073159673415*^9}},
+ CellLabel->"In[90]:=",ExpressionUUID->"98963d76-34b4-4c29-a052-fa927dad4f66"],
 
 Cell[CellGroupData[{
 
@@ -3084,38 +3234,39 @@ Cell[BoxData[
   RowBox[{"\<\"Wrote MATLAB file \[OpenCurlyDoubleQuote]\"\>", 
    "\[InvisibleSpace]", \
 "\<\"/home/vanparys/Documents/PhD/Codes/EQUIL/src/residuals_jacobians/\
-residuals_Bmod.m\"\>", 
+residuals_hyb.m\"\>", 
    "\[InvisibleSpace]", "\<\"\[CloseCurlyDoubleQuote] with <\"\>", 
-   "\[InvisibleSpace]", "\<\"residuals_Bmod\"\>", 
+   "\[InvisibleSpace]", "\<\"residuals_hyb\"\>", 
    "\[InvisibleSpace]", "\<\">.\"\>"}],
   SequenceForm[
   "Wrote MATLAB file \[OpenCurlyDoubleQuote]", 
    "/home/vanparys/Documents/PhD/Codes/EQUIL/src/residuals_jacobians/\
-residuals_Bmod.m", "\[CloseCurlyDoubleQuote] with <", "residuals_Bmod", ">."],
-  
+residuals_hyb.m", "\[CloseCurlyDoubleQuote] with <", "residuals_hyb", ">."],
   Editable->False]], "Print",
- CellChangeTimes->{3.972108224499161*^9, 3.972108301665784*^9},
+ CellChangeTimes->{3.972108224499161*^9, 3.972108301665784*^9, 
+  3.9730718261986837`*^9, 3.9730724886693907`*^9, 3.973073638139736*^9},
  CellLabel->
   "During evaluation of \
-In[147]:=",ExpressionUUID->"0b23ae6a-7f57-45b5-8ce9-823bda9a5447"],
+In[90]:=",ExpressionUUID->"d127117a-28dd-4043-b901-bac2a26795ab"],
 
 Cell[BoxData[
  InterpretationBox[
   RowBox[{"\<\"Wrote MATLAB file \\\"\"\>", 
    "\[InvisibleSpace]", \
 "\<\"/home/vanparys/Documents/PhD/Codes/EQUIL/src/residuals_jacobians/\
-jacobian_Bmod.m\"\>", "\[InvisibleSpace]", "\<\"\\\" with <\"\>", 
-   "\[InvisibleSpace]", "\<\"jacobian_Bmod\"\>", 
+jacobian_hyb.m\"\>", "\[InvisibleSpace]", "\<\"\\\" with <\"\>", 
+   "\[InvisibleSpace]", "\<\"jacobian_hyb_tmp\"\>", 
    "\[InvisibleSpace]", "\<\">.\"\>"}],
   SequenceForm[
   "Wrote MATLAB file \"", 
    "/home/vanparys/Documents/PhD/Codes/EQUIL/src/residuals_jacobians/jacobian_\
-Bmod.m", "\" with <", "jacobian_Bmod", ">."],
+hyb.m", "\" with <", "jacobian_hyb_tmp", ">."],
   Editable->False]], "Print",
- CellChangeTimes->{3.972108224499161*^9, 3.972108308934952*^9},
+ CellChangeTimes->{3.972108224499161*^9, 3.972108301665784*^9, 
+  3.9730718261986837`*^9, 3.9730724886693907`*^9, 3.973073682472205*^9},
  CellLabel->
   "During evaluation of \
-In[147]:=",ExpressionUUID->"a588f510-65cb-4ffa-944a-39247735bc35"]
+In[90]:=",ExpressionUUID->"86077bcb-bae7-4142-bfe3-c8facb2000b0"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
@@ -3143,7 +3294,7 @@ Cell[BoxData[{
        RowBox[{
         RowBox[{"body", "/.", " ", 
          RowBox[{"idx", "->", "#"}]}], "&"}], "/@", "vals"}], "]"}]}]}]}], 
-  "\[IndentingNewLine]"}], "\n", 
+  "\n"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"replaceSumIndexToValue", "[", 
    RowBox[{"expr_", ",", "idx_Symbol", ",", "val_"}], "]"}], ":=", 
@@ -3207,37 +3358,63 @@ Cell[BoxData[{
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{"Bhat", "[", 
-    RowBox[{"r_", ",", "\[Omega]_"}], "]"}], "=", 
-   RowBox[{"1", "+", 
-    RowBox[{"\[Epsilon]", 
-     RowBox[{
-      UnderscriptBox["\[Sum]", "mb"], 
+   RowBox[{
+    RowBox[{"Bhat", "[", 
+     RowBox[{"r_", ",", "\[Omega]_"}], "]"}], "=", 
+    RowBox[{"1", "+", 
+     RowBox[{"\[Epsilon]", 
       RowBox[{
-       RowBox[{"B", "[", 
-        RowBox[{"r", ",", "mb"}], "]"}], 
-       RowBox[{"Cos", "[", 
-        RowBox[{"mb", " ", "\[Omega]"}], "]"}]}]}]}]}]}], 
-  ";"}], "\[IndentingNewLine]", 
+       UnderscriptBox["\[Sum]", "mb"], 
+       RowBox[{
+        RowBox[{"B", "[", 
+         RowBox[{"r", ",", "mb"}], "]"}], 
+        RowBox[{"Cos", "[", 
+         RowBox[{"mb", " ", "\[Omega]"}], "]"}]}]}]}]}]}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"grr", "[", 
+      RowBox[{"r_", ",", "\[Omega]_"}], "]"}], "=", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{
+          SubscriptBox["\[PartialD]", "r"], 
+          RowBox[{"R", "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}]}], ")"}], "2"], "+", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{
+          SubscriptBox["\[PartialD]", "r"], 
+          RowBox[{"Z", "[", 
+           RowBox[{"r", ",", "\[Omega]"}], "]"}]}], ")"}], "2"]}], ")"}]}], 
+    ";"}], "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{"grr", "[", 
-    RowBox[{"r_", ",", "\[Omega]_"}], "]"}], "=", " ", 
-   RowBox[{"(", 
+   RowBox[{
+    RowBox[{"grr", "[", 
+     RowBox[{"r_", ",", "\[Omega]_"}], "]"}], "=", 
     RowBox[{
-     SuperscriptBox[
-      RowBox[{"(", 
-       RowBox[{
-        SubscriptBox["\[PartialD]", "r"], 
-        RowBox[{"R", "[", 
-         RowBox[{"r", ",", "\[Omega]"}], "]"}]}], ")"}], "2"], "+", 
-     SuperscriptBox[
-      RowBox[{"(", 
-       RowBox[{
-        SubscriptBox["\[PartialD]", "r"], 
-        RowBox[{"Z", "[", 
-         RowBox[{"r", ",", "\[Omega]"}], "]"}]}], ")"}], "2"]}], ")"}]}], 
-  ";"}], "\[IndentingNewLine]", 
+     RowBox[{"(", 
+      RowBox[{
+       FractionBox[
+        SuperscriptBox[
+         RowBox[{"J", "[", 
+          RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"], 
+        SuperscriptBox[
+         RowBox[{"R", "[", 
+          RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"]], "+", 
+       SuperscriptBox[
+        RowBox[{"gr\[Theta]", "[", 
+         RowBox[{"r", ",", "\[Omega]"}], "]"}], "2"]}], ")"}], 
+     FractionBox["1", 
+      RowBox[{"g\[Theta]\[Theta]", "[", 
+       RowBox[{"r", ",", "\[Omega]"}], "]"}]]}]}], ";"}], " ", 
+  RowBox[{"(*", " ", 
+   RowBox[{"Connects", " ", "with", " ", "Ghat"}], " ", 
+   "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{"g\[Theta]\[Theta]", "[", 
@@ -4004,8 +4181,9 @@ Cell[BoxData[{
   3.971774790919921*^9, 3.971774799833647*^9}, {3.971775529482298*^9, 
   3.971775540118347*^9}, {3.971776195721592*^9, 3.9717762034340277`*^9}, {
   3.971838183941188*^9, 3.971838184483137*^9}, {3.9718437885325127`*^9, 
-  3.9718437889548273`*^9}},
- CellLabel->"In[1]:=",ExpressionUUID->"8a5d1818-0214-4728-bf1a-0878d6e45bc7"],
+  3.9718437889548273`*^9}, {3.973070924999879*^9, 
+  3.973070930854648*^9}},ExpressionUUID->"8a5d1818-0214-4728-bf1a-\
+0878d6e45bc7"],
 
 Cell[BoxData[{
  RowBox[{
@@ -6683,90 +6861,93 @@ CellTagsIndex->{}
 Notebook[{
 Cell[558, 20, 274, 6, 31, "Text",ExpressionUUID->"208c5b4d-0fce-48a5-97c4-9a40ac5515e8"],
 Cell[CellGroupData[{
-Cell[857, 30, 151, 3, 61, "Chapter",ExpressionUUID->"12ff18b5-0f15-4ce5-ba9b-04aac4c57ab2"],
-Cell[1011, 35, 28497, 869, 1772, "Input",ExpressionUUID->"f175b666-efe7-44ec-a86a-af0515a5e112"],
-Cell[29511, 906, 2858, 78, 108, "Input",ExpressionUUID->"b5b10eaa-820a-4f2e-b73f-4d93ac53e477"],
+Cell[857, 30, 206, 4, 61, "Chapter",ExpressionUUID->"12ff18b5-0f15-4ce5-ba9b-04aac4c57ab2"],
+Cell[1066, 36, 33662, 989, 1833, "Input",ExpressionUUID->"f175b666-efe7-44ec-a86a-af0515a5e112"],
+Cell[34731, 1027, 2854, 77, 108, "Input",ExpressionUUID->"b5b10eaa-820a-4f2e-b73f-4d93ac53e477"],
 Cell[CellGroupData[{
-Cell[32394, 988, 566, 15, 32, "Input",ExpressionUUID->"f11c63f4-4b48-445f-9157-874cf70acde0"],
-Cell[32963, 1005, 1165, 33, 88, "Output",ExpressionUUID->"49af6b27-6bcf-4b4e-a1b5-82b0cc112717"]
+Cell[37610, 1108, 562, 14, 32, "Input",ExpressionUUID->"f11c63f4-4b48-445f-9157-874cf70acde0"],
+Cell[38175, 1124, 1281, 37, 70, "Output",ExpressionUUID->"af8a2f2a-cbcb-494a-a96d-2e719eabff32"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[34165, 1043, 210, 3, 26, "Input",ExpressionUUID->"fa747c99-c3ae-43d7-9e71-4b40fe5ec5bf"],
-Cell[34378, 1048, 172, 3, 30, "Output",ExpressionUUID->"6fda91a5-1157-46fa-af84-00c177159bf0"]
+Cell[39493, 1166, 210, 3, 26, "Input",ExpressionUUID->"fa747c99-c3ae-43d7-9e71-4b40fe5ec5bf"],
+Cell[39706, 1171, 223, 4, 30, "Output",ExpressionUUID->"5c74d29e-adfc-43be-8f33-7fb8b078f7c0"]
 }, Open  ]],
-Cell[34565, 1054, 8157, 239, 380, "Input",ExpressionUUID->"f10eb990-cbd2-4462-8fa7-2b2f8acb121d"],
+Cell[39944, 1178, 8153, 238, 380, "Input",ExpressionUUID->"f10eb990-cbd2-4462-8fa7-2b2f8acb121d"],
 Cell[CellGroupData[{
-Cell[42747, 1297, 4572, 117, 344, "Input",ExpressionUUID->"909b58a7-6a27-4b7e-93d9-42552fd79665"],
+Cell[48122, 1420, 4568, 116, 344, "Input",ExpressionUUID->"909b58a7-6a27-4b7e-93d9-42552fd79665"],
 Cell[CellGroupData[{
-Cell[47344, 1418, 205, 4, 22, "Print",ExpressionUUID->"f1eb9e30-06a7-4acd-ab55-6eb5c564f668"],
-Cell[47552, 1424, 196, 4, 22, "Print",ExpressionUUID->"55b1fd23-e7e8-493c-9fef-95044c6e798c"],
-Cell[47751, 1430, 200, 4, 22, "Print",ExpressionUUID->"aa141ce3-5b40-4f71-9765-67557e3e2235"],
-Cell[47954, 1436, 200, 4, 22, "Print",ExpressionUUID->"7f50bb61-b2cf-44f2-bf8a-8a544834b742"],
-Cell[48157, 1442, 211, 4, 22, "Print",ExpressionUUID->"34d56459-4bf9-4639-8550-50996b69f6d4"],
-Cell[48371, 1448, 213, 4, 22, "Print",ExpressionUUID->"c27e5f12-d34c-4c7c-89cc-9d3323fbb998"]
+Cell[52715, 1540, 276, 5, 22, "Print",ExpressionUUID->"050001f5-da18-4703-994a-f39b4a2be32d"],
+Cell[52994, 1547, 267, 5, 22, "Print",ExpressionUUID->"29159454-9531-4ea1-b1e7-6db1b506fd50"],
+Cell[53264, 1554, 269, 5, 22, "Print",ExpressionUUID->"07831423-7e34-4bc2-8692-a028a24f71f9"],
+Cell[53536, 1561, 267, 5, 22, "Print",ExpressionUUID->"3a9048aa-6acc-45ab-8130-b149af38fb21"],
+Cell[53806, 1568, 279, 5, 22, "Print",ExpressionUUID->"5d499e7f-202a-434f-9db3-a2d9f2f02ffb"],
+Cell[54088, 1575, 280, 5, 22, "Print",ExpressionUUID->"bb2b3116-b7df-444a-8b4a-e3fbb19bdaa7"],
+Cell[54371, 1582, 280, 5, 22, "Print",ExpressionUUID->"060759e5-4164-45da-afad-6fb6face1796"],
+Cell[54654, 1589, 282, 5, 22, "Print",ExpressionUUID->"25f23eb4-a62b-4631-bba6-6704a7fb2fc3"]
 }, Open  ]]
 }, Open  ]],
-Cell[48611, 1456, 548, 16, 32, "Input",ExpressionUUID->"ceeca0e5-fab8-41fd-91b9-79f64c41977c"],
-Cell[49162, 1474, 902, 27, 52, "Input",ExpressionUUID->"185fabbe-fc91-4825-a79b-91c7714754d4"],
-Cell[50067, 1503, 5295, 125, 315, "Input",ExpressionUUID->"d650a1c9-41fc-4e71-b4bc-88eaca8bd3f9"],
-Cell[55365, 1630, 6992, 198, 312, "Input",ExpressionUUID->"1aea2b24-9f7c-4d43-a547-52051b3807fc"],
-Cell[62360, 1830, 16428, 370, 1051, "Input",ExpressionUUID->"2d53f09e-5294-4fad-aaa6-ac36da884748"],
-Cell[78791, 2202, 38279, 854, 4763, "Input",ExpressionUUID->"3a171766-a2e6-461d-b428-94800d11fd11"],
+Cell[54963, 1598, 544, 15, 32, "Input",ExpressionUUID->"ceeca0e5-fab8-41fd-91b9-79f64c41977c"],
+Cell[55510, 1615, 898, 26, 52, "Input",ExpressionUUID->"185fabbe-fc91-4825-a79b-91c7714754d4"],
+Cell[56411, 1643, 5291, 124, 246, "Input",ExpressionUUID->"d650a1c9-41fc-4e71-b4bc-88eaca8bd3f9"],
+Cell[61705, 1769, 6988, 197, 255, "Input",ExpressionUUID->"1aea2b24-9f7c-4d43-a547-52051b3807fc"],
+Cell[68696, 1968, 16424, 369, 891, "Input",ExpressionUUID->"2d53f09e-5294-4fad-aaa6-ac36da884748"],
+Cell[85123, 2339, 11783, 275, 1361, "Input",ExpressionUUID->"c4dac5c0-5979-41d5-887c-8eaf5b88cd01"],
+Cell[96909, 2616, 27566, 589, 2711, "Input",ExpressionUUID->"3a171766-a2e6-461d-b428-94800d11fd11"],
 Cell[CellGroupData[{
-Cell[117095, 3060, 755, 17, 48, "Input",ExpressionUUID->"98963d76-34b4-4c29-a052-fa927dad4f66"],
+Cell[124500, 3209, 851, 18, 48, "Input",ExpressionUUID->"98963d76-34b4-4c29-a052-fa927dad4f66"],
 Cell[CellGroupData[{
-Cell[117875, 3081, 795, 18, 22, "Print",ExpressionUUID->"0b23ae6a-7f57-45b5-8ce9-823bda9a5447"],
-Cell[118673, 3101, 702, 16, 22, "Print",ExpressionUUID->"a588f510-65cb-4ffa-944a-39247735bc35"]
+Cell[125376, 3231, 860, 18, 22, "Print",ExpressionUUID->"d127117a-28dd-4043-b901-bac2a26795ab"],
+Cell[126239, 3251, 778, 17, 22, "Print",ExpressionUUID->"86077bcb-bae7-4142-bfe3-c8facb2000b0"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[119436, 3124, 173, 3, 61, "Chapter",ExpressionUUID->"63fe8800-a6c4-4c1c-8846-ad9feebc7883"],
-Cell[119612, 3129, 28742, 878, 1704, "Input",ExpressionUUID->"8a5d1818-0214-4728-bf1a-0878d6e45bc7"],
-Cell[148357, 4009, 1160, 33, 116, "Input",ExpressionUUID->"84357619-e31a-44e4-9b45-6bf5ddbbb080"],
-Cell[149520, 4044, 4299, 107, 260, "Input",ExpressionUUID->"8c63dd6e-0c42-4379-8837-7cfa9f59c4e1"],
+Cell[127078, 3275, 173, 3, 61, "Chapter",ExpressionUUID->"63fe8800-a6c4-4c1c-8846-ad9feebc7883"],
+Cell[127254, 3280, 29624, 905, 1746, "Input",ExpressionUUID->"8a5d1818-0214-4728-bf1a-0878d6e45bc7"],
+Cell[156881, 4187, 1160, 33, 116, "Input",ExpressionUUID->"84357619-e31a-44e4-9b45-6bf5ddbbb080"],
+Cell[158044, 4222, 4299, 107, 260, "Input",ExpressionUUID->"8c63dd6e-0c42-4379-8837-7cfa9f59c4e1"],
 Cell[CellGroupData[{
-Cell[153844, 4155, 211, 3, 26, "Input",ExpressionUUID->"4382d4a6-c8b1-40d7-9edd-c4c468bbb345"],
-Cell[154058, 4160, 222, 4, 30, "Output",ExpressionUUID->"f8dc15c0-f478-417a-8938-b7d0ae484978"]
+Cell[162368, 4333, 211, 3, 26, "Input",ExpressionUUID->"4382d4a6-c8b1-40d7-9edd-c4c468bbb345"],
+Cell[162582, 4338, 222, 4, 30, "Output",ExpressionUUID->"f8dc15c0-f478-417a-8938-b7d0ae484978"]
 }, Open  ]],
-Cell[154295, 4167, 2032, 62, 160, "Input",ExpressionUUID->"e334de82-a1e2-49a6-b88b-a1a1a955c46c"],
-Cell[156330, 4231, 618, 17, 53, "Input",ExpressionUUID->"42ea8ada-6253-4fcf-b5c6-e9991975c005"],
-Cell[156951, 4250, 1611, 44, 120, "Input",ExpressionUUID->"c26d4689-922d-4967-b21e-4bc5d642d88b"],
+Cell[162819, 4345, 2032, 62, 160, "Input",ExpressionUUID->"e334de82-a1e2-49a6-b88b-a1a1a955c46c"],
+Cell[164854, 4409, 618, 17, 53, "Input",ExpressionUUID->"42ea8ada-6253-4fcf-b5c6-e9991975c005"],
+Cell[165475, 4428, 1611, 44, 120, "Input",ExpressionUUID->"c26d4689-922d-4967-b21e-4bc5d642d88b"],
 Cell[CellGroupData[{
-Cell[158587, 4298, 230, 4, 26, "Input",ExpressionUUID->"de8cd233-3057-4439-8adb-46082bc06bcd"],
-Cell[158820, 4304, 6344, 174, 171, "Output",ExpressionUUID->"9cff2fca-03ab-4a83-9ff6-720699fa7229"]
+Cell[167111, 4476, 230, 4, 26, "Input",ExpressionUUID->"de8cd233-3057-4439-8adb-46082bc06bcd"],
+Cell[167344, 4482, 6344, 174, 171, "Output",ExpressionUUID->"9cff2fca-03ab-4a83-9ff6-720699fa7229"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[165201, 4483, 2992, 79, 108, "Input",ExpressionUUID->"28a6bbf4-d3e2-4077-b74a-cfbf3df27d05"],
-Cell[168196, 4564, 180, 2, 30, "Output",ExpressionUUID->"f71516e3-110b-4a8a-9c4c-56a71615c762"]
+Cell[173725, 4661, 2992, 79, 108, "Input",ExpressionUUID->"28a6bbf4-d3e2-4077-b74a-cfbf3df27d05"],
+Cell[176720, 4742, 180, 2, 30, "Output",ExpressionUUID->"f71516e3-110b-4a8a-9c4c-56a71615c762"]
 }, Open  ]],
-Cell[168391, 4569, 8153, 238, 380, "Input",ExpressionUUID->"a1c5bc5a-d117-4da2-be1e-b95b48c5d407"],
+Cell[176915, 4747, 8153, 238, 380, "Input",ExpressionUUID->"a1c5bc5a-d117-4da2-be1e-b95b48c5d407"],
 Cell[CellGroupData[{
-Cell[176569, 4811, 4568, 116, 344, "Input",ExpressionUUID->"b6192988-ce34-45a6-a51b-c405e5a4cb8c"],
+Cell[185093, 4989, 4568, 116, 344, "Input",ExpressionUUID->"b6192988-ce34-45a6-a51b-c405e5a4cb8c"],
 Cell[CellGroupData[{
-Cell[181162, 4931, 275, 5, 22, "Print",ExpressionUUID->"af1151fc-3410-4b68-86d7-9d701e406622"],
-Cell[181440, 4938, 266, 5, 22, "Print",ExpressionUUID->"b59a6f40-262b-434b-b0eb-25717f42bfaa"],
-Cell[181709, 4945, 270, 5, 22, "Print",ExpressionUUID->"028302ea-0d31-431b-914d-17eba170f40a"],
-Cell[181982, 4952, 268, 5, 22, "Print",ExpressionUUID->"14ffb7d0-e15d-4bc2-aec7-bc04c3afae59"],
-Cell[182253, 4959, 281, 5, 22, "Print",ExpressionUUID->"8df3a8e7-a4b7-44fb-9e06-c8ab910cedb6"],
-Cell[182537, 4966, 281, 5, 22, "Print",ExpressionUUID->"65a9c51f-de5f-456e-a397-66263b8187b4"],
-Cell[182821, 4973, 283, 5, 22, "Print",ExpressionUUID->"699948a9-2541-43b6-8a5f-a46b2a537099"],
-Cell[183107, 4980, 283, 5, 22, "Print",ExpressionUUID->"d3afba51-92e7-4792-9c8f-1d217baca49b"],
-Cell[183393, 4987, 281, 5, 22, "Print",ExpressionUUID->"664d542f-9360-488d-8f0b-e4832840b8b7"],
-Cell[183677, 4994, 281, 5, 22, "Print",ExpressionUUID->"afa301ca-5574-4820-af4c-2ff2a6984521"]
+Cell[189686, 5109, 275, 5, 22, "Print",ExpressionUUID->"af1151fc-3410-4b68-86d7-9d701e406622"],
+Cell[189964, 5116, 266, 5, 22, "Print",ExpressionUUID->"b59a6f40-262b-434b-b0eb-25717f42bfaa"],
+Cell[190233, 5123, 270, 5, 22, "Print",ExpressionUUID->"028302ea-0d31-431b-914d-17eba170f40a"],
+Cell[190506, 5130, 268, 5, 22, "Print",ExpressionUUID->"14ffb7d0-e15d-4bc2-aec7-bc04c3afae59"],
+Cell[190777, 5137, 281, 5, 22, "Print",ExpressionUUID->"8df3a8e7-a4b7-44fb-9e06-c8ab910cedb6"],
+Cell[191061, 5144, 281, 5, 22, "Print",ExpressionUUID->"65a9c51f-de5f-456e-a397-66263b8187b4"],
+Cell[191345, 5151, 283, 5, 22, "Print",ExpressionUUID->"699948a9-2541-43b6-8a5f-a46b2a537099"],
+Cell[191631, 5158, 283, 5, 22, "Print",ExpressionUUID->"d3afba51-92e7-4792-9c8f-1d217baca49b"],
+Cell[191917, 5165, 281, 5, 22, "Print",ExpressionUUID->"664d542f-9360-488d-8f0b-e4832840b8b7"],
+Cell[192201, 5172, 281, 5, 22, "Print",ExpressionUUID->"afa301ca-5574-4820-af4c-2ff2a6984521"]
 }, Open  ]]
 }, Open  ]],
-Cell[183985, 5003, 544, 15, 32, "Input",ExpressionUUID->"bd9f5afc-a755-4795-8bce-7dd9fb2be0b3"],
-Cell[184532, 5020, 898, 26, 52, "Input",ExpressionUUID->"ad1a96f6-ef3f-4428-b79f-8b9f42a98682"],
-Cell[185433, 5048, 5291, 124, 246, "Input",ExpressionUUID->"bdfa2f15-6bdf-40fc-a6b7-cdbcede68ef5"],
-Cell[190727, 5174, 6988, 197, 255, "Input",ExpressionUUID->"485e3942-4ec4-4735-b446-7314d0a70ae2"],
-Cell[197718, 5373, 16424, 369, 891, "Input",ExpressionUUID->"fc1432dd-f8d7-473e-bb7e-b00e6c4fb741"],
-Cell[214145, 5744, 38295, 853, 4045, "Input",ExpressionUUID->"a5c3c8e6-f258-4b22-9901-023178a8d14e"],
+Cell[192509, 5181, 544, 15, 32, "Input",ExpressionUUID->"bd9f5afc-a755-4795-8bce-7dd9fb2be0b3"],
+Cell[193056, 5198, 898, 26, 52, "Input",ExpressionUUID->"ad1a96f6-ef3f-4428-b79f-8b9f42a98682"],
+Cell[193957, 5226, 5291, 124, 246, "Input",ExpressionUUID->"bdfa2f15-6bdf-40fc-a6b7-cdbcede68ef5"],
+Cell[199251, 5352, 6988, 197, 255, "Input",ExpressionUUID->"485e3942-4ec4-4735-b446-7314d0a70ae2"],
+Cell[206242, 5551, 16424, 369, 891, "Input",ExpressionUUID->"fc1432dd-f8d7-473e-bb7e-b00e6c4fb741"],
+Cell[222669, 5922, 38295, 853, 4045, "Input",ExpressionUUID->"a5c3c8e6-f258-4b22-9901-023178a8d14e"],
 Cell[CellGroupData[{
-Cell[252465, 6601, 652, 15, 48, "Input",ExpressionUUID->"8d46ecd7-678e-4c5c-9cb8-7626e37d55a3"],
+Cell[260989, 6779, 652, 15, 48, "Input",ExpressionUUID->"8d46ecd7-678e-4c5c-9cb8-7626e37d55a3"],
 Cell[CellGroupData[{
-Cell[253142, 6620, 881, 19, 22, "Print",ExpressionUUID->"6bd7f72a-7a9a-4dd1-93e1-cd0a0bd7659b"],
-Cell[254026, 6641, 790, 18, 22, "Print",ExpressionUUID->"d0dafbb3-b1c9-4566-afc6-b29bda8f8ab9"]
+Cell[261666, 6798, 881, 19, 22, "Print",ExpressionUUID->"6bd7f72a-7a9a-4dd1-93e1-cd0a0bd7659b"],
+Cell[262550, 6819, 790, 18, 22, "Print",ExpressionUUID->"d0dafbb3-b1c9-4566-afc6-b29bda8f8ab9"]
 }, Open  ]]
 }, Open  ]]
 }, Closed]]

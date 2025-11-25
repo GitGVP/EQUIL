@@ -1,7 +1,7 @@
 function [dbetapardB0, dbetapardr, dbetapardB, dbetapardR, d2betapardB2, ...
     d2betapardrdB, d2betapardRdB, d2betapardrdR, d2betapardR2, d3betapardrdB2, ...
-    d3betapardB3, d3betapardBdR2, d3betapardB2dR, d3betapardrdRdB, betapar, ...
-    betaperp] = biMaxwellian(kinetic_profiles,r,RR,BB)
+    d3betapardB3, d3betapardBdR2, d3betapardB2dR, d3betapardrdRdB, ...
+    d3betapardrdR2, betapar, betaperp] = biMaxwellian(kinetic_profiles,r,RR,BB)
     beta = kinetic_profiles.beta(r) * ones(1,size(RR,2));
     betap = kinetic_profiles.betap(r) * ones(1,size(RR,2));
     Ah = kinetic_profiles.Ah(r) * ones(1,size(RR,2));
@@ -30,7 +30,8 @@ function [dbetapardB0, dbetapardr, dbetapardB, dbetapardR, d2betapardB2, ...
         d3betapardBdR2 = zeros(size(RR));
         d3betapardB2dR = zeros(size(RR));
         d3betapardrdRdB = zeros(size(RR));
-        if nargout > 13 % postprocessing
+        d3betapardrdR2 = zeros(size(RR));
+        if nargout > 14 % postprocessing
             betapar = (BB.*beta)./(Ah.*(BB - Bc) + Bc);
             betapar(idx) = (BB(idx).*(1 + Ah(idx).*(1 - BB(idx)./Bc(idx)) - 2.*(Ah(idx).*(1 - BB(idx)./Bc(idx))).^2.5).*beta(idx))./((1 - Ah(idx).^2.*(-1 + BB(idx)./Bc(idx)).^2).*Bc(idx));
             betaperp = betapar - BB.*(-(((-1 + Ah).*Bc.*beta)./(Ah.*(BB - Bc) + Bc).^2));
