@@ -65,7 +65,7 @@ function plot_error_panel(err_all, values_eps, outerloop_pvals, cmap, col_inds, 
         ylim_old = get(gca,'YLim');
         patch([x_fill(1) x_fill(2) x_fill(2) x_fill(1)], ...
               [yl(1) yl(1) yl(2) yl(2)], ...
-              'k', 'FaceAlpha', 0.25, 'EdgeColor', 'none');
+              'k', 'FaceAlpha', 0.05, 'EdgeColor', 'none');
         set(gca, 'YLim', ylim_old);  
     end
     uistack(findobj(gca,'Type','patch'),'bottom'); % send patch behind data

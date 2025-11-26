@@ -24,7 +24,7 @@ function J = jacobian_noRepl(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1,P2,do
 	Sp = reshape(P1 * S_flat, Nq, 1, []);
 	Spp = reshape(P2 * S_flat, Nq, 1, []);
 	ms = reshape(linspace(2,Ns+1,Ns), [1,1,Ns]);
-	mb = reshape(linspace(1,Nb,Nb), [1,1,Nb]);
+	mb = reshape(0:(Nb-1), [1,1,Nb]);
 	BB = 1 + epsilon.*sum(Bs.*cos(mb.*omega),3);
 	RR = 1 - delta.*epsilon.^2 + epsilon.^3.*P.*cos(omega) + epsilon.*r.*cos(omega) + epsilon.^2.*sum(cos((-1 + ms).*omega).*S,3);
 [dbetapardB0, ...

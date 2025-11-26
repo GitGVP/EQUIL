@@ -1,8 +1,8 @@
 %% Test with outer loop
-base_args = {'beta',0.5, 's0', 4, 'debug', 4, ...
-            'residuals_fun', @residuals_noRepl, 'equation_of_state',@isotropic_rotating, ...
+base_args = {'beta',0.8, 's0', 4, 'debug', 4, ...
+            'residuals_fun', @residuals_noRepl, 'equation_of_state',@isotropic, ...
              'jacobian_fun', @jacobian_noRepl, 'nk', 30, ...
-              'm',15, 'om_pts', 200, 'Nb', 1, 'mach20',0.3};
+              'm',15, 'om_pts', 200, 'Nb', 1, 'mach20',0};
          
 eps_max = 0.4;
 % --- outer-loop configuration: ---
@@ -21,7 +21,7 @@ eps_max = 0.4;
 % converged in m
 
 outerloop_pname = 'Ns';             % parameter name to pass to equilSol
-outerloop_pvals = [3]; % was [3 5 10] numeric vector of values
+outerloop_pvals = [3 5 10]; % was [3 5 10] numeric vector of values
 outerloop_legend_name = 'N_S';  % string used in legend (LaTeX)
 
 %outerloop_pname = 'Nb';             % parameter name to pass to equilSol
@@ -206,6 +206,58 @@ plot_profile_panel(L.r_q, interp1(LY.r_fine, LY.S2_1_fine, L.r_q, 'spline'), S2_
 figure;
 plot_profile_panel(L.r_q, LY.deltap_ana, deltap_num, cmap, col_inds, "$\Delta'$ profiles", "$\hat\Delta_0$");
 
+%% 2 plots for paper (1. NLO shift, 2. NLO elongation)
+
+figure(); 
+t = tiledlayout(2,2,'TileSpacing','compact','Padding','none'); % minimal spacing
+ax = nexttile(1);
+plot_error_panel(L20error_all, values_eps, outerloop_pvals, cmap, col_inds, marker_list, '$L^{2}_{\Delta_0}$ error', outerloop_legend_name, 2);
+axis(ax,'tight');
+set(ax,'LooseInset',get(ax,'TightInset')); % removes extra padding
+ax = nexttile(3);
+plot_error_panel(L2error_all, values_eps, outerloop_pvals, cmap, col_inds, marker_list, '$L^2_{\Delta_1}$ error', outerloop_legend_name, 7);
+axis(ax,'tight');
+set(ax,'LooseInset',get(ax,'TightInset')); % removes extra padding
+
+ax = nexttile(2);
+plot_profile_panel(L.r_q, LY.delta_ana, delta_num, cmap, col_inds, '$\Delta_0$ profiles', '$\hat\Delta_0$');
+hold(ax,'on');
+h = plot(L.r_q, LY.delta_ana + 0.4 * interp1(LY.r_fine, LY.delta1_ana, L.r_q, 'spline'), ...
+         'LineWidth',2,'Color',[1 0.35 0.5]);
+legend(ax, h, {'$\Delta_0 + \epsilon \Delta_1$'}, 'Interpreter','latex','FontSize',12,'Box','off','Location','northwest');
+axis(ax,'tight'); set(ax,'LooseInset',get(ax,'TightInset'));
+
+ax = nexttile(4);
+plot_profile_panel(L.r_q, interp1(LY.r_fine, LY.delta1_ana, L.r_q, 'spline'), delta1_num, cmap, col_inds, '$\Delta_1$ profiles', '$\hat\Delta_1$');
+axis(ax,'tight'); set(ax,'LooseInset',get(ax,'TightInset'));
+
+
+figure(); 
+t = tiledlayout(2,2,'TileSpacing','compact','Padding','none'); % minimal spacing
+ax = nexttile(1);
+plot_error_panel(L2S2error_all, values_eps, outerloop_pvals, cmap, col_inds, marker_list,  '$L^2_{S_2}$ error', outerloop_legend_name, 7);
+axis(ax,'tight');
+set(ax,'LooseInset',get(ax,'TightInset')); % removes extra padding
+ax = nexttile(3);
+plot_error_panel(L2S2_1_error_all, values_eps, outerloop_pvals, cmap, col_inds, marker_list,  '$L^2_{S_{2,1}}$ error', outerloop_legend_name, 5);
+axis(ax,'tight');
+set(ax,'LooseInset',get(ax,'TightInset')); % removes extra padding
+
+ax = nexttile(2);
+plot_profile_panel(L.r_q, LY.S2_ana, S2_num, cmap, col_inds, '$S_{2,0}$ profiles', '$\hat S_{2,0}$');
+hold(ax,'on');
+h = plot(L.r_q, LY.S2_ana + eps_max * interp1(LY.r_fine, LY.S2_1_fine, L.r_q, 'spline'), ...
+         'LineWidth',2,'Color',[1 0.35 0.5]);
+legend(ax, h, {'$\Delta_0 + \epsilon \Delta_1$'}, 'Interpreter','latex','FontSize',12,'Box','off','Location','northwest');
+axis(ax,'tight'); set(ax,'LooseInset',get(ax,'TightInset'));
+
+ax = nexttile(4);
+plot_profile_panel(L.r_q, interp1(LY.r_fine, LY.S2_1_fine, L.r_q, 'spline'), S2_1_num, cmap, col_inds, '$S_{2,1}$ profiles', '$\hat S_{2,1}$');
+axis(ax,'tight'); set(ax,'LooseInset',get(ax,'TightInset'));
+
+
+
+
 %% both plots in one for paper
 
 % 
@@ -256,36 +308,10 @@ plot_profile_panel(L.r_q, LY.deltap_ana, deltap_num, cmap, col_inds, "$\Delta'$ 
 % 
 % 
 % 
-% figure(); 
-% t = tiledlayout(2,2,'TileSpacing','compact','Padding','none'); % minimal spacing
-% 
-% errors = {L2error_all, L20error_all, L2t2error_all, L2S2error_all};
-% titles = {'$L^2_{\Delta_1}$ error', '$L^{2}_{\Delta_0}$ error', '$L^2_{t_2}$ error', '$L^2_{S_2}$ error'};
-% skip_counts = [8, 5, 5, 6];
-% 
-% % error panels in tiles 1,3,5,7
-% swap_order = [3, 1, 5, 7];
-% for ip = 1:2
-%     idx = 1 + 2*(ip-1);
-%     ax = nexttile(swap_order(ip));
-%     plot_error_panel(errors{ip}, values_eps, outerloop_pvals, cmap, col_inds, marker_list, titles{ip}, outerloop_legend_name, skip_counts(ip));
-%     % tighten this axis
-%     axis(ax,'tight');
-%     set(ax,'LooseInset',get(ax,'TightInset')); % removes extra padding
-% end
+
 % 
 % % profile panels in tiles 2,4,6,8
-% ax = nexttile(2);
-% plot_profile_panel(L.r_q, LY.delta_ana, delta_num, cmap, col_inds, '$\Delta_0$ profiles', '$\hat\Delta_0$');
-% hold(ax,'on');
-% h = plot(L.r_q, LY.delta_ana + 0.4 * interp1(LY.r_fine, LY.delta1_ana, L.r_q, 'spline'), ...
-%          'LineWidth',2,'Color',[1 0.35 0.5]);
-% legend(ax, h, {'$\Delta_0 + \epsilon \Delta_1$'}, 'Interpreter','latex','FontSize',12,'Box','off','Location','northwest');
-% axis(ax,'tight'); set(ax,'LooseInset',get(ax,'TightInset'));
-% 
-% ax = nexttile(4);
-% plot_profile_panel(L.r_q, interp1(LY.r_fine, LY.delta1_ana, L.r_q, 'spline'), delta1_num, cmap, col_inds, '$\Delta_1$ profiles', '$\hat\Delta_1$');
-% axis(ax,'tight'); set(ax,'LooseInset',get(ax,'TightInset'));
+
 % 
 % 
 % 
