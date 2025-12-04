@@ -23,8 +23,8 @@ function P = equilP(varargin)
  P.spline_p = P.nq; % might be a bit risky to set like this
  P.om_pts = 300;               % quadrature points in omega
  P.equation_of_state = @isotropic;
- P.residuals_fun = @residuals_noEL;
- P.jacobian_fun = @jacobian_anyDF;
+ P.residuals_fun = @residuals_noRepl;
+ P.jacobian_fun = @jacobian_noRepl;
  P.Ns = 3; % (R,Z) cosine harmonics
  P.Nb = 1; % B cosine harmonics 
  P.nk = 30; % Newton iterations
@@ -34,10 +34,10 @@ function P = equilP(varargin)
  P.do_shift_NLO = false;
 
  P.q0 = 1;
- P.s0 = 0.5;
+ P.s0 = 4;
  
  % kinetic profiles' defaults
- P.beta = 0;
+ P.beta = 0.3;
  P.A0 = 1;
  P.Bc0 = 1+0.3; 
  P.mach20 = 0;
@@ -53,9 +53,8 @@ function L = equilL(P)
   L.omega = (0:P.om_pts-1) * 2*pi / P.om_pts;        % nodes: 0, 2pi/N, ..., 2pi*(N-1)/N
   
   
-  [L.r_q, L.P0, L.P1, L.P2, L.M, ...
-  L.P0_S, L.P1_S, L.P2_S, L.M_S, ...
-  L.M_profiles, L.M_extended, L.P_templates, L.P_extended, L.M_template, ...
+  [L.r_q, L.P0, L.P1, L.P2, ...
+  L.M_profiles, L.M_extended, L.P_templates, L.P_extended, ...
   L.A_global, L.profile_lengths, L.profile_starts, L.P0_end] = ...
   assemble_FE_matrices_bspline(L.r_nodes, P.Nb, P.Ns, P.nq, P.spline_p);
   % numeric check (coerce if necessary)
