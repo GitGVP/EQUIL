@@ -31,6 +31,7 @@ function P = equilP(varargin)
  % input default parameters
  P.debug = 0;
  P.damping = 1;
+ P.do_shift_NLO = false;
 
  P.q0 = 1;
  P.s0 = 0.5;

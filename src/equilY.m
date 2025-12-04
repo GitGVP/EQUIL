@@ -45,10 +45,11 @@ function LY = equilY(L, LX)
   LY.delta1_ana = cumtrapz(r_fine, LY.delta1p_ana);
   
   %NLO elongation
-  S2_1_RHS = (LX.qfun(r_fine).^2./r_fine.^3) .* (r_fine.*(6.*LY.deltap_fine.*LX.qpfun(r_fine).*r_fine.^2.*(LY.deltap_fine - 2.*LY.S3p_fine) + 2.*LX.qfun(r_fine).*(-6.*LY.deltap_fine.^2.*r_fine + r_fine.^3 + 2.*LY.deltap_fine.*(r_fine.^2 - 8.*LY.S3_fine) - 2.*r_fine.*(-2.*LY.deltap_fine + r_fine).*LY.S3p_fine) + LX.qfun(r_fine).^3.*(6.*d2betapardrdB.*LY.deltap_fine.*r_fine - 2.*d2betapardrdB.*r_fine.^2 + d3betapardrdR2.*r_fine.^2 + d3betapardrdB2.*r_fine.^2 - 2.*d3betapardrdRdB.*r_fine.^2 - 8.*d2betapardrdB.*LY.S3_fine - 6.*d2betapardrdB.*r_fine.*LY.S3p_fine + d2betapardrdR.*(-6.*LY.deltap_fine.*r_fine + 4.*r_fine.^2 + 8.*LY.S3_fine + 6.*r_fine.*LY.S3p_fine) + 2.*dbetapardr.*(8.*LY.S3_fine + r_fine.*(-6.*LY.deltap_fine + r_fine + 6.*LY.S3p_fine)))))./(4..*LX.qfun(r_fine).^3);
-  S2_1_RHS_fun = @(r) interp1(r_fine, S2_1_RHS, r, 'spline');
-  [LY.S2_1_fine, LY.S2_1p_fine] = solve_S_eq(r_fine, 0,LX.qfun,LX.qpfun, 2, S2_1_RHS_fun);
-  
+  if L.P.do_shift_NLO
+      S2_1_RHS = (LX.qfun(r_fine).^2./r_fine.^3) .* (r_fine.*(6.*LY.deltap_fine.*LX.qpfun(r_fine).*r_fine.^2.*(LY.deltap_fine - 2.*LY.S3p_fine) + 2.*LX.qfun(r_fine).*(-6.*LY.deltap_fine.^2.*r_fine + r_fine.^3 + 2.*LY.deltap_fine.*(r_fine.^2 - 8.*LY.S3_fine) - 2.*r_fine.*(-2.*LY.deltap_fine + r_fine).*LY.S3p_fine) + LX.qfun(r_fine).^3.*(6.*d2betapardrdB.*LY.deltap_fine.*r_fine - 2.*d2betapardrdB.*r_fine.^2 + d3betapardrdR2.*r_fine.^2 + d3betapardrdB2.*r_fine.^2 - 2.*d3betapardrdRdB.*r_fine.^2 - 8.*d2betapardrdB.*LY.S3_fine - 6.*d2betapardrdB.*r_fine.*LY.S3p_fine + d2betapardrdR.*(-6.*LY.deltap_fine.*r_fine + 4.*r_fine.^2 + 8.*LY.S3_fine + 6.*r_fine.*LY.S3p_fine) + 2.*dbetapardr.*(8.*LY.S3_fine + r_fine.*(-6.*LY.deltap_fine + r_fine + 6.*LY.S3p_fine)))))./(4..*LX.qfun(r_fine).^3);
+      S2_1_RHS_fun = @(r) interp1(r_fine, S2_1_RHS, r, 'spline');
+      [LY.S2_1_fine, LY.S2_1p_fine] = solve_S_eq(r_fine, 0,LX.qfun,LX.qpfun, 2, S2_1_RHS_fun);
+  end
   LY.r_fine = r_fine;
   LY.B1_ana =  - L.r_q;
   

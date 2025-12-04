@@ -1,6 +1,4 @@
 %% TODO: organize this better
-% - There is the q fitting part: try to get more and more accurate q
-% profiles
 % - There is the MEQ inputs preparation as well, maybe make this process
 % iterative (to converge I guess on FA and FB) so that the profiles are the
 % same and then recheck if the q profiles match.
@@ -23,38 +21,6 @@ plot(L.pQ.^2, LY.kappa, 'x')
 figure;hold on;
 plot(LYe.psiN, LYe.deltatrig(2:end), '.')
 plot(L.pQ.^2, LY.delta, 'x')
-
-
-% Match exactly the q profiles ?
-
-
-
-%% fit the q profile
-
-[L, LX, LY] = fgs('ana',1,0, 'iterq',50);
-[Le, LXe] = equilSol('beta', 0, 's0',0.01, 'debug', 4);
-LXe.eps_val = 0.1;
-
-
-LXe.Sbc(1) = 0;
-LXe.S2bc = -0;
-LXe.Sbc(2) = 0;
-LXe.S3bc = 0;
-
-meq_qfun = @(r) ppval(spline(L.pQ(:).^2,  [0 1./LY.iqQ.' 0]),r);
-meq_qpfun = @(r) ppval(fnder(spline(L.pQ(:).^2,  [0 1./LY.iqQ.' 0])),r);
-
-%meq_qfun = @(r) ppval(makima(L.pQ(:).^2,1./LY.iqQ),r);
-%meq_qpfun = @(r) ppval(fnder(makima(L.pQ(:).^2, 1./LY.iqQ)),r);
-
-
-LXe.qfun = meq_qfun;
-LXe.qpfun = meq_qpfun;
-LXe.q_vec = meq_qfun(Le.r_q);
-LXe.qp_vec = meq_qpfun(Le.r_q);
-
-LYe = equilY(Le, LXe);
-
 
 %%
 addpath('/home/vanparys/Documents/PhD/Codes/meq')
@@ -282,8 +248,8 @@ for i = 1:n_beta
 
     % 1) compute equilibrium solution for requested beta
     [Le, LXe] = equilSol('beta', beta_val, 's0', 5, 'debug', 4, ...
-                         'residuals_fun',@residuals_Bmod,...
-                         'jacobian_fun', @jacobian_Bmod, 'Ns', 2,'Nb',10);
+                         'residuals_fun',@residuals_noRepl,...
+                         'jacobian_fun', @jacobian_noRepl, 'Ns', 2,'Nb',10);
     eps_val = 0.37225;
     LXe.eps_val = 0.37225;
     LXe.Sbc(1) = 0; LXe.S2bc = 0; LXe.Sbc(2) = 0; LXe.S3bc = 0;

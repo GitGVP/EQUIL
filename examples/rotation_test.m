@@ -1,5 +1,5 @@
 %% Check whether anisotropic case gives the same as before now.
-[L, LX] = equilSol('beta',0.6,'s0', 4, 'debug', 4,...
+[L, LX] = equilSol('beta',0.5,'s0', 4, 'debug', 4,...
     'residuals_fun',@residuals_noRepl,'jacobian_fun', @jacobian_noRepl, ...
     'equation_of_state', @isotropic,'Ns', 3,'Nb',10);
 
@@ -10,11 +10,17 @@ LX.S3bc = 0.2;
 LX.Sbc(2) = 0.2;
 LY = equilY(L, LX);
 
-[L, LX] = equilSol('beta',0.3, 'A0',2.5,'s0', 4, 'debug', 4,...
+[L, LX] = equilSol('beta',0.25, 'A0',2,'s0', 4, 'debug', 4,...
     'residuals_fun',@residuals_noRepl,'jacobian_fun', @jacobian_noRepl, ...
     'equation_of_state', @biMaxwellian,'Ns', 3,'Nb',10, 'Bc0', 1.2,...
     'damping',1);
-LX.x = LY.x; L.P.hot_restart = true;LX.eps_val = 0.3;
+
+LX.eps_val = 0.3;
+LX.Sbc(1) = -0.8;
+LX.S2bc = -0.8;
+LX.S3bc = 0.2;
+LX.Sbc(2) = 0.2;
+LX.x = LY.x; L.P.hot_restart = true;
 LY = equilY(L, LX);
 
 tiledlayout(1,3,'TileSpacing','compact','Padding','compact')
