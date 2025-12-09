@@ -23,8 +23,8 @@ function P = equilP(varargin)
  P.spline_p = P.nq; % might be a bit risky to set like this
  P.om_pts = 300;               % quadrature points in omega
  P.equation_of_state = @isotropic;
- P.residuals_fun = @residuals_noRepl;
- P.jacobian_fun = @jacobian_noRepl;
+ %P.residuals_fun = @residuals_noRepl;
+ %P.jacobian_fun = @jacobian_noRepl;
  P.Ns = 3; % (R,Z) cosine harmonics
  P.Nb = 1; % B cosine harmonics 
  P.nk = 30; % Newton iterations
@@ -41,6 +41,7 @@ function P = equilP(varargin)
  P.A0 = 1;
  P.Bc0 = 1+0.3; 
  P.mach20 = 0;
+ P.num_disc = 'spectral';
  
  % overwrites
  for k = 1:2:length(varargin)
@@ -52,11 +53,24 @@ function L = equilL(P)
   L.r_nodes = linspace(0, 1, 2*P.m+1);   % node positions
   L.omega = (0:P.om_pts-1) * 2*pi / P.om_pts;        % nodes: 0, 2pi/N, ..., 2pi*(N-1)/N
   
-  
-  [L.r_q, L.P0, L.P1, L.P2, ...
-  L.M_profiles, L.M_extended, L.P_templates, L.P_extended, ...
-  L.A_global, L.profile_lengths, L.profile_starts, L.P0_end] = ...
-  assemble_FE_matrices_bspline(L.r_nodes, P.Nb, P.Ns, P.nq, P.spline_p);
+  % Choose assembly depending on selected discretisation
+  if isfield(P, 'num_disc') && strcmpi(P.num_disc, 'spectral')
+    % spectral assembly
+    P.residuals_fun = @residuals_noRepl_spec;
+    P.jacobian_fun = @jacobian_noRepl_spect;
+    [L.r_q, L.P0, L.P1, L.P2, ...
+     L.M_profiles, L.M_extended, L.P_templates, L.P_extended, ...
+     L.A_global, L.profile_lengths, L.profile_starts, L.P0_end] = ...
+        assemble_spectral_matrices(L.r_nodes, P.Nb, P.Ns, P.nq, P.spline_p);
+  else
+        % default: finite-element / B-spline assembly
+        P.residuals_fun = @residuals_noRepl;
+        P.jacobian_fun = @jacobian_noRepl;
+      [L.r_q, L.P0, L.P1, L.P2, ...
+      L.M_profiles, L.M_extended, L.P_templates, L.P_extended, ...
+      L.A_global, L.profile_lengths, L.profile_starts, L.P0_end] = ...
+      assemble_FE_matrices_bspline(L.r_nodes, P.Nb, P.Ns, P.nq, P.spline_p);
+  end
   % numeric check (coerce if necessary)
   if iscell(L.profile_lengths), L.profile_lengths = cell2mat(L.profile_lengths); end
 

@@ -92,7 +92,9 @@ function LY = equilY(L, LX)
   if not(L.P.hot_restart)
     % testing 0 for all profiles besides shaping
     profiles_q(1:(3+L.P.Nb)*L.Nq) = 0;
-    x = profiles_to_x(profiles_q, L.A_global, L.M_profiles, L.P0_end, L.P.Nb, LX.Sbc, L.profile_lengths, L.Nq);
+    %x = profiles_to_x(profiles_q, L.A_global, L.M_profiles, L.P0_end, L.P.Nb, LX.Sbc, L.profile_lengths, L.Nq);
+    
+    x=zeros((3+L.P.Nb)*L.dof_count+L.P.Ns*(L.dof_count-1),1);
   else
       x = LX.x;
   end
