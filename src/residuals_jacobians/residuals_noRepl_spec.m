@@ -37,7 +37,7 @@ function R = residuals_noRepl_spec(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1
             S(:,1,mIdx)   = S(:,1,mIdx)+ Sbc(mIdx) * (r(:) .^ (exponent-1));
             % derivatives:
             Sp(:,1,mIdx)  = Sp(:,1,mIdx)  +Sbc(mIdx) * (exponent-1) * (r(:) .^ (exponent - 2));
-            if exponent - 1 >= 1
+            if exponent - 2 >= 1
                 Spp(:,1,mIdx) = Spp(:,1,mIdx)+ Sbc(mIdx) * (exponent-1) * (exponent - 2) * (r(:) .^ (exponent - 3));
             else
                 % second derivative singular at r=0 when exponent = 1: set finite value
@@ -67,7 +67,7 @@ function R = residuals_noRepl_spec(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1
     if ~isempty(Bs)
         for ib = 1:Nb
             Bs(idx0,1,ib) = 0;
-            Bsp(idx0,1,ib) = 0;
+            %Bsp(idx0,1,ib) = 0;
         end
     end
     

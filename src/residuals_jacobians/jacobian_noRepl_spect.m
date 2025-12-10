@@ -37,7 +37,7 @@ function J = jacobian_noRepl_spect(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1
             S(:,1,mIdx)   = S(:,1,mIdx)+ Sbc(mIdx) * (r(:) .^ (exponent-1));
             % derivatives:
             Sp(:,1,mIdx)  = Sp(:,1,mIdx)  +Sbc(mIdx) * (exponent-1) * (r(:) .^ (exponent - 2));
-            if exponent - 1 >= 1
+            if exponent - 2 >= 1
                 Spp(:,1,mIdx) = Spp(:,1,mIdx)+ Sbc(mIdx) * (exponent-1) * (exponent - 2) * (r(:) .^ (exponent - 3));
             else
                 % second derivative singular at r=0 when exponent = 1: set finite value
@@ -45,6 +45,7 @@ function J = jacobian_noRepl_spect(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1
             end
        
     end
+    
 	ms = reshape(linspace(2,Ns+1,Ns), [1,1,Ns]);
 	mb = reshape(0:(Nb-1), [1,1,Nb]);
 	BB = 1 + epsilon.*sum(Bs.*cos(mb.*omega),3);
@@ -226,8 +227,9 @@ function J = jacobian_noRepl_spect(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1
     end
 
 % Note: use nReplace = min(2, dof_count) to match residual code behavior.
-
-% % find r==0 quadrature index (same logic as residuals_noRepl)
+% -----------------------------
+% Constraint-enforcement patch
+% -----------------------------
 % tol_r0 = 1e-14;
 % idx0 = find(abs(r) < tol_r0, 1);
 % if isempty(idx0), idx0 = 1; end

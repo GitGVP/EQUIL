@@ -27,11 +27,21 @@ active_dofs = Nnodes - 1;   % remove DOF at r=0 (global node 1)
 %end
 
 % Get LGL nodes & weights on [-1,1] for quadrature; map to [0,1]
-[xi_lgl, w_lgl] = legendre_gauss_lobatto(nq-1); % returns nq nodes and weights
-gauss_pts = (xi_lgl + 1) / 2;      % in [0,1]
-gauss_wts = w_lgl * 0.5;           % weights on [0,1]
-
-
+%[xi_lgl, w_lgl] = legendre_gauss_lobatto(nq-1); % returns nq nodes and weights
+%gauss_pts = (xi_lgl + 1) / 2;      % in [0,1]
+%gauss_wts = w_lgl * 0.5;           % weights on [0,1]
+use_open_quadrature=true;
+if use_open_quadrature
+    % open Gauss-Legendre quadrature (nq points inside (-1,1))
+    [xi_gl, w_gl] = legendre_gauss(nq); % returns nq nodes in (-1,1) and weights
+    gauss_pts = (xi_gl + 1) / 2;  % map to (0,1)
+    gauss_wts = w_gl * 0.5;
+else
+    % LGL (includes endpoints) -- keep previous behavior
+    [xi_lgl, w_lgl] = legendre_gauss_lobatto(nq-1); % returns nq nodes in [-1,1] and weights
+    gauss_pts = (xi_lgl + 1) / 2;      % in [0,1]
+    gauss_wts = w_lgl * 0.5;           % weights for [0,1]
+end
 Nq = nq * m_s;
 dof_count = active_dofs;
 
@@ -399,4 +409,19 @@ end
 Pvals = Pn;
 % derivative via recurrence: P_n'(x) = n/(x^2-1) ( x P_n(x) - P_{n-1}(x) )
 Pder = ( n * ( x .* Pvals - Pnm2 ) ) ./ (x.^2 - 1);
+end
+
+function [x, w] = legendre_gauss(N)
+% returns N nodes and weights for Gauss-Legendre on (-1,1)
+% using symmetric tridiagonal (Golub-Welsch)
+if N == 1
+    x = 0; w = 2; return;
+end
+n = N;
+beta = 0.5 ./ sqrt(1 - (2*(1:n-1)).^(-2));
+J = diag(beta,1) + diag(beta,-1);
+[V,D] = eig(J);
+[x,ix] = sort(diag(D));
+V = V(:,ix);
+w = 2 * (V(1,:).^2)';
 end
