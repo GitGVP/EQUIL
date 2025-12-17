@@ -6,19 +6,21 @@ function [L, LX, LY] = equilSol(varargin)
     P = equilP(varargin{:});
     % matrices assembly, other utilities
     L = equilL(P);
+    check_projection_matrices(L.P0, L.P1, L.P2,L.r_q,'LGL nodal (spectral-element)')
     % code inputs (BCs, profiles, aspect ratio)
-    if nargout > 1
-        LX = equilX(L);
-        if nargout > 2
-            LY = equilY(L,LX);
-        end
-    end
+    %if nargout > 1
+    %    LX = equilX(L);
+     %   if nargout > 2
+     %       LY = equilY(L,LX);
+     %   end
+    %end
+
 end
 
 function P = equilP(varargin)
  % default parameters
  P.hot_restart = false;
- P.m = 15; 
+ P.m = 30; 
  P.nq = 10; % adapt to p for B-spline
  P.spline_p = P.nq; % might be a bit risky to set like this
  P.om_pts = 300;               % quadrature points in omega
