@@ -1,7 +1,8 @@
 function [r_q, ...
           P0_full, P1_full, P2_full,...
           M_profiles, M_extended, P_templates, P_extended, ...
-          A_global, profile_lengths, profile_starts, P0_end] = ...
+          A_global, profile_lengths, profile_starts, P0_end, ...
+          ML2, ML2_q] = ... % for L2 error computation
           assemble_FE_matrices_bspline(r_nodes, Nb, Ns, nq, p)
 
 % r_nodes vector, Nb number of "extra full" profiles, Ns number with right-BC
@@ -224,4 +225,10 @@ A_global = sparse(Ai, Aj, Av, totalDofs, totalDofs);
 % return last-column P0 for BC assembly convenience
 P0_end = P0_full(:, end);
 
+if nargout>12
+    X = A_full \ M_full;
+    ML2 = M_full' * X;
+    w_q = sum(M_full,1)'; 
+    ML2_q = spdiags(w_q,0,Nq,Nq);
+end
 end

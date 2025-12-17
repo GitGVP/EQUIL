@@ -1,233 +1,176 @@
-% testing in a script
-clear all;
+%% Convergence study with Leading Order (LO) residuals for all profiles
+% Two different ways of computing the L2 squared norm: diagonal matrix with
+% gaussian weights or via matrix inversion of the projection from
+% quadrature values to degrees of freedom space. (both give the same result)
+% ------------------- 
+% The various definitions of h (grid spacing) lead to the same results
+% 
 
-% used in G_JFNK_FULL
-nq = 2; % Number of quadrature points
+nsim = 12;
+ms = [round(linspace(3,15,nsim))];
+L2delta = zeros(nsim,1);
+L2delta_q = zeros(nsim,1);
 
-syms xi_sym;
-phi_sym = [2*(xi_sym-0.5)*(xi_sym-1);
-          4*xi_sym*(1-xi_sym);
-          2*xi_sym*(xi_sym-0.5)];
-dphi_dxi_sym = diff(phi_sym, xi_sym);
-d2phi_dxi2_sym = diff(dphi_dxi_sym, xi_sym);
-
-dopp = false;
-%ms = linspace(20,60,11);
-%ms = [60];
-ms = linspace(20,50,7);
-L2s = []; H1s = []; r0s = [];
-!rm last_solution.mat
-for m = ms
-    H1_elem = []; L2_elem = [];
-    h = 1/(2*m);
-    nq = 2; % Number of quadrature points
-    G_JFNK_full
-    !rm last_solution.mat
-    if res_norm > 1e-2
-        L2s = [L2s, NaN]; H1s = [H1s, NaN];
-        continue;
-    end
-    x_full = [0; x(1:2*m); ... % t2
-        0; x(2*m+1:4*m);... % delta
-        0; x(4*m+1:6*m);... % P
-        0; x(6*m+1:8*m);... % B1
-        0; x(8*m+1:end);S2bc;... % S2
-        ];        
-
-
-    %gauss_pts = [(1 - sqrt(3/5))/2, 0.5, (1 + sqrt(3/5))/2];
-    %gauss_wts = [5/18, 4/9, 5/18];
-    nq = 10; % Number of quadrature points
-    [gauss_pts, gauss_wts] = lgwt(nq, 0, 1);
-
-
-    phi = zeros(3,3);
-    dphi_dxi = zeros(3,3);
-    d2phi_dxi2 = zeros(3,3);
-    for i = 1:3
-        for q = 1:nq
-            xi_val = gauss_pts(q);
-            phi(i,q) = double(subs(phi_sym(i), xi_sym, xi_val));
-            dphi_dxi(i,q) = double(subs(dphi_dxi_sym(i), xi_sym, xi_val));
-            d2phi_dxi2(i,q) = double(subs(d2phi_dxi2_sym(i), xi_sym, xi_val));
-        end
-    end
-    dphi_dr = dphi_dxi / (2*h);
-    d2phi_dr2 = d2phi_dxi2 / (2*h)^2;
-
-    % --- initialize accumulators ---
-    L2_err_sq   = 0.0;
-    H1_sem_sq   = 0.0;
-
-    % Loop over elements
-    for e = 1:m
-        % local DOF indices into U
-        nodes = [2*e-1, 2*e, 2*e+1];     % left vertex, mid, right vertex
-        r0 = r_nodes(nodes(1));          % left node coordinate
-        r0s = [r0s, r0];
-        % loop over quadrature points (xi in [0,1])
-        for q = 1:nq
-            q_global = (e-1)*nq + q;     % if you have r_q precomputed
-            rq = r0 + 2*h*gauss_pts(q); % physical quadrature point on this element
-            uh_q = 0; duh_dr_q = 0;
-            for i = 1:3 
-                node_global = nodes(i);
-                if node_global == 1
-                    continue  
-                end
-                uh_q = uh_q + x_full(nodes(i))*phi(i,q);
-                duh_dr_q = duh_dr_q + x_full(nodes(i))*dphi_dr(i,q);
-            end
-
-            % exact solution at rq
-            uex = interp1(r_fine, t2_fine, rq, 'spline');%t2_ana(q_global);
-            duex = interp1(r_fine, t2p_fine, rq, 'spline');%t2p_ana(q_global);
-            %duex = results.t2p(q_global);
-            % pointwise differences
-            diff   = uex - uh_q;
-            diffp  = duex - duh_dr_q;
-            % Jacobian for xi in [0,1] -> r in [r0, r0+2h] is dx/dxi = 2*h
-            J = 2*h;
-
-            % accumulate 
-            L2_err_sq = L2_err_sq + J * gauss_wts(q) * (diff^2);
-            H1_sem_sq = H1_sem_sq + J * gauss_wts(q) * (diffp^2);
-        end
-        L2_elem = [L2_elem, sqrt(L2_err_sq)];
-        H1_elem = [H1_elem, sqrt(H1_sem_sq)];
-    end
-
-    % final errors
-    L2_err   = sqrt(L2_err_sq);
-    H1_semi  = sqrt(H1_sem_sq);
-
-    fprintf('L2 error = %.6e\n', L2_err);
-    fprintf('H1 seminorm error = %.6e\n', H1_semi);
-    L2s = [L2s, L2_err]; H1s = [H1s, H1_semi];
+h_eff = zeros(nsim,1);
+for ii=1:nsim
+    
+    [L, LX, LY] = equilSol('debug',4,'residuals_fun', @residuals_LO, ...
+    'jacobian_fun',@jacobian_LO, 'Ns', 1, 'Nb', 10, 'm', ms(ii), 'nq', 6, 'spline_p',6);
+    [~, ...
+              ~, ~, ~,...
+              ~, ~, ~, ~, ...
+              ~, ~, ~, ~, ...
+              ML2, ML2_q] = ... % for L2 error computation
+              assemble_FE_matrices_bspline(L.r_nodes, L.P.Nb, L.P.Ns, L.P.nq, L.P.spline_p);
+    err_t2 = LY.t2(2:end)-LY.t2_ana;
+    err_delta = LY.delta(2:end)-LY.delta_ana;
+    err_P = LY.P(2:end)-LY.P_ana;
+    err_S2 = LY.S(2:end,1,1) - LY.S2_ana;
+    L2delta(ii) = sqrt(err_delta.' * ML2 * err_delta + ...
+        err_t2.' * ML2 * err_t2 + ...
+        err_P.' * ML2 * err_P + ...
+        err_S2.' * ML2 * err_S2);
+    L2delta_q(ii) = sqrt(err_delta.' * ML2_q * err_delta + ...
+        err_t2.' * ML2_q * err_t2 + ...
+        err_P.' * ML2_q * err_P + ...
+        err_S2.' * ML2_q * err_S2);
+    %h_eff(ii) = 1/ numel(L.r_q);
+    %h_eff(ii) = max(diff(L.r_q)); % use max difference, does not change anything from above
+    R = reshape(L.r_q, L.P.nq, [])';           % m x nq
+    elem_len = max(R,[],2) - min(R,[],2);  % length of each element
+    h_geom = exp(mean(log(elem_len))); 
+    h_eff(ii) = h_geom;
 end
 
 
-hvals = 1./(2*ms);
-
-figure('WindowStyle','docked');
-tiledlayout(2,1, 'TileSpacing','compact','Padding','compact');
-
-nexttile;
-loglog(hvals, L2s, 'o-', 'LineWidth', 1.5); 
-hold on;
-p = polyfit(log(hvals), log(L2s), 1);
-hfit = linspace(min(hvals), max(hvals), 100);
+figure;
+loglog(h_eff, L2delta, 'o', 'LineWidth',3);
+grid on; hold on;
+loglog(h_eff, L2delta_q, 'x', 'LineWidth',3);
+p = polyfit(log(h_eff(:)), log(L2delta(:)), 1);
 slope = p(1);
-L2fit = exp(polyval(p, log(hfit)));
-loglog(hfit, L2fit, '--', 'LineWidth', 1.5);
-legend('L2 error', sprintf('Fit slope = %.2f', slope), 'Location','best');
-ylabel('L2 error');
+h_fit = linspace(min(h_eff), max(h_eff), 200);
+L2_fit = exp(polyval(p, log(h_fit)));
+loglog(h_fit, L2_fit, '-', 'LineWidth',3);
+legend({'$M^t A^{-1} M$','$W$', sprintf('fit: slope = %.3g', slope)}, 'Location', 'SouthEast',...
+    'Box','off', 'Interpreter','latex', 'FontSize',14);
+title('$L_2$ error (all profiles)', 'Interpreter','latex', 'FontSize',14)
+
+
+%% Do t2 only
+% This is done with spline order = 3, the problematic residuals (delta, P)
+% are removed (but in fact this does not affect the t2 convergence, i.e. this 
+% % can be done using residuals_LO and jacobian_LO without problem.)
+% ----------
+% NOTE: in the choice of ms we skip even values, these lead to a fit with
+% values that oscillate between overestimated error and underestimated (without 
+% changing the obtained slope).
+
+
+nsim = 15;
+ms = [round(linspace(9,39,nsim))];
+L2_t2_only = zeros(nsim,1);
+h_eff = zeros(nsim,1);
+for ii=1:nsim
+    
+    [L, LX, LY] = equilSol('debug',4,'residuals_fun', @residuals_LO_t2, ...
+    'jacobian_fun',@jacobian_LO_t2, 'Ns', 1, 'Nb', 10, 'm', ms(ii), 'nq', 3, 'spline_p',3);
+    [~, ...
+              ~, ~, ~,...
+              ~, ~, ~, ~, ...
+              ~, ~, ~, ~, ...
+              ML2, ML2_q] = ... % for L2 error computation
+              assemble_FE_matrices_bspline(L.r_nodes, L.P.Nb, L.P.Ns, L.P.nq, L.P.spline_p);
+    err_t2 = LY.t2(2:end)-LY.t2_ana;
+    err_delta = LY.delta(2:end)-LY.delta_ana;
+    L2_t2_only(ii) = sqrt(err_t2.' * ML2 * err_t2);
+    %h_eff(ii) = 1/ numel(L.r_q);
+    %h_eff(ii) = max(diff(L.r_q)); % use max difference, does not change anything from above
+    R = reshape(L.r_q, L.P.nq, [])';           % m x nq
+    elem_len = max(R,[],2) - min(R,[],2);  % length of each element
+    h_geom = exp(mean(log(elem_len))); 
+    h_eff(ii) = h_geom;
+end
+
+figure;
+loglog(h_eff, L2_t2_only, 'o', 'LineWidth',3);
+grid on; hold on;
+p = polyfit(log(h_eff(:)), log(L2_t2_only(:)), 1);
+slope = p(1);
+h_fit = linspace(min(h_eff), max(h_eff), 200);
+L2_fit = exp(polyval(p, log(h_fit)));
+loglog(h_fit, L2_fit, '-', 'LineWidth',3);
+legend({'$W$', sprintf('fit: slope = %.3g', slope)}, 'Location', 'SouthEast',...
+    'Box','off', 'Interpreter','latex', 'FontSize',14);
+title('$L_2$ error ($t_2$)', 'Interpreter','latex', 'FontSize',14)
+
+
+%% Plots of the profiles 
+% with tanh forcing, problems at r=0 are much much worse, this is
+% illustrated in the following example and plots of profiles and first
+% derivatives
+
+[L, LX] = equilSol('debug',4,'residuals_fun', @residuals_LO_t2, ...
+    'jacobian_fun',@jacobian_LO_t2, 'Ns', 1, 'Nb', 10);%, 'nq', 15, 'spline_p',15, 'm', 10);
+r_ped = 0.6;
+beta_ped = 0.1;
+%betappedfun = @(r) beta_ped * (1./ cosh(8*pi*(r+r_ped)).^2-1 ./cosh(8*pi*(r-r_ped)).^2);
+betappedfun = @(r) - 4 * pi * beta_ped ./ (1+ cosh(8*pi*(r-r_ped)));
+LX.kinetic_profiles.beta = @(r) zeros(size(r)); LX.kinetic_profiles.betap = betappedfun; 
+LY = equilY(L, LX);
+
+figure;
+tiledlayout(4,1,"TileSpacing",'compact','Padding','compact')
+nexttile; hold on;
+plot(L.r_q, LY.t2_ana, 'LineWidth', 1.5);
+plot(LY.r_plt, LY.t2, 'o');
+xlabel('$\hat r$', 'FontSize',14, 'Interpreter','latex');
+ylabel('$t_2$', 'FontSize',14, 'Interpreter','latex');
+grid on;
+nexttile; hold on;
+plot(L.r_q, LY.delta_ana, 'LineWidth', 1.5);
+plot(LY.r_plt, LY.delta, 'o');
+xlabel('$\hat r$', 'FontSize',14, 'Interpreter','latex');
+ylabel('$\hat \Delta$', 'FontSize',14, 'Interpreter','latex');
+grid on;
+nexttile; hold on;
+plot(L.r_q, LY.P_ana, 'LineWidth', 1.5);
+plot(LY.r_plt, LY.P, 'o');
+xlabel('$\hat r$', 'FontSize',14, 'Interpreter','latex');
+ylabel('$\hat P$', 'FontSize',14, 'Interpreter','latex');
+grid on;
+nexttile; hold on;
+plot(L.r_q, LY.S2_ana, 'LineWidth', 1.5);
+plot(LY.r_plt, LY.S(:,1,1), 'o');
+xlabel('$\hat r$', 'FontSize',14, 'Interpreter','latex');
+ylabel('$\hat S_2$', 'FontSize',14, 'Interpreter','latex');
 grid on;
 
-nexttile;
-loglog(hvals, H1s, 'o-', 'LineWidth', 1.5); 
-hold on;
-p = polyfit(log(hvals), log(H1s), 1);
-slope = p(1);
-hfit = linspace(min(hvals), max(hvals), 100);
-L2fit = exp(polyval(p, log(hfit)));
-loglog(hfit, L2fit, '--', 'LineWidth', 1.5);
-legend('H1 error', sprintf('Fit slope = %.2f', slope), 'Location','best');
-xlabel('h'); ylabel('H1 error');
+
+%
+figure;
+tiledlayout(4,1,"TileSpacing",'compact','Padding','compact')
+nexttile; hold on;
+plot(L.r_q, LY.t2p_ana, 'LineWidth', 1.5);
+plot(L.r_q, LY.t2p, 'o');
+xlabel('$\hat r$', 'FontSize',14, 'Interpreter','latex');
+ylabel("$t_2'$", 'FontSize',14, 'Interpreter','latex');
 grid on;
-
-
-% %% Test interpolation error 
-% 
-% % --- pick a smooth exact solution ---
-% eps_val = 0.1;
-% u_exact = @(r) -r.^2 + 3*r.^4 * eps_val^2 / 32 + 113 * r.^6 * eps_val ^ 4 / 2048;
-% du_exact = @(r) -2 *r + 3*4*r.^3 * eps_val^2 / 32 + 113 * 6 * r.^5 * eps_val ^ 4 / 2048;
-% 
-% % pick several meshes for the test
-% mvals = linspace(10,100,10); 
-% L2_test = zeros(size(mvals));
-% H1_test = zeros(size(mvals));
-% 
-% for k = 1:numel(mvals)
-%     mloc = mvals(k);
-%     hloc = 1/(2*mloc);
-%     r_nodes_loc = linspace(0,1,2*mloc+1);
-% 
-%     % build nodal DOFs by sampling exact solution at vertices and midpoints
-%     Uloc = zeros(2*mloc+1,1);
-%     for ii = 1:(2*mloc+1)
-%         Uloc(ii) = u_exact(r_nodes_loc(ii));
-%     end
-%     % build phi, dphi_dr etc as you already do for each h (reuse your code)
-%     % For brevity assume phi, dphi_dr and gauss_pts, gauss_wts already match hloc:
-%     % (recompute them if needed using your symbolic setup with hloc)
-%     % Now call your error loop replacing U by Uloc (use the code you already have)
-%     % Suppose you have a function compute_errors(U, m, h, r_nodes, phi, dphi_dr, ...)
-%     % [L2_test(k), H1_test(k)] = compute_errors(Uloc, mloc, ...);
-% 
-%     % --- If you don't have the function, simply inline your loop here using Uloc ---
-%     % (Use the loop from previous messages to compute L2 and H1 with Uloc)
-%         % --- initialize accumulators ---
-%     phi = zeros(3,3);
-%     dphi_dxi = zeros(3,3);
-%     d2phi_dxi2 = zeros(3,3);
-%     for i = 1:3
-%         for q = 1:3
-%             xi_val = gauss_pts(q);
-%             phi(i,q) = double(subs(phi_sym(i), xi_sym, xi_val));
-%             dphi_dxi(i,q) = double(subs(dphi_dxi_sym(i), xi_sym, xi_val));
-%             d2phi_dxi2(i,q) = double(subs(d2phi_dxi2_sym(i), xi_sym, xi_val));
-%         end
-%     end
-%     dphi_dr = dphi_dxi / (2*hloc);
-%     d2phi_dr2 = d2phi_dxi2 / (2*hloc)^2;
-%     L2_err_sq   = 0.0;
-%     H1_sem_sq   = 0.0;
-% 
-%     % Loop over elements
-%     for e = 1:mloc
-%         % local DOF indices into U
-%         nodes = [2*e-1, 2*e, 2*e+1];     % left vertex, mid, right vertex
-%         r0 = r_nodes_loc(nodes(1));          % left node coordinate
-%         % local DOF values
-%         u_l = Uloc(nodes(1));
-%         u_m = Uloc(nodes(2));
-%         u_r = Uloc(nodes(3));
-% 
-%         % loop over quadrature points (xi in [0,1])
-%         for q = 1:3
-%             q_global = (e-1)*3 + q;     % if you have r_q precomputed
-%             rq = r0 + 2*hloc*gauss_pts(q); % physical quadrature point on this element
-% 
-%             % finite-element approximation at rq (using local DOFs)
-%             uh_q = u_l*phi(1,q) + u_m*phi(2,q) + u_r*phi(3,q);
-% 
-%             % derivative w.r.t r at rq (use your dphi_dr)
-%             duh_dr_q = u_l*dphi_dr(1,q) + u_m*dphi_dr(2,q) + u_r*dphi_dr(3,q);
-% 
-%             % exact solution at rq
-%             uex = u_exact(rq);
-%             duex = du_exact(rq);
-% 
-%             % pointwise differences
-%             diff   = uex - uh_q;
-%             diffp  = duex - duh_dr_q;
-% 
-%             % Jacobian for xi in [0,1] -> r in [r0, r0+2h] is dx/dxi = 2*h
-%             J = 2*hloc;
-% 
-%             % accumulate (using your gauss weights on [0,1])
-%             L2_err_sq = L2_err_sq + J * gauss_wts(q) * (diff^2);
-%             H1_sem_sq = H1_sem_sq + J * gauss_wts(q) * (diffp^2);
-%         end
-%     end
-%     L2_test(k) = sqrt(L2_err_sq);
-%     H1_test(k) = sqrt(H1_sem_sq);
-% end
-% 
-% disp([mvals; L2_test; H1_test]');
-% 
-% L2s = L2_test;
-% H1s = H1_test;
-% hvals = 1./(2*mvals);
+nexttile; hold on;
+plot(L.r_q, LY.deltap_ana, 'LineWidth', 1.5);
+plot(LY.r_plt, LY.deltap, 'o');
+xlabel('$\hat r$', 'FontSize',14, 'Interpreter','latex');
+ylabel("$\hat \Delta$'", 'FontSize',14, 'Interpreter','latex');
+grid on;
+nexttile; hold on;
+plot(L.r_q, LY.Pp_ana, 'LineWidth', 1.5);
+plot(LY.r_plt, LY.Pp, 'o');
+xlabel('$\hat r$', 'FontSize',14, 'Interpreter','latex');
+ylabel("$\hat P'$", 'FontSize',14, 'Interpreter','latex');
+grid on;
+nexttile; hold on;
+plot(L.r_q, interp1(LY.r_fine,LY.S2p_fine, L.r_q), 'LineWidth', 1.5);
+plot(LY.r_plt, LY.Sp(:,1,1), 'o');
+xlabel('$\hat r$', 'FontSize',14, 'Interpreter','latex');
+ylabel("$\hat S_2'$", 'FontSize',14, 'Interpreter','latex');
+grid on;
