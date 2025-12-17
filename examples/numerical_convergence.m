@@ -6,7 +6,7 @@
 % The various definitions of h (grid spacing) lead to the same results
 % 
 
-nsim = 12;
+nsim = 13;
 ms = [round(linspace(3,15,nsim))];
 L2delta = zeros(nsim,1);
 L2delta_q = zeros(nsim,1);
@@ -15,7 +15,7 @@ h_eff = zeros(nsim,1);
 for ii=1:nsim
     
     [L, LX, LY] = equilSol('debug',4,'residuals_fun', @residuals_LO, ...
-    'jacobian_fun',@jacobian_LO, 'Ns', 1, 'Nb', 10, 'm', ms(ii), 'nq', 6, 'spline_p',6);
+    'jacobian_fun',@jacobian_LO, 'Ns', 1, 'Nb', 10, 'm', ms(ii), 'nq', 12, 'spline_p',6);
     [~, ...
               ~, ~, ~,...
               ~, ~, ~, ~, ...
@@ -55,6 +55,7 @@ loglog(h_fit, L2_fit, '-', 'LineWidth',3);
 legend({'$M^t A^{-1} M$','$W$', sprintf('fit: slope = %.3g', slope)}, 'Location', 'SouthEast',...
     'Box','off', 'Interpreter','latex', 'FontSize',14);
 title('$L_2$ error (all profiles)', 'Interpreter','latex', 'FontSize',14)
+xlabel('$h$', 'Interpreter','latex', 'FontSize',14)
 
 
 %% Do t2 only
@@ -67,14 +68,14 @@ title('$L_2$ error (all profiles)', 'Interpreter','latex', 'FontSize',14)
 % changing the obtained slope).
 
 
-nsim = 15;
-ms = [round(linspace(9,39,nsim))];
+nsim = 12;
+ms = [round(linspace(9,31,nsim))];
 L2_t2_only = zeros(nsim,1);
 h_eff = zeros(nsim,1);
 for ii=1:nsim
     
-    [L, LX, LY] = equilSol('debug',4,'residuals_fun', @residuals_LO_t2, ...
-    'jacobian_fun',@jacobian_LO_t2, 'Ns', 1, 'Nb', 10, 'm', ms(ii), 'nq', 3, 'spline_p',3);
+    [L, LX, LY] = equilSol('debug',4,'residuals_fun', @residuals_LO, ...
+    'jacobian_fun',@jacobian_LO, 'Ns', 1, 'Nb', 10, 'm', ms(ii), 'nq', 6, 'spline_p',3);
     [~, ...
               ~, ~, ~,...
               ~, ~, ~, ~, ...
@@ -103,15 +104,15 @@ loglog(h_fit, L2_fit, '-', 'LineWidth',3);
 legend({'$W$', sprintf('fit: slope = %.3g', slope)}, 'Location', 'SouthEast',...
     'Box','off', 'Interpreter','latex', 'FontSize',14);
 title('$L_2$ error ($t_2$)', 'Interpreter','latex', 'FontSize',14)
-
+xlabel('$h$', 'Interpreter','latex', 'FontSize',14)
 
 %% Plots of the profiles 
 % with tanh forcing, problems at r=0 are much much worse, this is
 % illustrated in the following example and plots of profiles and first
 % derivatives
 
-[L, LX] = equilSol('debug',4,'residuals_fun', @residuals_LO_t2, ...
-    'jacobian_fun',@jacobian_LO_t2, 'Ns', 1, 'Nb', 10);%, 'nq', 15, 'spline_p',15, 'm', 10);
+[L, LX] = equilSol('debug',4,'residuals_fun', @residuals_LO, ...
+    'jacobian_fun',@jacobian_LO, 'Ns', 1, 'Nb', 10);%, 'nq', 15, 'spline_p',15, 'm', 10);
 r_ped = 0.6;
 beta_ped = 0.1;
 %betappedfun = @(r) beta_ped * (1./ cosh(8*pi*(r+r_ped)).^2-1 ./cosh(8*pi*(r-r_ped)).^2);
