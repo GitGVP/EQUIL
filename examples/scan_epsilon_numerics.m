@@ -21,7 +21,7 @@ eps_max = 0.4;
 % converged in m
 
 outerloop_pname = 'Ns';             % parameter name to pass to equilSol
-outerloop_pvals = [3 5 10]; % was [3 5 10] numeric vector of values
+outerloop_pvals = [3];%[3 5 10]; % was [3 5 10] numeric vector of values
 outerloop_legend_name = 'N_S';  % string used in legend (LaTeX)
 
 %outerloop_pname = 'Nb';             % parameter name to pass to equilSol
@@ -256,6 +256,51 @@ plot_profile_panel(L.r_q, interp1(LY.r_fine, LY.S2_1_fine, L.r_q, 'spline'), S2_
 axis(ax,'tight'); set(ax,'LooseInset',get(ax,'TightInset'));
 
 
+
+figure;
+t = tiledlayout(1,2,'TileSpacing','compact','Padding','none');
+ax = nexttile(1);
+
+h1 = plot_error_panel_2(L20error_all, values_eps, 0.02, cmap, col_inds, ...
+    {'o'}, '$\hat\Delta_0$');
+hold on;
+h2 = plot_error_panel_2(L2error_all .* values_eps, values_eps, 0.02, cmap, col_inds, ...
+    {'square'}, '$\hat\Delta_0+\epsilon\hat\Delta_1$');
+
+
+legend([h1 h2], 'Interpreter','latex', ...
+       'FontSize',14, 'Box','off');
+
+title('$\|\hat\Delta_{\mathrm{num}}-\hat\Delta_{\mathrm{ana}}\|_{L^2}$', ...
+      'Interpreter','latex','FontSize',14);
+xlabel('$\epsilon$', 'Interpreter', 'latex','FontSize',14)
+
+axis(ax,'tight');
+set(ax,'LooseInset',get(ax,'TightInset'));
+ylim([8e-5 3.35])
+xlim([1e-3 max(values_eps)])
+ax = nexttile(2);
+
+h1 = plot_error_panel_2(L2S2error_all, values_eps, 0.02, cmap, col_inds, ...
+    {'o'}, '$\hat S_{2,0}$');
+hold on;
+h2 = plot_error_panel_2(L2S2_1_error_all .* values_eps, values_eps, 0.02, cmap, col_inds, ...
+    {'square'},  '$\hat S_{2,0}+\epsilon\hat S_{2,1}$');
+hold on;
+plot([0.164578 0.164578], [1e-4 1e2], '--', 'Color', 'r')
+legend([h1 h2], 'Interpreter','latex', ...
+       'FontSize',14, 'Box','off');
+
+
+title('$\|\hat S_{2,\mathrm{num}}-\hat S_{2,\mathrm{ana}}\|_{L^2}$', ...
+      'Interpreter','latex','FontSize',14);
+
+xlabel('$\epsilon$', 'Interpreter', 'latex','FontSize',14)
+
+axis(ax,'tight');
+set(ax,'LooseInset',get(ax,'TightInset'));
+ylim([2e-5 0.535])
+xlim([1e-3 max(values_eps)])
 
 
 %% both plots in one for paper

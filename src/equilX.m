@@ -55,6 +55,11 @@ function LX = equilX(L)
           Ahpfun = @(r) zeros(size(r));
           LX.kinetic_profiles = struct('beta', betafun,'betap', betapfun,...
               'Ah',Ahfun, 'Ahp',Ahpfun, 'Bc', Bcfun, 'Bcp',Bcpfun);
+      case 'runaways'
+          gammafun = @(r) L.P.gamma0*(1-r.^2);
+          gammapfun = @(r) -2*L.P.gamma0*r;
+          LX.kinetic_profiles = struct('beta', betafun,'betap', betapfun,...
+              'gamma',gammafun, 'gammap',gammapfun);
       otherwise
           fprintf('Equation of state not implemented!\n')
   end

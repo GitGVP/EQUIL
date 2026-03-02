@@ -71,6 +71,7 @@ xlabel('$h$', 'Interpreter','latex', 'FontSize',14)
 nsim = 12;
 ms = [round(linspace(9,31,nsim))];
 L2_t2_only = zeros(nsim,1);
+H1_t2_only = zeros(nsim,1);
 h_eff = zeros(nsim,1);
 for ii=1:nsim
     
@@ -83,8 +84,9 @@ for ii=1:nsim
               ML2, ML2_q] = ... % for L2 error computation
               assemble_FE_matrices_bspline(L.r_nodes, L.P.Nb, L.P.Ns, L.P.nq, L.P.spline_p);
     err_t2 = LY.t2(2:end)-LY.t2_ana;
-    err_delta = LY.delta(2:end)-LY.delta_ana;
+    err_t2p = LY.t2p-LY.t2p_ana;
     L2_t2_only(ii) = sqrt(err_t2.' * ML2 * err_t2);
+    H1_t2_only(ii) = sqrt(err_t2p.' * ML2_q * err_t2p);    
     %h_eff(ii) = 1/ numel(L.r_q);
     %h_eff(ii) = max(diff(L.r_q)); % use max difference, does not change anything from above
     R = reshape(L.r_q, L.P.nq, [])';           % m x nq
@@ -105,6 +107,35 @@ legend({'$W$', sprintf('fit: slope = %.3g', slope)}, 'Location', 'SouthEast',...
     'Box','off', 'Interpreter','latex', 'FontSize',14);
 title('$L_2$ error ($t_2$)', 'Interpreter','latex', 'FontSize',14)
 xlabel('$h$', 'Interpreter','latex', 'FontSize',14)
+
+
+figure;
+tiledlayout(1,2,"TileSpacing","compact","Padding","compact")
+nexttile;
+
+p = polyfit(log(h_eff(:)), log(L2_t2_only(:)), 1);
+slope = p(1);
+h_fit = linspace(min(h_eff), max(h_eff), 200);
+L2_fit = exp(polyval(p, log(h_fit)));
+loglog(h_fit, L2_fit, '-', 'LineWidth',3);
+grid on; hold on;
+loglog(h_eff, L2_t2_only, 'o', 'LineWidth',3,'k');
+legend({sprintf('fit: slope = %.3g', slope)}, ...
+    'Location','SouthEast','Box','off','Interpreter','latex','FontSize',14);
+title('$\|t_2 - t_{2,h}\|_{L^2}$', 'Interpreter','latex','FontSize',14)
+xlabel('$h$', 'Interpreter','latex','FontSize',14)
+nexttile;
+p = polyfit(log(h_eff(:)), log(H1_t2_only(:)), 1);
+slope = p(1);
+h_fit = linspace(min(h_eff), max(h_eff), 200);
+H1_fit = exp(polyval(p, log(h_fit)));
+loglog(h_fit, H1_fit, '-', 'LineWidth',3);
+grid on; hold on;
+loglog(h_eff, H1_t2_only, 'o', 'LineWidth',3,'k');
+legend({sprintf('fit: slope = %.3g', slope)}, ...
+    'Location','SouthEast','Box','off','Interpreter','latex','FontSize',14);
+title('$|t_2 - t_{2,h}|_{H^1}$', 'Interpreter','latex','FontSize',14)
+xlabel('$h$', 'Interpreter','latex','FontSize',14)
 
 %% Plots of the profiles 
 % with tanh forcing, problems at r=0 are much much worse, this is
@@ -175,3 +206,96 @@ plot(LY.r_plt, LY.Sp(:,1,1), 'o');
 xlabel('$\hat r$', 'FontSize',14, 'Interpreter','latex');
 ylabel("$\hat S_2'$", 'FontSize',14, 'Interpreter','latex');
 grid on;
+
+
+
+% p-refinement
+nsim = 12;
+
+spline_ps = 3:5;
+nP = numel(spline_ps);
+
+% m-grid allowed to depend on p
+ms = repmat(round(linspace(9,31,nsim)).',1,nP);
+%ms(:,2) = ms(:,2) - 2;
+%ms(:,3) = ms(:,3) - 4; 
+%ms(:,4) = ms(:,4) - 6;
+
+ms(:,2) = linspace(7,18,12);
+ms(:,3) = linspace(7,18,12);
+%ms(:,4) = linspace(5,16,12);
+
+% number of last points to discard for each p
+% (can be tuned later; same length as spline_ps)
+n_skip_tail = [0 0 0];   % example
+
+L2_t2_only = zeros(nsim,nP);
+h_eff      = zeros(nsim,nP);
+slopes     = zeros(nP,1);
+
+figure; hold on; grid on;
+set(gca,'XScale','log','YScale','log');
+
+fit_handles = gobjects(nP,1);
+
+for ip = 1:nP
+    
+    spline_p = spline_ps(ip);
+    nq = 2*spline_p+1;
+    
+    for ii = 1:nsim
+        
+        [L, LX, LY] = equilSol( ...
+            'debug',4, ...
+            'residuals_fun', @residuals_LO, ...
+            'jacobian_fun',  @jacobian_LO, ...
+            'Ns',1,'Nb',10, ...
+            'm', ms(ii,ip), ...
+            'nq', nq, ...
+            'spline_p', spline_p);
+        
+        [~,~,~,~,~,~,~,~,~,~,~,~,ML2,~] = ...
+            assemble_FE_matrices_bspline( ...
+                L.r_nodes, L.P.Nb, L.P.Ns, L.P.nq, L.P.spline_p);
+        
+        err_t2 = LY.t2(2:end) - LY.t2_ana;
+        L2_t2_only(ii,ip) = sqrt(err_t2.' * ML2 * err_t2);
+        
+        % effective mesh size (geometric mean element length)
+        R = reshape(L.r_q, L.P.nq, [])';     % m x nq
+        elem_len = max(R,[],2) - min(R,[],2);
+        h_eff(ii,ip) = exp(mean(log(elem_len)));
+    end
+    
+    % indices to keep
+    n_keep = nsim - n_skip_tail(ip);
+    idx = 1:n_keep;
+    
+    % fit using only retained points
+    pfit = polyfit(log(h_eff(idx,ip)), log(L2_t2_only(idx,ip)), 1);
+    slopes(ip) = pfit(1);
+    
+    h_fit  = linspace(min(h_eff(idx,ip)), max(h_eff(idx,ip)), 200);
+    L2_fit = exp(polyval(pfit, log(h_fit)));
+    
+    % plot retained data only (no legend entry)
+    h_data = loglog(h_eff(idx,ip), L2_t2_only(idx,ip), 'o', 'LineWidth',2);
+    h_data.Annotation.LegendInformation.IconDisplayStyle = 'off';
+    
+    % plot fit
+    fit_handles(ip) = loglog(h_fit, L2_fit, '-', ...
+        'LineWidth',2, 'Color', h_data.Color);
+end
+
+% legend: fits only
+leg = cell(nP,1);
+for ip = 1:nP
+    leg{ip} = sprintf('$p=%d$, slope = %.3g', spline_ps(ip), slopes(ip));
+end
+
+legend(fit_handles, leg, ...
+    'Location','SouthEast', ...
+    'Interpreter','latex','FontSize',13,'Box','off');
+
+title('$L_2$ error ($t_2$)', 'Interpreter','latex','FontSize',14);
+xlabel('$h$', 'Interpreter','latex','FontSize',14);

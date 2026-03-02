@@ -57,7 +57,7 @@ function plot_error_panel(err_all, values_eps, outerloop_pvals, cmap, col_inds, 
         labels{k} = sprintf('$%s=%g,\\ \\mathrm{slope}=%.2f$', outerloop_legend_name, outerloop_pvals(k), slope_k);
     end
     
-        if skip_count > 0
+        if skip_count > 0 && false
         % x-bounds of excluded region
         x_fill = [min(values_eps), max(values_eps(1+skip_count:end))];
         % y-bounds: full vertical axis
@@ -67,7 +67,7 @@ function plot_error_panel(err_all, values_eps, outerloop_pvals, cmap, col_inds, 
               [yl(1) yl(1) yl(2) yl(2)], ...
               'k', 'FaceAlpha', 0.05, 'EdgeColor', 'none');
         set(gca, 'YLim', ylim_old);  
-    end
+        end
     uistack(findobj(gca,'Type','patch'),'bottom'); % send patch behind data
     legend(h, labels, 'Interpreter', 'latex', 'FontSize', 10, 'Location', 'southeast', 'Box', 'off');
     

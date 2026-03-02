@@ -40,12 +40,12 @@ function scan_eps_from_equilibrium(L0,LX0,LY0,varargin)
     t2_ana = LY0.t2_ana;
     t2p_ana = LY0.t2p_ana;
     
-    t2_num(1,:)    = LY0.t2(2:end);
-    t2p_num(1,:)    = LY0.t2p;
-    delta_num(1,:)  = LY0.delta(2:end);
-    delta1_num(1,:) = (LY0.delta(2:end) - delta0_ana) / LX0.eps_val;
-    S2_num(1,:)  = squeeze(LY0.S(2:end,1,1));
-    S2_1_num(1,:)   = (squeeze(LY0.S(2:end,1,1)) - S2_0_ana) / LX0.eps_val;
+    t2_num(1,:)    = LY0.t2(2:end-1);
+    t2p_num(1,:)    = LY0.t2p(2:end-1);
+    delta_num(1,:)  = LY0.delta(2:end-1);
+    delta1_num(1,:) = (LY0.delta(2:end-1) - delta0_ana) / LX0.eps_val;
+    S2_num(1,:)  = squeeze(LY0.S(2:end-1,1,1));
+    S2_1_num(1,:)   = (squeeze(LY0.S(2:end-1,1,1)) - S2_0_ana) / LX0.eps_val;
 
     L2error_all(1)      = norm(delta1_ana - delta1_num(1,:).');
     L20error_all(1)     = norm(delta0_ana - delta_num(1,:).');
@@ -54,7 +54,7 @@ function scan_eps_from_equilibrium(L0,LX0,LY0,varargin)
     L2S2_1_error_all(1) = norm(S2_1_ana - S2_1_num(1,:).');
     H1_error_all(1) = norm(t2p_ana - t2_num(1,:).');
      
-    deltap_num(1,:) = LY0.deltap(2:end);
+    deltap_num(1,:) = LY0.deltap(2:end-1);
     
     % set previous LY for warm-start in next iterations
     LY_prev = LY0;
@@ -72,13 +72,13 @@ function scan_eps_from_equilibrium(L0,LX0,LY0,varargin)
         LY_prev = LY;
     
         % store results at index ii+1
-        delta_num(ii+1,:)  = LY.delta(2:end);
-        delta1_num(ii+1,:) = (LY.delta(2:end) - delta0_ana) / LX.eps_val;
-        t2_num(ii+1,:)    = LY.t2(2:end);
-        t2p_num(ii+1,:)    = LY.t2p;
-        S2_num(ii+1,:)  = squeeze(LY.S(2:end,1,1));
-        deltap_num(ii+1,:) = LY.deltap(2:end);
-        S2_1_num(ii+1,:) = (squeeze(LY.S(2:end,1,1))- S2_0_ana) / LX.eps_val;
+        delta_num(ii+1,:)  = LY.delta(2:end-1);
+        delta1_num(ii+1,:) = (LY.delta(2:end-1) - delta0_ana) / LX.eps_val;
+        t2_num(ii+1,:)    = LY.t2(2:end-1);
+        t2p_num(ii+1,:)    = LY.t2p(2:end-1);
+        S2_num(ii+1,:)  = squeeze(LY.S(2:end-1,1,1));
+        deltap_num(ii+1,:) = LY.deltap(2:end-1);
+        S2_1_num(ii+1,:) = (squeeze(LY.S(2:end-1,1,1))- S2_0_ana) / LX.eps_val;
 
         L2error_all(1,ii+1)      = norm(delta1_ana - delta1_num(ii+1,:).');
         L20error_all(1,ii+1)     = norm(delta0_ana - delta_num(ii+1,:).');
@@ -140,6 +140,28 @@ function scan_eps_from_equilibrium(L0,LX0,LY0,varargin)
     axis(ax,'tight');
     set(ax,'LooseInset',get(ax,'TightInset')); % removes extra padding
     ax = nexttile(3);
+    plot_error_panel(L2error_all, values_eps, 0, cmap, col_inds, {'o'}, '$L^2_{\Delta_1}$ error', outerloop_legend_name, 4);
+    axis(ax,'tight');
+    set(ax,'LooseInset',get(ax,'TightInset')); % removes extra padding
+
+    ax = nexttile(2);
+    plot_profile_panel(L0.r_q, delta0_ana, delta_num, cmap, col_inds, '$\Delta_0$ profiles', '$\hat\Delta_0$');
+    axis(ax,'tight'); set(ax,'LooseInset',get(ax,'TightInset'));
+    
+    ax = nexttile(4);
+    plot_profile_panel(L0.r_q,S2_1_ana, S2_1_num, cmap, col_inds, '$\hat S_{2,1}$ profiles', '$\hat S_{2,1}$')
+    axis(ax,'tight'); set(ax,'LooseInset',get(ax,'TightInset'));
+
+
+    %% shift LO and NLO
+
+    figure(); 
+    t = tiledlayout(2,2,'TileSpacing','compact','Padding','none'); % minimal spacing
+    ax = nexttile(1);
+    plot_error_panel(L20error_all, values_eps, 0, cmap, col_inds, {'o'}, '$L^{2}_{\Delta_0}$ error', outerloop_legend_name, 4);
+    axis(ax,'tight');
+    set(ax,'LooseInset',get(ax,'TightInset')); % removes extra padding
+    ax = nexttile(3);
     plot_error_panel(L2S2_1_error_all, values_eps, 0, cmap, col_inds, {'o'}, '$L^2_{S_{2,1}}$ error', outerloop_legend_name, 5);
     axis(ax,'tight');
     set(ax,'LooseInset',get(ax,'TightInset')); % removes extra padding
@@ -151,6 +173,8 @@ function scan_eps_from_equilibrium(L0,LX0,LY0,varargin)
     ax = nexttile(4);
     plot_profile_panel(L0.r_q,S2_1_ana, S2_1_num, cmap, col_inds, '$\hat S_{2,1}$ profiles', '$\hat S_{2,1}$')
     axis(ax,'tight'); set(ax,'LooseInset',get(ax,'TightInset'));
+
+
 
     % 
 
@@ -227,7 +251,7 @@ function scan_eps_from_equilibrium(L0,LX0,LY0,varargin)
     % %cb.Label.String = '$\epsilon$';
     % cb.Ticks = linspace(0,1,5);
     % cb.TickLabels = arrayfun(@(x) sprintf('%.3f', 10^(min(log_eps)+(max(log_eps)-min(log_eps))*x)), cb.Ticks, 'UniformOutput', false);
-end
+ end
 
 
 

@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    126363,       3474]
-NotebookOptionsPosition[    121188,       3379]
-NotebookOutlinePosition[    121584,       3395]
-CellTagsIndexPosition[    121541,       3392]
+NotebookDataLength[    140627,       3709]
+NotebookOptionsPosition[    135211,       3610]
+NotebookOutlinePosition[    135607,       3626]
+CellTagsIndexPosition[    135564,       3623]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -893,7 +893,7 @@ Cell[BoxData[{
      ",", " ", 
      RowBox[{"{", 
       RowBox[{
-       RowBox[{"grt", "[", 
+       RowBox[{"gr\[Theta]", "[", 
         RowBox[{"r", ",", " ", "\[Omega]"}], "]"}], ",", " ", 
        RowBox[{"g\[Theta]\[Theta]", "[", 
         RowBox[{"r", ",", " ", "\[Omega]"}], "]"}], ",", " ", "0"}], "}"}], 
@@ -950,8 +950,9 @@ Cell[BoxData[{
    RowBox[{"ContrToCov", "[", 
     RowBox[{"JU", "[", 
      RowBox[{"r", ",", "\[Omega]"}], "]"}], "]"}]}], ";"}]}], "Input",
- CellChangeTimes->{{3.97133559050776*^9, 3.971335590713417*^9}},
- CellLabel->"In[12]:=",ExpressionUUID->"1669b912-4412-4811-8d31-cad03f986bc4"],
+ CellChangeTimes->{{3.97133559050776*^9, 3.971335590713417*^9}, 
+   3.9791068007485113`*^9},
+ CellLabel->"In[53]:=",ExpressionUUID->"1669b912-4412-4811-8d31-cad03f986bc4"],
 
 Cell[BoxData[{
  RowBox[{
@@ -1549,7 +1550,7 @@ Cell[BoxData[{
   3.971338224515427*^9}, {3.9713385945237217`*^9, 3.9713386051730824`*^9}, {
   3.9713400347200747`*^9, 3.971340046334489*^9}, {3.972623160479051*^9, 
   3.9726232053683853`*^9}},
- CellLabel->"In[46]:=",ExpressionUUID->"1a521b0c-a064-4ce2-bdea-d9ff726d162c"],
+ CellLabel->"In[87]:=",ExpressionUUID->"1a521b0c-a064-4ce2-bdea-d9ff726d162c"],
 
 Cell[BoxData["\[IndentingNewLine]"], "Input",
  CellChangeTimes->{{3.9713355306272717`*^9, 
@@ -2162,6 +2163,236 @@ Cell[BoxData[
     RowBox[{"r", ",", "BB", ",", "RR"}], "]"}]}], "BB"]], "Output",
  CellChangeTimes->{{3.972029962976383*^9, 3.972029970910782*^9}},
  CellLabel->"Out[59]=",ExpressionUUID->"572af984-5bce-40e6-a4e4-f394839f2703"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\"\<LY.jphi = RR.*\>\"", "<>", 
+  RowBox[{"ToMatlab", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"JU", "[", 
+      RowBox[{"r", ",", "\[Omega]"}], "]"}], "[", 
+     RowBox[{"[", "3", "]"}], "]"}], "/.", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"R", "[", 
+       RowBox[{"r", ",", "\[Omega]"}], "]"}], "->", "RR"}], "}"}]}], "]"}], "<>",
+   " ", "\"\<;\>\""}]], "Input",
+ CellChangeTimes->{{3.9791062157437963`*^9, 3.9791063115457067`*^9}, {
+  3.979106432792862*^9, 3.979106450362668*^9}, {3.979106814645651*^9, 
+  3.979106815043907*^9}},
+ CellLabel->"In[89]:=",ExpressionUUID->"3f023f4b-97a4-4500-835a-5f60c0cd449a"],
+
+Cell[BoxData["\<\"LY.jphi = RR.*((LX.eps_val.^2.*(1 - \
+dbetapardB0.*LX.eps_val.^2 + \
+LX.eps_val.^2.*t2).*((LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).^2 + (-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).^2))./(LX.qfun(L.r_q).*RR.*((LX.eps_val.^3.*P_hat.*cos(L.\
+omega) + LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + \
+ms).*cos((-1 + ms).*L.omega).*S,3)).*(-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*Sp,3)) - \
+(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - LX.eps_val.*L.r_q.*sin(L.omega) + \
+LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 + \
+ms).*L.omega)),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3)))) - (LX.eps_val.^2.*qp.*L.r_q.*(1 - \
+dbetapardB0.*LX.eps_val.^2 + \
+LX.eps_val.^2.*t2).*((LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).^2 + (-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).^2))./(LX.qfun(L.r_q).^2.*RR.*((LX.eps_val.^3.*P_hat.*\
+cos(L.omega) + LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + \
+ms).*cos((-1 + ms).*L.omega).*S,3)).*(-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*Sp,3)) - \
+(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - LX.eps_val.*L.r_q.*sin(L.omega) + \
+LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 + \
+ms).*L.omega)),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3)))) + \
+(LX.eps_val.^4.*L.r_q.*t2p.*((LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).^2 + (-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).^2))./(LX.qfun(L.r_q).*RR.*((LX.eps_val.^3.*P_hat.*cos(L.\
+omega) + LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + \
+ms).*cos((-1 + ms).*L.omega).*S,3)).*(-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*Sp,3)) - \
+(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - LX.eps_val.*L.r_q.*sin(L.omega) + \
+LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 + \
+ms).*L.omega)),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3)))) - (LX.eps_val.^2.*L.r_q.*(1 - \
+dbetapardB0.*LX.eps_val.^2 + \
+LX.eps_val.^2.*t2).*((LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).^2 + (-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).^2).*(-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + \
+ms).*L.omega).*Sp,3)))./(LX.qfun(L.r_q).*RR.^2.*((LX.eps_val.^3.*P_hat.*cos(L.\
+omega) + LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + \
+ms).*cos((-1 + ms).*L.omega).*S,3)).*(-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*Sp,3)) - \
+(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - LX.eps_val.*L.r_q.*sin(L.omega) + \
+LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 + \
+ms).*L.omega)),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3)))) + (LX.eps_val.^2.*L.r_q.*(1 - \
+dbetapardB0.*LX.eps_val.^2 + \
+LX.eps_val.^2.*t2).*(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).*((-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).*(-(deltap.*LX.eps_val.^2) + LX.eps_val.*cos(L.omega) + \
+LX.eps_val.^3.*Pp.*cos(L.omega) + LX.eps_val.^2.*sum(cos((-1 + \
+ms).*L.omega).*Sp,3)) + (LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3))))./(LX.qfun(L.r_q).*RR.^2.*((LX.eps_val.^3.*P_hat.*cos(\
+L.omega) + LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + \
+ms).*cos((-1 + ms).*L.omega).*S,3)).*(-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*Sp,3)) - \
+(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - LX.eps_val.*L.r_q.*sin(L.omega) + \
+LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 + \
+ms).*L.omega)),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3)))) + (LX.eps_val.^2.*L.r_q.*(1 - \
+dbetapardB0.*LX.eps_val.^2 + \
+LX.eps_val.^2.*t2).*((-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).*(-(deltap.*LX.eps_val.^2) + LX.eps_val.*cos(L.omega) + \
+LX.eps_val.^3.*Pp.*cos(L.omega) + LX.eps_val.^2.*sum(cos((-1 + \
+ms).*L.omega).*Sp,3)) + (LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3))).*((-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) - LX.eps_val.^2.*sum(-((-1 + \
+ms).^2.*S.*sin((-1 + ms).*L.omega)),3)).*(-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*Sp,3)) - \
+(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - LX.eps_val.*L.r_q.*sin(L.omega) + \
+LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 + \
+ms).*L.omega)),3)).*(LX.eps_val.*cos(L.omega) + \
+LX.eps_val.^3.*Pp.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*Sp,3)) - (-(LX.eps_val.^3.*P_hat.*cos(L.omega)) - \
+LX.eps_val.*L.r_q.*cos(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).^2.*cos((-1 \
++ ms).*L.omega).*S),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3)) + (LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).*(-(LX.eps_val.*sin(L.omega)) - \
+LX.eps_val.^3.*Pp.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*sin((-1 + \
+ms).*L.omega).*Sp),3))))./(LX.qfun(L.r_q).*RR.*((LX.eps_val.^3.*P_hat.*cos(L.\
+omega) + LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + \
+ms).*cos((-1 + ms).*L.omega).*S,3)).*(-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*Sp,3)) - \
+(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - LX.eps_val.*L.r_q.*sin(L.omega) + \
+LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 + \
+ms).*L.omega)),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3))).^2) - (LX.eps_val.^2.*L.r_q.*(1 - \
+dbetapardB0.*LX.eps_val.^2 + \
+LX.eps_val.^2.*t2).*((-(LX.eps_val.^3.*P_hat.*cos(L.omega)) - \
+LX.eps_val.*L.r_q.*cos(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).^2.*cos((-1 \
++ ms).*L.omega).*S),3)).*(-(deltap.*LX.eps_val.^2) + LX.eps_val.*cos(L.omega) \
++ LX.eps_val.^3.*Pp.*cos(L.omega) + LX.eps_val.^2.*sum(cos((-1 + \
+ms).*L.omega).*Sp,3)) + (LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).*(LX.eps_val.*cos(L.omega) + \
+LX.eps_val.^3.*Pp.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*Sp,3)) + (-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) - LX.eps_val.^2.*sum(-((-1 + \
+ms).^2.*S.*sin((-1 + ms).*L.omega)),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3)) + (-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).*(-(LX.eps_val.*sin(L.omega)) - \
+LX.eps_val.^3.*Pp.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*sin((-1 + \
+ms).*L.omega).*Sp),3))))./(LX.qfun(L.r_q).*RR.*((LX.eps_val.^3.*P_hat.*cos(L.\
+omega) + LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + \
+ms).*cos((-1 + ms).*L.omega).*S,3)).*(-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*Sp,3)) - \
+(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - LX.eps_val.*L.r_q.*sin(L.omega) + \
+LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 + \
+ms).*L.omega)),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3)))) + (LX.eps_val.^2.*L.r_q.*(1 - \
+dbetapardB0.*LX.eps_val.^2 + \
+LX.eps_val.^2.*t2).*(2.*(LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).*(LX.eps_val.*cos(L.omega) + \
+LX.eps_val.^3.*Pp.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*Sp,3)) + 2.*(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).*(-(LX.eps_val.*sin(L.omega)) - \
+LX.eps_val.^3.*Pp.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*sin((-1 + \
+ms).*L.omega).*Sp),3))))./(LX.qfun(L.r_q).*RR.*((LX.eps_val.^3.*P_hat.*cos(L.\
+omega) + LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + \
+ms).*cos((-1 + ms).*L.omega).*S,3)).*(-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*Sp,3)) - \
+(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - LX.eps_val.*L.r_q.*sin(L.omega) + \
+LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 + \
+ms).*L.omega)),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3)))) - (LX.eps_val.^2.*L.r_q.*(1 - \
+dbetapardB0.*LX.eps_val.^2 + \
+LX.eps_val.^2.*t2).*((LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).^2 + (-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).^2).*((-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*Sp,3)).*(LX.eps_val.*cos(L.omega) \
++ LX.eps_val.^3.*Pp.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*Sp,3)) - (LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3)).*(-(LX.eps_val.*sin(L.omega)) - \
+LX.eps_val.^3.*Pp.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*sin((-1 + \
+ms).*L.omega).*Sp),3)) + (LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).*(-(deltapp.*LX.eps_val.^2) + \
+LX.eps_val.^3.*Ppp.*cos(L.omega) + LX.eps_val.^2.*sum(cos((-1 + \
+ms).*L.omega).*Spp,3)) - (-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).*(LX.eps_val.^3.*Ppp.*sin(L.omega) - \
+LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Spp,3))))./(LX.qfun(L.r_q).*RR.*((LX.eps_val.^3.*P_hat.*cos(L.\
+omega) + LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + \
+ms).*cos((-1 + ms).*L.omega).*S,3)).*(-(deltap.*LX.eps_val.^2) + \
+LX.eps_val.*cos(L.omega) + LX.eps_val.^3.*Pp.*cos(L.omega) + \
+LX.eps_val.^2.*sum(cos((-1 + ms).*L.omega).*Sp,3)) - \
+(-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - LX.eps_val.*L.r_q.*sin(L.omega) + \
+LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 + \
+ms).*L.omega)),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3))).^2))./(RR.*((LX.eps_val.^3.*P_hat.*cos(L.omega) + \
+LX.eps_val.*L.r_q.*cos(L.omega) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + \
+ms).*L.omega).*S,3)).*(-(deltap.*LX.eps_val.^2) + LX.eps_val.*cos(L.omega) + \
+LX.eps_val.^3.*Pp.*cos(L.omega) + LX.eps_val.^2.*sum(cos((-1 + \
+ms).*L.omega).*Sp,3)) - (-(LX.eps_val.^3.*P_hat.*sin(L.omega)) - \
+LX.eps_val.*L.r_q.*sin(L.omega) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 \
++ ms).*L.omega)),3)).*(LX.eps_val.*sin(L.omega) + \
+LX.eps_val.^3.*Pp.*sin(L.omega) - LX.eps_val.^2.*sum(sin((-1 + \
+ms).*L.omega).*Sp,3))));\"\>"], "Output",
+ CellChangeTimes->{{3.9791064253698874`*^9, 3.9791064438422527`*^9}, 
+   3.979106489688624*^9, 3.9791068160913067`*^9},
+ CellLabel->"Out[89]=",ExpressionUUID->"a0cf9bf5-4864-47d0-a513-a475fac5b3ca"]
 }, Open  ]]
 }, Open  ]],
 
@@ -3395,85 +3626,89 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[558, 20, 11189, 330, 678, "Input",ExpressionUUID->"351e620b-68ac-428f-84a3-0bb272c71f7a"],
-Cell[11750, 352, 18936, 601, 1173, "Input",ExpressionUUID->"1669b912-4412-4811-8d31-cad03f986bc4"],
-Cell[30689, 955, 24566, 596, 1305, "Input",ExpressionUUID->"1a521b0c-a064-4ce2-bdea-d9ff726d162c"],
-Cell[55258, 1553, 175, 3, 51, "Input",ExpressionUUID->"eeead2fe-a8da-4b5b-894d-16ed6512b430"],
+Cell[11750, 352, 18971, 602, 1173, "Input",ExpressionUUID->"1669b912-4412-4811-8d31-cad03f986bc4"],
+Cell[30724, 956, 24566, 596, 1361, "Input",ExpressionUUID->"1a521b0c-a064-4ce2-bdea-d9ff726d162c"],
+Cell[55293, 1554, 175, 3, 51, "Input",ExpressionUUID->"eeead2fe-a8da-4b5b-894d-16ed6512b430"],
 Cell[CellGroupData[{
-Cell[55458, 1560, 176, 3, 45, "Subsubsection",ExpressionUUID->"231cf88f-6a46-414a-8cb5-8e2d24ffeafa"],
-Cell[55637, 1565, 495, 14, 33, "Input",ExpressionUUID->"7676b868-efd4-45fb-b9a9-1fb3ba7bbbf4"],
+Cell[55493, 1561, 176, 3, 45, "Subsubsection",ExpressionUUID->"231cf88f-6a46-414a-8cb5-8e2d24ffeafa"],
+Cell[55672, 1566, 495, 14, 33, "Input",ExpressionUUID->"7676b868-efd4-45fb-b9a9-1fb3ba7bbbf4"],
 Cell[CellGroupData[{
-Cell[56157, 1583, 647, 18, 45, "Input",ExpressionUUID->"8d8cb827-4319-4e6e-8c3e-0ab43c1fa8bb"],
-Cell[56807, 1603, 797, 12, 99, "Output",ExpressionUUID->"d726451b-f922-4396-9dd8-9b2dc21740b3"]
+Cell[56192, 1584, 647, 18, 45, "Input",ExpressionUUID->"8d8cb827-4319-4e6e-8c3e-0ab43c1fa8bb"],
+Cell[56842, 1604, 797, 12, 99, "Output",ExpressionUUID->"d726451b-f922-4396-9dd8-9b2dc21740b3"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[57641, 1620, 767, 19, 51, "Input",ExpressionUUID->"7d2af8d1-5398-4aca-94a0-ed77042cddf4"],
-Cell[58411, 1641, 370, 5, 36, "Output",ExpressionUUID->"c7ebb46c-d996-4660-8670-c49a24c07206"]
+Cell[57676, 1621, 767, 19, 51, "Input",ExpressionUUID->"7d2af8d1-5398-4aca-94a0-ed77042cddf4"],
+Cell[58446, 1642, 370, 5, 36, "Output",ExpressionUUID->"c7ebb46c-d996-4660-8670-c49a24c07206"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[58818, 1651, 755, 19, 47, "Input",ExpressionUUID->"92dd9fdf-7ced-4d4b-a862-a4d187acd7d4"],
-Cell[59576, 1672, 701, 10, 99, "Output",ExpressionUUID->"040dc446-d684-45e2-922c-fea69a9233df"]
+Cell[58853, 1652, 755, 19, 47, "Input",ExpressionUUID->"92dd9fdf-7ced-4d4b-a862-a4d187acd7d4"],
+Cell[59611, 1673, 701, 10, 99, "Output",ExpressionUUID->"040dc446-d684-45e2-922c-fea69a9233df"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[60314, 1687, 1683, 42, 92, "Input",ExpressionUUID->"5d5b01ce-dda4-42a9-8848-b962bf755f47"],
-Cell[62000, 1731, 1194, 16, 142, "Output",ExpressionUUID->"11cec5a1-f99d-45ae-842d-fa5ae9780768"],
-Cell[63197, 1749, 1215, 17, 142, "Output",ExpressionUUID->"45ae4081-cedc-4009-b01d-b2b8aa9b4a60"]
+Cell[60349, 1688, 1683, 42, 92, "Input",ExpressionUUID->"5d5b01ce-dda4-42a9-8848-b962bf755f47"],
+Cell[62035, 1732, 1194, 16, 142, "Output",ExpressionUUID->"11cec5a1-f99d-45ae-842d-fa5ae9780768"],
+Cell[63232, 1750, 1215, 17, 142, "Output",ExpressionUUID->"45ae4081-cedc-4009-b01d-b2b8aa9b4a60"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[64449, 1771, 466, 12, 32, "Input",ExpressionUUID->"56974603-d9dd-4d4f-9d05-ad13165676f7"],
-Cell[64918, 1785, 1059, 14, 142, "Output",ExpressionUUID->"e1d4c409-7e55-440e-929a-998c371fd870"]
+Cell[64484, 1772, 466, 12, 32, "Input",ExpressionUUID->"56974603-d9dd-4d4f-9d05-ad13165676f7"],
+Cell[64953, 1786, 1059, 14, 142, "Output",ExpressionUUID->"e1d4c409-7e55-440e-929a-998c371fd870"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[66014, 1804, 341, 8, 32, "Input",ExpressionUUID->"16174a94-9b3e-4d57-887f-2d873827cc23"],
-Cell[66358, 1814, 314, 4, 36, "Output",ExpressionUUID->"e574cc34-97ca-457f-887d-9f4e16ef2f03"]
+Cell[66049, 1805, 341, 8, 32, "Input",ExpressionUUID->"16174a94-9b3e-4d57-887f-2d873827cc23"],
+Cell[66393, 1815, 314, 4, 36, "Output",ExpressionUUID->"e574cc34-97ca-457f-887d-9f4e16ef2f03"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[66709, 1823, 768, 21, 33, "Input",ExpressionUUID->"534e87d6-809b-4c6f-b0f2-81d2d0a484cb"],
-Cell[67480, 1846, 1101, 16, 142, "Output",ExpressionUUID->"bf18f070-0b9d-4aee-9b4c-6076c89be434"]
+Cell[66744, 1824, 768, 21, 33, "Input",ExpressionUUID->"534e87d6-809b-4c6f-b0f2-81d2d0a484cb"],
+Cell[67515, 1847, 1101, 16, 142, "Output",ExpressionUUID->"bf18f070-0b9d-4aee-9b4c-6076c89be434"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[68618, 1867, 589, 18, 29, "Input",ExpressionUUID->"a0bc83b8-6b39-4994-97a0-143e12aeb1de"],
-Cell[69210, 1887, 8745, 242, 213, "Output",ExpressionUUID->"cc8aa044-b4e6-4e88-8af4-8aca9229a331"]
+Cell[68653, 1868, 589, 18, 29, "Input",ExpressionUUID->"a0bc83b8-6b39-4994-97a0-143e12aeb1de"],
+Cell[69245, 1888, 8745, 242, 213, "Output",ExpressionUUID->"cc8aa044-b4e6-4e88-8af4-8aca9229a331"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[77992, 2134, 497, 14, 29, "Input",ExpressionUUID->"28963b9d-9251-4129-beb4-3464ea824918"],
-Cell[78492, 2150, 476, 13, 52, "Output",ExpressionUUID->"572af984-5bce-40e6-a4e4-f394839f2703"]
+Cell[78027, 2135, 497, 14, 29, "Input",ExpressionUUID->"28963b9d-9251-4129-beb4-3464ea824918"],
+Cell[78527, 2151, 476, 13, 52, "Output",ExpressionUUID->"572af984-5bce-40e6-a4e4-f394839f2703"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[79040, 2169, 647, 16, 32, "Input",ExpressionUUID->"3f023f4b-97a4-4500-835a-5f60c0cd449a"],
+Cell[79690, 2187, 13301, 207, 1757, "Output",ExpressionUUID->"a0cf9bf5-4864-47d0-a513-a475fac5b3ca"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[79017, 2169, 161, 3, 45, "Subsubsection",ExpressionUUID->"6c5d9f85-6508-49c0-b8d7-7cc42685ff22"],
-Cell[79181, 2174, 245, 8, 35, "Text",ExpressionUUID->"c68908a4-e4f6-4b87-9540-7b5c5adcc411"],
-Cell[79429, 2184, 11856, 321, 233, "Input",ExpressionUUID->"09c90510-22dc-4e7f-95c1-4f2d10e9be27"],
+Cell[93040, 2400, 161, 3, 45, "Subsubsection",ExpressionUUID->"6c5d9f85-6508-49c0-b8d7-7cc42685ff22"],
+Cell[93204, 2405, 245, 8, 35, "Text",ExpressionUUID->"c68908a4-e4f6-4b87-9540-7b5c5adcc411"],
+Cell[93452, 2415, 11856, 321, 233, "Input",ExpressionUUID->"09c90510-22dc-4e7f-95c1-4f2d10e9be27"],
 Cell[CellGroupData[{
-Cell[91310, 2509, 1177, 33, 33, "Input",ExpressionUUID->"df7973df-4265-4cf1-9c41-716a9e0eb865"],
-Cell[92490, 2544, 1016, 16, 121, "Output",ExpressionUUID->"303ab60c-989b-4494-9218-ae533166da0b"]
+Cell[105333, 2740, 1177, 33, 33, "Input",ExpressionUUID->"df7973df-4265-4cf1-9c41-716a9e0eb865"],
+Cell[106513, 2775, 1016, 16, 121, "Output",ExpressionUUID->"303ab60c-989b-4494-9218-ae533166da0b"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[93543, 2565, 903, 24, 33, "Input",ExpressionUUID->"1b8e942c-b1c2-4ec3-bba3-6fee3825b937"],
-Cell[94449, 2591, 840, 13, 99, "Output",ExpressionUUID->"2d939504-19bd-4713-bf2e-bd5236a01a84"]
+Cell[107566, 2796, 903, 24, 33, "Input",ExpressionUUID->"1b8e942c-b1c2-4ec3-bba3-6fee3825b937"],
+Cell[108472, 2822, 840, 13, 99, "Output",ExpressionUUID->"2d939504-19bd-4713-bf2e-bd5236a01a84"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[95326, 2609, 995, 27, 33, "Input",ExpressionUUID->"190f57ae-01fc-40c3-92e4-584a55019a1b"],
-Cell[96324, 2638, 586, 8, 78, "Output",ExpressionUUID->"d9152549-a664-496c-9aa2-b456afd4c302"]
+Cell[109349, 2840, 995, 27, 33, "Input",ExpressionUUID->"190f57ae-01fc-40c3-92e4-584a55019a1b"],
+Cell[110347, 2869, 586, 8, 78, "Output",ExpressionUUID->"d9152549-a664-496c-9aa2-b456afd4c302"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[96947, 2651, 426, 12, 32, "Input",ExpressionUUID->"1bb995d4-d7fd-40ed-9e71-f08ef2c52a2e"],
-Cell[97376, 2665, 193, 2, 33, "Output",ExpressionUUID->"b073a9fe-d232-4669-985b-e373c0626d3e"]
+Cell[110970, 2882, 426, 12, 32, "Input",ExpressionUUID->"1bb995d4-d7fd-40ed-9e71-f08ef2c52a2e"],
+Cell[111399, 2896, 193, 2, 33, "Output",ExpressionUUID->"b073a9fe-d232-4669-985b-e373c0626d3e"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[97606, 2672, 686, 20, 33, "Input",ExpressionUUID->"ab5f2cce-d1f4-491d-9f9a-265998886ede"],
-Cell[98295, 2694, 5894, 166, 102, "Output",ExpressionUUID->"87f0951f-a092-42ef-ab86-3c377001624c"]
+Cell[111629, 2903, 686, 20, 33, "Input",ExpressionUUID->"ab5f2cce-d1f4-491d-9f9a-265998886ede"],
+Cell[112318, 2925, 5894, 166, 102, "Output",ExpressionUUID->"87f0951f-a092-42ef-ab86-3c377001624c"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[104226, 2865, 874, 26, 51, "Input",ExpressionUUID->"9a33bdab-34e7-4728-89fe-267dd3fe0a0b"],
-Cell[105103, 2893, 5941, 167, 102, "Output",ExpressionUUID->"77562793-d45c-49a4-b26f-975b38fe0274"]
+Cell[118249, 3096, 874, 26, 51, "Input",ExpressionUUID->"9a33bdab-34e7-4728-89fe-267dd3fe0a0b"],
+Cell[119126, 3124, 5941, 167, 102, "Output",ExpressionUUID->"77562793-d45c-49a4-b26f-975b38fe0274"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[111081, 3065, 3116, 95, 107, "Input",ExpressionUUID->"befadea1-15d0-4bd5-bdbc-c7d331c3cd2b"],
-Cell[114200, 3162, 1121, 32, 61, "Output",ExpressionUUID->"f7f8c366-4c0c-4ec3-93ef-e578ac4868ec"]
+Cell[125104, 3296, 3116, 95, 107, "Input",ExpressionUUID->"befadea1-15d0-4bd5-bdbc-c7d331c3cd2b"],
+Cell[128223, 3393, 1121, 32, 61, "Output",ExpressionUUID->"f7f8c366-4c0c-4ec3-93ef-e578ac4868ec"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[115358, 3199, 2299, 71, 91, "Input",ExpressionUUID->"5aa810ca-181d-4633-a601-89c22ddbf513"],
-Cell[117660, 3272, 3500, 103, 79, "Output",ExpressionUUID->"8e075b08-b715-49ea-ab1c-91b7b41e8fe4"]
+Cell[129381, 3430, 2299, 71, 91, "Input",ExpressionUUID->"5aa810ca-181d-4633-a601-89c22ddbf513"],
+Cell[131683, 3503, 3500, 103, 79, "Output",ExpressionUUID->"8e075b08-b715-49ea-ab1c-91b7b41e8fe4"]
 }, Open  ]]
 }, Open  ]]
 }

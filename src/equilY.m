@@ -96,6 +96,28 @@ function LY = equilY(L, LX)
   else
       x = LX.x;
   end
+
+  if L.P.debug > 10
+    figure;
+    tl = tiledlayout(3,1,'TileSpacing','compact','Padding','compact');
+    ax1 = nexttile(1);
+    hold on;grid on;
+    ylabel('$t_2$', 'Interpreter','latex', 'FontSize',14)
+    ax2 = nexttile(2);
+    hold on;grid on;
+    ylabel('$\hat \Delta$', 'Interpreter','latex', 'FontSize',14)
+    ax3 = nexttile(3);
+    hold on;grid on;
+    xlabel('$\hat r$', 'Interpreter','latex', 'FontSize',14)
+    ylabel('$\hat S_2$', 'Interpreter','latex', 'FontSize',14)
+    plot(ax1, L.r_q, L.P0*x(1:size(L.P0,2)),'k--','LineWidth',3,...
+        'DisplayName', sprintf('$k=%i$',0))
+    plot(ax2, L.r_q, L.P0*x(size(L.P0,2)+1: 2*size(L.P0,2)),'k--','LineWidth',3,...
+        'DisplayName', sprintf('$k=%i$',0))
+    plot(ax3, L.r_q, L.P0*[x(size(L.P0,2)*(3+L.P.Nb)+1: size(L.P0,2)*(3+L.P.Nb+1)-1); LX.Sbc(1)],'k--','LineWidth',3,...
+        'DisplayName', sprintf('$k=%i$',0))
+    drawnow;
+  end
   res_norms = [];LY.isconverged = false;
   % Newton iterations
   for k = 1:L.P.nk
@@ -142,12 +164,21 @@ function LY = equilY(L, LX)
     if L.P.debug > 1
       fprintf('Iter %d, eps %.1e, |res| = %.4e, |Δx| = %.3e\n', ...
               k, LX.eps_val, res_norm, norm(update));
+      if L.P.debug > 10
+            plot(ax1, L.r_q, L.P0*x(1:size(L.P0,2)), 'DisplayName', sprintf('$k=%i$',k))
+            plot(ax2, L.r_q, L.P0*x(size(L.P0,2)+1: 2*size(L.P0,2)), 'DisplayName', sprintf('$k=%i$',k))
+            plot(ax3, L.r_q, L.P0*[x(size(L.P0,2)*(3+L.P.Nb)+1: size(L.P0,2)*(3+L.P.Nb+1)-1); LX.Sbc(1)],'DisplayName', sprintf('$k=%i$',k))
+            drawnow;
+      end
     end
     % Break if converged
     if res_norm < 5e-14
         LY.isconverged = true;
       break;
     end
+  end
+  if L.P.debug > 10
+    legend('Interpreter','latex','Box','off');
   end
   LY.x = x;
   LY.res_norms = res_norms;
