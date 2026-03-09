@@ -393,14 +393,21 @@ ms).*LY.omega_plt).*Sp,3));
       , LY.JoverR .* RR, true); % to be multiplied by R0^3 * P0
   LY.Wp = 2*pi*equil_2D_integral(LY.BBp2, r_plt, LY.omega_plt...
       , LY.JoverR .* RR, false); % to be multiplied by R0^3 * B0^2 /2 /mu0
+
+  
   
   % Surface Integrals
   LY.Ip = equil_2D_integral(LY.jphi, r_plt, LY.omega_plt...
       , LY.JoverR, false); % to be multiplied by R0 * B0 /mu0
-
+  
+  LY.Ft =  equil_2D_integral(sqrt(LY.BBt2), r_plt, LY.omega_plt...
+      , LY.JoverR, true); % to be multiplied by R0^2 * B0
+  LY.Ft0 = equil_2D_integral(1./RR, r_plt, LY.omega_plt...
+      , LY.JoverR, true); % to be multiplied by R0^2 * B0
 
   %% SFL part
   LY.theta_SFL = LX.eps_val^(-2) * cumtrapz(LY.omega_plt, LY.JoverR ./RR,2) ./ r_plt;
+  LY.theta_SFL(1,:) = LY.omega_plt;
   [LY.RR_sfl, LY.ZZ_sfl] = regrid_to_SFL(RR, ZZ, LY.theta_SFL, r_plt, LY.omega_plt);
 
   % ---- Package results ----
@@ -432,13 +439,18 @@ function [R_sfl, Z_sfl] = regrid_to_SFL(RR, ZZ, theta_SFL, r_plt, omega_plt)
     Ntheta = numel(omega_plt);
     theta_uniform = linspace(0, 2*pi, Ntheta);
 
-    R_sfl = ones(Nr, Ntheta);   % row 1 = magnetic axis
+    R_sfl = ones(Nr, Ntheta);
     Z_sfl = zeros(Nr, Ntheta);
 
     for i = 2 : Nr
         th_ext = [theta_SFL(i,end)-2*pi, theta_SFL(i,:), theta_SFL(i,1)+2*pi];
         R_ext  = [RR(i,end),             RR(i,:),        RR(i,1)];
         Z_ext  = [ZZ(i,end),             ZZ(i,:),        ZZ(i,1)];
+
+        [th_ext, idx] = unique(th_ext);
+        R_ext = R_ext(idx);
+        Z_ext = Z_ext(idx);
+
         R_sfl(i,:) = interp1(th_ext, R_ext, theta_uniform, 'spline');
         Z_sfl(i,:) = interp1(th_ext, Z_ext, theta_uniform, 'spline');
     end
