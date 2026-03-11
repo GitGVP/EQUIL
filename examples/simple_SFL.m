@@ -1,5 +1,5 @@
 %% Simple circular case comparing theta_SFL grid vs. omega grid for (R,Z)
-[L, LX] = equilSol('debug',4, 'Nb', 1);
+[L, LX] = equilSol('debug',4, 'Nb', 1, 'do_SFL', true);
 LX.Sbc = zeros(L.P.Ns,1); LX.S2bc = 0; LX.S3bc = 0; 
 LY =equilY(L, LX);
 
@@ -29,7 +29,7 @@ axis equal;
 
 
 figure;
-tiledlayout(1,2,"TileSpacing","tight","Padding","tight")
+tiledlayout(1,3,"TileSpacing","tight","Padding","tight")
 nexttile;
 contourf(LY.RR, LY.ZZ, LY.N_SFL)
 axis equal;
@@ -44,7 +44,13 @@ xlabel('$R/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
 ylabel('$Z/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
 colorbar;
 title('$M=g_{r\vartheta}/J_\vartheta$', 'Interpreter', 'latex', 'Fontsize',18)
-
+nexttile;
+contourf(LY.RR, LY.ZZ, LY.L_SFL.*LY.r_plt)
+axis equal;
+xlabel('$R/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
+ylabel('$Z/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
+colorbar;
+title('$\hat rL=\hat rg_{rr}/J_\vartheta$', 'Interpreter', 'latex', 'Fontsize',18)
 
 figure;
 contourf(LY.RR, LY.ZZ, LY.N_ana)

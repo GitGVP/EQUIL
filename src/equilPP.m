@@ -421,6 +421,7 @@ ms).*LY.omega_plt).*Sp,3));
       , LY.JoverR, true); % to be multiplied by R0^2 * B0
 
   %% SFL part
+  if L.P.do_SFL
   LY.theta_SFL = LX.eps_val^(-2) * cumtrapz(LY.omega_plt, LY.JoverR ./RR,2) ./ r_plt;
   LY.theta_SFL(1,:) = LY.omega_plt;
   [LY.RR_sfl, LY.ZZ_sfl] = regrid_to_SFL(RR, ZZ, LY.theta_SFL, r_plt, LY.omega_plt);
@@ -473,6 +474,10 @@ ms).*LY.omega_plt).*Spp,3))))./(r_plt.^2.*RR.^2),2);
 
 
   LY.M_SFL = grt./J_SFL;
+  grr = LX.eps_val.^2.*((-(deltap.*LX.eps_val) + cos(LY.omega_plt) + LX.eps_val.^2.*Pp.*cos(LY.omega_plt) + LX.eps_val.*sum(cos((-1 + ms).*LY.omega_plt).*Sp,3)).^2 + (sin(LY.omega_plt) + LX.eps_val.^2.*Pp.*sin(LY.omega_plt) - LX.eps_val.*sum(sin((-1 + ms).*LY.omega_plt).*Sp,3)).^2);
+  grr_SFL = grr + 2*gro.^2 ./ goo + grt.^2 ./ gtt;
+  LY.L_SFL = grr_SFL ./ J_SFL;
+
   % analytical result, Daniele Eq.(5.25)
   LY.N_ana = LX.eps_val * r_plt .* (1 + 2 * LX.eps_val * deltap .* cos(LY.theta_SFL) + ...
       LX.eps_val^2 * deltap.^2 /2 + (3/4) * LX.eps_val^2 .* r_plt.^2 + LX.eps_val^2 * delta + ...
@@ -500,7 +505,7 @@ cos(LY.omega_plt).*sum(sin((-1 + ms).*LY.omega_plt).*Sp,3))) + ...
 12.*cos(LY.omega_plt).*sum(cos((-1 + ...
 ms).*LY.omega_plt).*Sp,3).*(deltap.*cos(LY.omega_plt) + ...
 sin(LY.omega_plt).*sum(sin((-1 + ms).*LY.omega_plt).*Sp,3))))./2.))./r_plt;
-
+  end
   % ---- Package results ----
   LY.r_plt = r_plt;
   LY.t2 = t2;
