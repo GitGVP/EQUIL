@@ -1,23 +1,17 @@
 function LY = equilY(L, LX)
   r_fine = linspace(0,1,0.5*1e4); 
   r_fine = r_fine(2:end);
-  if true %isequal(L.P.residuals_fun, @residuals_rotation) || isequal(L.P.residuals_fun, @residuals_vec)
-      [dbetapardB0, dbetapardr, dbetapardB, dbetapardR, d2betapardB2, ...
-    d2betapardrdB, d2betapardRdB, d2betapardrdR, d2betapardR2, d3betapardrdB2, ...
-    d3betapardB3, d3betapardBdR2, d3betapardB2dR, d3betapardrdRdB, d3betapardrdR2, betapar, ...
-    betaperp] = L.P.equation_of_state(LX.kinetic_profiles,r_fine.',ones(numel(r_fine), numel(L.omega)),ones(numel(r_fine), numel(L.omega)));
-      dbetapardr = mean(dbetapardr,2).';
-      d2betapardrdB = mean(d2betapardrdB,2).';
-      d3betapardrdB2 = mean(d3betapardrdB2,2).';
-      d3betapardrdRdB = mean(d3betapardrdRdB,2).';
-      d2betapardrdR = mean(d2betapardrdR,2).';
-      d3betapardrdR2 = mean(d3betapardrdR2,2).';
-  else
-      [dbetapardr, ~, ~, d2betapardrdB] = L.P.equation_of_state(LX.betafun(r_fine.'),LX.betapfun(r_fine.'),...
-        LX.Ahfun(r_fine.'),LX.Ahpfun(r_fine.'),ones(numel(r_fine), numel(L.omega)),zeros(numel(r_fine), numel(L.omega)));
-      dbetapardr = mean(dbetapardr,2).';
-      d2betapardrdB = mean(d2betapardrdB,2).';
-  end
+  [dbetapardB0, dbetapardr, dbetapardB, dbetapardR, d2betapardB2, ...
+d2betapardrdB, d2betapardRdB, d2betapardrdR, d2betapardR2, d3betapardrdB2, ...
+d3betapardB3, d3betapardBdR2, d3betapardB2dR, d3betapardrdRdB, d3betapardrdR2, betapar, ...
+betaperp] = L.P.equation_of_state(LX.kinetic_profiles,r_fine.',ones(numel(r_fine), numel(L.omega)),ones(numel(r_fine), numel(L.omega)));
+  dbetapardr = mean(dbetapardr,2).';
+  d2betapardrdB = mean(d2betapardrdB,2).';
+  d3betapardrdB2 = mean(d3betapardrdB2,2).';
+  d3betapardrdRdB = mean(d3betapardrdRdB,2).';
+  d2betapardrdR = mean(d2betapardrdR,2).';
+  d3betapardrdR2 = mean(d3betapardrdR2,2).';
+
   % made anisotropic
   LY.t2p_fine = - 2 * r_fine ./ LX.qfun(r_fine) .^ 2 + r_fine .^ 2 .* LX.qpfun(r_fine) ./ LX.qfun(r_fine) .^ 3 - dbetapardr;
   LY.t2_fine =  cumtrapz(r_fine, LY.t2p_fine);

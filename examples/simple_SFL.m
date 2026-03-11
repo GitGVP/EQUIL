@@ -1,8 +1,7 @@
 %% Simple circular case comparing theta_SFL grid vs. omega grid for (R,Z)
-
-[L, LX] = equilSol('debug',4);
+[L, LX] = equilSol('debug',4, 'Nb', 1);
 LX.Sbc = zeros(L.P.Ns,1); LX.S2bc = 0; LX.S3bc = 0; 
-LY = equilY(L, LX);
+LY =equilY(L, LX);
 
 figure;
 tiledlayout(1,2,"TileSpacing","tight","Padding","tight")
@@ -27,3 +26,43 @@ end
 title('$\hat r =$ const, $\omega =$ const', 'Interpreter', 'latex', 'Fontsize',14)
 xlabel('$R/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
 axis equal;
+
+
+figure;
+tiledlayout(1,2,"TileSpacing","tight","Padding","tight")
+nexttile;
+contourf(LY.RR, LY.ZZ, LY.N_SFL)
+axis equal;
+xlabel('$R/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
+ylabel('$Z/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
+colorbar;
+title('$N=g_{\vartheta\vartheta}/J_\vartheta$', 'Interpreter', 'latex', 'Fontsize',18)
+nexttile;
+contourf(LY.RR, LY.ZZ, LY.M_SFL)
+axis equal;
+xlabel('$R/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
+ylabel('$Z/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
+colorbar;
+title('$M=g_{r\vartheta}/J_\vartheta$', 'Interpreter', 'latex', 'Fontsize',18)
+
+
+figure;
+contourf(LY.RR, LY.ZZ, LY.N_ana)
+axis equal;
+xlabel('$R/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
+ylabel('$Z/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
+colorbar;
+title('$N=g_{\vartheta\vartheta}/J_\vartheta$ (analytical)', 'Interpreter', 'latex', 'Fontsize',18)
+
+
+figure;
+contourf(LY.RR, LY.ZZ, LY.N_ana2)
+axis equal;
+xlabel('$R/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
+ylabel('$Z/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
+colorbar;
+title('second $N=g_{\vartheta\vartheta}/J_\vartheta$ (analytical)', 'Interpreter', 'latex', 'Fontsize',18)
+
+
+
+
