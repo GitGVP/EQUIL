@@ -17,7 +17,6 @@ end
 
 function P = equilP(varargin)
  % default parameters
- P.hot_restart = false;
  P.m = 15; 
  P.nq = 10; % adapt to p for B-spline
  P.spline_p = P.nq; % might be a bit risky to set like this
@@ -64,6 +63,9 @@ function L = equilL(P)
 
   L.dof_count = L.profile_lengths(1);   % first profile block size (2*m normally)
   L.Nq        = numel(L.r_q);          % number of quadrature points per profile
+  
+  [lu_L, lu_U, lu_P, lu_Q] = lu(L.A_global);
+  L.lu = struct('L', lu_L, 'U', lu_U, 'P', lu_P, 'Q', lu_Q);
   L.P = P;
 end
 

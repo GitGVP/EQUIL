@@ -3,11 +3,9 @@ function LX = equilX(L)
   LX.eps_val = 0.3;
 
   LX.Sbc = zeros(L.P.Ns,1);
-  LX.S2bc = -1;
-  LX.Sbc(1) = LX.S2bc;
-  LX.S3bc = 0.3;
+  LX.Sbc(1) = -1;
   if L.P.Ns >1
-    LX.Sbc(2) = LX.S3bc;
+    LX.Sbc(2) = 0.3;
   end
   % %% Add a pedestal:
   r_ped = 0.6;
@@ -63,4 +61,5 @@ function LX = equilX(L)
       otherwise
           fprintf('Equation of state not implemented!\n')
   end
+  LX.x = equil_x0(L, LX);
 end

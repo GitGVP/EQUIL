@@ -21,7 +21,7 @@ colorbar();
 % Scan in aspect ratio and compare to asymptotic expansion
 
 % First rerun just to compute the Next to Leading Order elongation
-LX.x = LY.x;L.P.do_shift_NLO = true;L.P.hot_restart=true;
+LX.x = LY.x;L.P.do_shift_NLO = true;
 LY = equilY(L, LX);
 scan_eps_from_equilibrium(L,LX,LY,20)
 % 3 plots: 

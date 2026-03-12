@@ -24,8 +24,8 @@ betaperp] = L.P.equation_of_state(LX.kinetic_profiles,r_fine.',ones(numel(r_fine
   LY.deltap_ana = interp1(r_fine, LY.deltap_fine, L.r_q, 'spline');
 
 
-  [LY.S2_fine, LY.S2p_fine] = solve_S_eq(r_fine, LX.S2bc,LX.qfun,LX.qpfun, 2);
-  [LY.S3_fine, LY.S3p_fine] = solve_S_eq(r_fine, LX.S3bc,LX.qfun,LX.qpfun, 3);
+  [LY.S2_fine, LY.S2p_fine] = solve_S_eq(r_fine, LX.Sbc(1),LX.qfun,LX.qpfun, 2);
+  [LY.S3_fine, LY.S3p_fine] = solve_S_eq(r_fine, LX.Sbc(2),LX.qfun,LX.qpfun, 3);
   LY.P_fine = -r_fine.^3/8 + LY.S2_fine .^2 ./ (2* r_fine) - r_fine .* LY.delta_fine / 2;  % todo: add other shaping
   LY.Pp_fine = -3*r_fine.^2/8 + 2 * LY.S2_fine .* LY.S2p_fine  ./ (2* r_fine) - LY.S2_fine.^2 ./ (2* r_fine.^2) -  LY.delta_fine / 2 - r_fine .* LY.deltap_fine / 2;
   LY.S2_ana = interp1(r_fine, LY.S2_fine, L.r_q, 'spline');
@@ -46,51 +46,9 @@ betaperp] = L.P.equation_of_state(LX.kinetic_profiles,r_fine.',ones(numel(r_fine
   end
   LY.r_fine = r_fine;
   LY.B1_ana =  - L.r_q;
-  
-  profiles_q = zeros(L.Nq * (3 + L.P.Nb + L.P.Ns), 1);
 
-  % Calculate segment sizes
-  base_offset = 0;
-
-  % Assign base variables (t2, delta, P)
-  profiles_q(base_offset + (1:L.Nq)) = LY.t2_ana;
-  base_offset = base_offset + L.Nq;
-  profiles_q(base_offset + (1:L.Nq)) = LY.delta_ana;
-  base_offset = base_offset + L.Nq;
-  profiles_q(base_offset + (1:L.Nq)) = LY.P_ana;
-  base_offset = base_offset + L.Nq;
-
-  % Assign B1
-  profiles_q(base_offset + (1:L.Nq)) = 0;%LY.B1_ana;
-  base_offset = base_offset + L.Nq;
-
-  % Remaining B coefficients (B2 through B_Nb) are already zeros from preallocation
-  base_offset = base_offset + (L.P.Nb - 1) * L.Nq;
-
-  % Assign S coefficients
-  profiles_q(base_offset + (1:L.Nq)) = LY.S2_ana;
-  base_offset = base_offset + L.Nq;
-
-  if L.P.Ns >= 2
-    profiles_q(base_offset + (1:L.Nq)) = LY.S3_ana;
-    base_offset = base_offset + L.Nq;
-    
-    if L.P.Ns > 2
-        for i = 3:L.P.Ns
-            profiles_q(base_offset + (1:L.Nq)) = LX.Sbc(i) * L.r_q.^(i-1);
-            base_offset = base_offset + L.Nq;
-        end
-    end
-  end
-
-  if not(L.P.hot_restart)
-    % testing 0 for all profiles besides shaping
-    profiles_q(1:(3+L.P.Nb)*L.Nq) = 0;
-    x = profiles_to_x(profiles_q, L.A_global, L.M_profiles, L.P0_end, L.P.Nb, LX.Sbc, L.profile_lengths, L.Nq);
-  else
-      x = LX.x;
-  end
-
+  % Initial state
+  x = LX.x;
   if L.P.debug > 10
     figure;
     tl = tiledlayout(3,1,'TileSpacing','compact','Padding','compact');

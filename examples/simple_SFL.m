@@ -1,8 +1,8 @@
 %% Simple circular case comparing theta_SFL grid vs. omega grid for (R,Z)
 [L, LX] = equilSol('debug',4, 'Nb', 1, 'do_SFL', true);
-LX.Sbc = zeros(L.P.Ns,1); LX.S2bc = 0; LX.S3bc = 0; 
-LY =equilY(L, LX);
-
+LX.Sbc = zeros(L.P.Ns, 1);
+LX.x = equil_x0(L, LX);
+LY = equilY(L, LX);
 figure;
 tiledlayout(1,2,"TileSpacing","tight","Padding","tight")
 nexttile;hold on;
@@ -68,7 +68,3 @@ xlabel('$R/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
 ylabel('$Z/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
 colorbar;
 title('second $N=g_{\vartheta\vartheta}/J_\vartheta$ (analytical)', 'Interpreter', 'latex', 'Fontsize',18)
-
-
-
-
