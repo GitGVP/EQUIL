@@ -68,7 +68,13 @@ ms).*L.omega).*Sp,3));
   LY.Wk_test = 2*pi*trapz(L.r_q, 2*pi*mean((betapar + betaperp)/2 .* JoverR .* RR,2));  % to be multiplied by R0^3 * P0
   %LY.Ip_test = trapz(L.r_q, 2*pi*mean(jphi.* JoverR .* RR,2)); % to be multiplied by R0 * B0 /mu0
   LY.bp_liu = 8 * pi * Intp / Intphi^2;
+  BBt = (1 - dbetapardB0.*LX.eps_val.^2 + LX.eps_val.^2.*t2)./(RR - (dbetapardB.*LX.eps_val.^2.*RR)./(1 + LX.eps_val.*sum(Bs.*cos(mb.*L.omega),3)));
 
+
+
+
+  LY.Ft_test = trapz(L.r_q, 2*pi*mean((BBt - 1./RR).* JoverR, 2)); % to be multiplied by R0^2 * B0
+  LY.Ft0_test = trapz(L.r_q, 2*pi*mean(1./RR.* JoverR, 2)); % to be multiplied by R0^2 * B0
   % rotation, anisotropic ones
   LY.wrot_liu = 8 * pi * Introt / Intphi^2;
   LY.bppar_liu = 8 * pi * Intppar / Intphi^2;
@@ -419,6 +425,11 @@ ms).*LY.omega_plt).*Sp,3));
       , LY.JoverR, true); % to be multiplied by R0^2 * B0
   LY.Ft0 = equil_2D_integral(1./RR, r_plt, LY.omega_plt...
       , LY.JoverR, true); % to be multiplied by R0^2 * B0
+
+
+  % rhotor 
+  toroidal_flux =  2*pi*mean(sqrt(LY.BBt2).* LY.JoverR, 2); % to be multiplied by R0^2 * B0
+  LY.rhotor = sqrt(toroidal_flux/toroidal_flux(end)); 
 
   %% SFL part
   if L.P.do_SFL
