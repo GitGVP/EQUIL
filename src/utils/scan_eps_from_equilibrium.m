@@ -58,9 +58,9 @@ function scan_eps_from_equilibrium(L0,LX0,LY0,varargin)
     
     % set previous LY for warm-start in next iterations
     LY_prev = LY0;
-    LX = LX0; L = L0; L.P.hot_restart = true; L.P.do_shift_NLO = false;                     
+    LX = LX0; L = L0; L.P.do_ana = false; L.P.do_shift_NLO = false;                     
     for ii = 1:nsim-1
-        eps_val = values_eps(end-ii);    % like original script: decreasing eps
+        eps_val = values_eps(end-ii);
         LX.eps_val = eps_val;
         LX.x = LY_prev.x;                % warm start from previous result
         % run solver

@@ -61,5 +61,4 @@ function LX = equilX(L)
       otherwise
           fprintf('Equation of state not implemented!\n')
   end
-  LX.x = equil_x0(L, LX);
 end

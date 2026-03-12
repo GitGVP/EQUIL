@@ -23,9 +23,11 @@ colorbar();
 % First rerun just to compute the Next to Leading Order elongation
 LX.x = LY.x;L.P.do_shift_NLO = true;
 LY = equilY(L, LX);
-scan_eps_from_equilibrium(L,LX,LY,20)
+scan_eps_from_equilibrium(L,LX,LY,10)
 % 3 plots: 
 % 1. convergence rates for shift, diamagnetism and elongation
 % 2. Profiles (colors for each simulation), with expansion prediction (black)
 % and pink is LO + max_eps * NLO prediction
 % 3. Only shift and and NLO elongation.
+
+%! TODO: re-update these aspect ratio scans helper scripts/plots

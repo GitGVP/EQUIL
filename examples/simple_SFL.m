@@ -1,7 +1,6 @@
 %% Simple circular case comparing theta_SFL grid vs. omega grid for (R,Z)
 [L, LX] = equilSol('debug',4, 'Nb', 1, 'do_SFL', true);
 LX.Sbc = zeros(L.P.Ns, 1);
-LX.x = equil_x0(L, LX);
 LY = equilY(L, LX);
 figure;
 tiledlayout(1,2,"TileSpacing","tight","Padding","tight")
