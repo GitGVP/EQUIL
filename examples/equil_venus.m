@@ -6,10 +6,10 @@ q0 = 0.7795296521664806;
 q1 = 2.9639395354123486;
 s0 = 2 * (q1/q0 -1);
 
-Sbc = [-0.35 0.06, 0];
+Sbc = [-0.35 0.14, 0];
 eps_val = 0.32;
 [L, LX] = equilSol('debug',4, 'Nb', 1, 'q0', q0,'s0' , s0, ...
-    'beta',0.425, 'om_pts', 299, 'do_SFL',true);
+    'beta',0.445, 'om_pts', 300, 'do_SFL',true);
 
 LX.eps_val = eps_val;LX.Sbc=Sbc;
 
@@ -27,8 +27,8 @@ for betas = [L.P.beta]
     beta_fit  = @(rr) reshape(    bsxfun(@power, rr(:), ord_b)   * cb.',          size(rr));
     betap_fit = @(rr) reshape(    bsxfun(@power, rr(:), ord_b-1) * (ord_b.*cb).', size(rr));
 
-    LX.kinetic_profiles.beta  = @(rr) reshape(interp1(L.r_q, beta_fit(L.r_q),  rr(:), 'pchip', 'extrap'), size(rr));
-    LX.kinetic_profiles.betap = @(rr) reshape(interp1(L.r_q, betap_fit(L.r_q), rr(:), 'pchip', 'extrap'), size(rr));
+    LX.kinetic_profiles.beta  = beta_fit;
+    LX.kinetic_profiles.betap = betap_fit;
     LX.x = LY.x;
     LY = equilY(L,LX);
 end
