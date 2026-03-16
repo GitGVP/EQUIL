@@ -5,22 +5,35 @@
 q0 = 0.7795296521664806;
 q1 = 2.9639395354123486;
 s0 = 2 * (q1/q0 -1);
+
+eps_val = 0.0975; Sbc = [-1.2 0.4 0];
 [L, LX] = equilSol('debug',4, 'Nb', 1, 'q0', q0,'s0' , s0, ...
-    'beta',1, 'om_pts', 299);
+    'beta',1, 'om_pts', 299, 'do_SFL',true);
 
-% steeper q profile
-LX.qfun = @(r) L.P.q0*(1+0.5*L.P.s0*r.^4);
-LX.qpfun = @(r) L.P.q0*(0.5*4*L.P.s0*r.^3);
-LX.q_vec = LX.qfun(L.r_q);LX.qp_vec = LX.qpfun(L.r_q);
-LX.eps_val = 0.1;
+LX.eps_val = eps_val;LX.Sbc=Sbc;
 
-LX.Sbc=zeros(numel(LX.Sbc),1);
-LX.S2bc=0; LX.S3bc=0;
 
 LY =equilY(L, LX);
 
+% increase beta
+for betas = [3 4.6 4.6 4.6]
+    L.P.beta = betas;
+    LX = equilX(L);
+    LX.eps_val = eps_val;LX.Sbc=Sbc;
+    beta_interp = L.P.beta * (1 - LY.psiN);
+    ord_b = 0:2:14;
+    cb = (bsxfun(@power, L.r_q(:), ord_b) \ beta_interp(:)).';     % 1xK
+    beta_fit  = @(rr) reshape(    bsxfun(@power, rr(:), ord_b)   * cb.',          size(rr));
+    betap_fit = @(rr) reshape(    bsxfun(@power, rr(:), ord_b-1) * (ord_b.*cb).', size(rr));
+
+    LX.kinetic_profiles.beta  = @(rr) reshape(interp1(L.r_q, beta_fit(L.r_q),  rr(:), 'pchip', 'extrap'), size(rr));
+    LX.kinetic_profiles.betap = @(rr) reshape(interp1(L.r_q, betap_fit(L.r_q), rr(:), 'pchip', 'extrap'), size(rr));
+    LX.x = LY.x;
+    LY = equilY(L,LX);
+end
 filename = 'equilibrium.h5';
 to_venus(LX, LY, filename)
+
 
 
 % Example of plotting the flux surfaces

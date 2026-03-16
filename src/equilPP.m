@@ -532,6 +532,7 @@ sin(LY.omega_plt).*sum(sin((-1 + ms).*LY.omega_plt).*Sp,3))))./2.))./r_plt;
   LY.Sp = Sp;
   LY.Spp = Spp;
   LY.BB = BB;
+  LY.psi = psi;
   LY.psiN = psiN;
   LY.RR = RR;
   LY.ZZ = ZZ;
