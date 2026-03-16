@@ -19,7 +19,7 @@ function to_venus(LX, LY, filename)
     end
     
     Nr = numel(LY.r_plt); Ntheta = numel(LY.omega_plt)-1;
-    R0 = 10.334454903971825; B0 =  0.9617498446849172;
+    R0 = 3.1923984520629225; B0 =  0.9367286560046748;
     P0 = LX.eps_val^2*B0^2/4./pi/1.0E-07;
     Lref =1; Bref =0.9617498446849172;
 
