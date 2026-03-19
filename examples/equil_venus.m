@@ -1,15 +1,16 @@
-%% Example of running EQUIL and creating the HDF5 file used in VENUS-MHD
 
+beta0=0.427160000000000;
+
+%beta0 = linspace(0., -1, 15)*4;
 
 % Match inputs
 q0 = 0.7795296521664806;
 q1 = 2.9639395354123486;
 s0 = 2 * (q1/q0 -1);
-
-Sbc = [-0.35 0.14, 0];
-eps_val = 0.32;
+Sbc = [-0.35 0.06, 0];
+eps_val = 0.1;
 [L, LX] = equilSol('debug',4, 'Nb', 1, 'q0', q0,'s0' , s0, ...
-    'beta',0.445, 'om_pts', 300, 'do_SFL',true);
+    'beta',beta0, 'om_pts', 300, 'do_SFL',true);
 
 LX.eps_val = eps_val;LX.Sbc=Sbc;
 
@@ -21,7 +22,7 @@ for betas = [L.P.beta]
     L.P.beta = betas;
     LX = equilX(L);
     LX.eps_val = eps_val;LX.Sbc=Sbc;
-    beta_interp = L.P.beta * (1 - LY.psiN);
+    beta_interp = L.P.beta * (1 - LY.psiN_q);
     ord_b = 0:2:14;
     cb = (bsxfun(@power, L.r_q(:), ord_b) \ beta_interp(:)).';     % 1xK
     beta_fit  = @(rr) reshape(    bsxfun(@power, rr(:), ord_b)   * cb.',          size(rr));
@@ -32,10 +33,56 @@ for betas = [L.P.beta]
     LX.x = LY.x;
     LY = equilY(L,LX);
 end
-filename = 'equilibrium.h5';
+
+filename = "equi.h5";
 to_venus(LX, LY, filename)
 
 
+
+
+%% Example of running EQUIL and creating the HDF5 file used in VENUS-MHD
+%beta0_vmec=0.425
+beta1=linspace(0.005, 0.0903, 4);
+beta2=linspace(0.1358, 0.5, 6);
+beta0=[beta1 beta2];
+%beta0 = linspace(0., -1, 15)*4;
+
+% Match inputs
+q0 = 0.7795296521664806;
+q1 = 2.9639395354123486;
+s0 = 2 * (q1/q0 -1);
+
+Sbc = [-0.35 0.06, 0];
+eps_val = 0.26;
+[L, LX] = equilSol('debug',4, 'Nb', 1, 'q0', q0,'s0' , s0, ...
+    'beta',0.3, 'om_pts', 300, 'do_SFL',true);
+
+LX.eps_val = eps_val;LX.Sbc=Sbc;
+
+
+LY =equilY(L, LX);
+    
+% increase beta
+for i = 1:numel(beta0)
+    L.P.beta = beta0(i);
+    LX = equilX(L);
+    LX.eps_val = eps_val;LX.Sbc=Sbc;
+    beta_interp = L.P.beta * (1 - LY.psiN_q);
+    ord_b = 0:2:14;
+    cb = (bsxfun(@power, L.r_q(:), ord_b) \ beta_interp(:)).';     % 1xK
+    beta_fit  = @(rr) reshape(    bsxfun(@power, rr(:), ord_b)   * cb.',          size(rr));
+    betap_fit = @(rr) reshape(    bsxfun(@power, rr(:), ord_b-1) * (ord_b.*cb).', size(rr));
+
+    LX.kinetic_profiles.beta  = beta_fit;
+    LX.kinetic_profiles.betap = betap_fit;
+    LX.x = LY.x;
+    LY = equilY(L,LX);
+    filename = sprintf("eqbeta%d.h5", i);
+    to_venus(LX, LY, filename)
+end
+
+
+%%
 
 % Example of plotting the flux surfaces
 figure;axis equal;hold on;
