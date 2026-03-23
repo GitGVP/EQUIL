@@ -113,7 +113,7 @@ function LY = equilPP_to_plot_grid(L, LX, LY, t2, t2p, delta, deltap, deltapp, .
 
   [dbetapardB0, ~, dbetapardB, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, LY.betapar, LY.betaperp] = ...
       L.P.equation_of_state(LX.kinetic_profiles, r_plt, LY.RR, LY.BB);
-
+  LY.dbetapardB0 = dbetapardB0;
   LY.t2      = t2;    LY.t2p  = t2p;
   LY.delta   = delta; LY.deltap = deltap; LY.deltapp = deltapp;
   LY.P       = P_hat; LY.Pp   = Pp;
@@ -169,7 +169,8 @@ function LY = equilPP_to_plot_grid(L, LX, LY, t2, t2p, delta, deltap, deltapp, .
   dthetaSFLdomega = LY.JoverR ./ RR./ r_plt * LX.eps_val^(-2);
   gtt = (dthetaSFLdomega).^(-2) .* goo; % to be multiplied by R0^2
   LY.N_SFL = gtt./J_SFL; % currently, on the (r,\omega) grid, to be regridded if we want to pass it to VENUS-MHD
-
+  LY.N0 = mean(LY.N_SFL(:,1:end-1)  .* dthetaSFLdomega(:,1:end-1), 2);
+  LY.Nm1 = mean( exp(1i * LY.theta_SFL(:,1:end-1)).* LY.N_SFL(:,1:end-1)  .* dthetaSFLdomega(:,1:end-1), 2);
   % compute M = grt/Jac in SFL coordinates
   gro = (-(LX.eps_val.^3.*P_hat.*sin(LY.omega_plt)) - LX.eps_val.*r_plt.*sin(LY.omega_plt) + LX.eps_val.^2.*sum(-((-1 + ms).*S.*sin((-1 + ms).*LY.omega_plt)),3)).*(-(deltap.*LX.eps_val.^2) + LX.eps_val.*cos(LY.omega_plt) + LX.eps_val.^3.*Pp.*cos(LY.omega_plt) + LX.eps_val.^2.*sum(cos((-1 + ms).*LY.omega_plt).*Sp,3)) + (LX.eps_val.^3.*P_hat.*cos(LY.omega_plt) + LX.eps_val.*r_plt.*cos(LY.omega_plt) - LX.eps_val.^2.*sum((-1 + ms).*cos((-1 + ms).*LY.omega_plt).*S,3)).*(LX.eps_val.*sin(LY.omega_plt) + LX.eps_val.^3.*Pp.*sin(LY.omega_plt) - LX.eps_val.^2.*sum(sin((-1 + ms).*LY.omega_plt).*Sp,3));
   dthetaSFLdr = cumtrapz(LY.omega_plt,(RR.*(-((LX.eps_val.^2.*P_hat.*cos(LY.omega_plt) + r_plt.*cos(LY.omega_plt) - ...
@@ -211,9 +212,23 @@ ms).*LY.omega_plt).*Spp,3))))./(r_plt.^2.*RR.^2),2);
 
 
   LY.M_SFL = grt./J_SFL;
+  LY.Mm1 = mean( exp(1i * LY.theta_SFL(:,1:end-1)).* LY.M_SFL(:,1:end-1)  .* dthetaSFLdomega(:,1:end-1), 2);
   grr = LX.eps_val.^2.*((-(deltap.*LX.eps_val) + cos(LY.omega_plt) + LX.eps_val.^2.*Pp.*cos(LY.omega_plt) + LX.eps_val.*sum(cos((-1 + ms).*LY.omega_plt).*Sp,3)).^2 + (sin(LY.omega_plt) + LX.eps_val.^2.*Pp.*sin(LY.omega_plt) - LX.eps_val.*sum(sin((-1 + ms).*LY.omega_plt).*Sp,3)).^2);
   grr_SFL = grr + 2*gro.^2 ./ goo + grt.^2 ./ gtt;
   LY.L_SFL = grr_SFL ./ J_SFL;
+
+  % compute (j^\phi / B^\phi)_{-1}
+  LY.JoverBm1 = mean( exp(-1i * LY.theta_SFL(:,1:end-1)).* LY.jphi(:,1:end-1) ./ sqrt(LY.BBt2(:,1:end-1)) .* dthetaSFLdomega(:,1:end-1), 2);
+
+  LY.prefacY0 = mean(J_SFL(:,1:end-1).*sqrt(LY.BBt2(:,1:end-1))./ RR(:,1:end-1) .* dthetaSFLdomega(:,1:end-1), 2) ./ r_plt ./ LY.N0;
+
+  l1 = r_plt .* (1 ./ LX.qfun(r_plt)-1);
+  l1p = -1 + (1./LX.qfun(r_plt)) - r_plt .* LX.qpfun(r_plt) ./ LX.qfun(r_plt).^2;
+  
+  [~ ,iq1] = min(abs(LX.qfun(r_plt)-1));
+  rs = r_plt(iq1);
+  LY.Y0 = LY.prefacY0 .* (LX.eps_val * (LY.JoverBm1 - 1i .* LY.Mm1) .* l1  + ...
+      LY.Nm1 .* l1p ) .* (r_plt < rs);
 
   % analytical result, Daniele Eq.(5.25)
   LY.N_ana = LX.eps_val * r_plt .* (1 + 2 * LX.eps_val * deltap .* cos(LY.theta_SFL) + ...

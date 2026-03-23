@@ -1,5 +1,5 @@
 %% Simple circular case comparing theta_SFL grid vs. omega grid for (R,Z)
-[L, LX] = equilSol('debug',4, 'Nb', 1, 'do_SFL', true);
+[L, LX] = equilSol('debug',4, 'Nb', 1, 'do_SFL', true,'q0',0.8);
 LX.Sbc = zeros(L.P.Ns, 1);
 LY = equilY(L, LX);
 figure;
@@ -67,3 +67,15 @@ xlabel('$R/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
 ylabel('$Z/R_0$', 'Interpreter', 'latex', 'Fontsize',14)
 colorbar;
 title('second $N=g_{\vartheta\vartheta}/J_\vartheta$ (analytical)', 'Interpreter', 'latex', 'Fontsize',18)
+
+
+figure;hold on;
+plot(LY.r_plt, real(LY.Nm1), '.')
+plot(LY.r_plt, real(LY.Mm1), '.')
+plot(LY.r_plt, imag(LY.Nm1), '-')
+plot(LY.r_plt, imag(LY.Mm1), '-')
+grid on;
+xlabel('$\hat r$', 'Interpreter', 'latex', 'Fontsize',14)
+legend({'$\Re{(N_{-1})}$','$\Re{(M_{-1})}$','$\Im{(N_{-1})}$','$\Im{(M_{-1})}$'}, 'Interpreter', 'latex', 'Fontsize',14, 'Box','off')
+
+% Y0 
