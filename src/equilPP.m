@@ -208,10 +208,10 @@ LX.eps_val.*(LX.eps_val.^2.*P_hat.*sin(LY.omega_plt) + r_plt.*sin(LY.omega_plt) 
 - LX.eps_val.*sum(-((-1 + ms).*S.*sin((-1 + ...
 ms).*LY.omega_plt)),3)).*(LX.eps_val.*Ppp.*sin(LY.omega_plt) - sum(sin((-1 + ...
 ms).*LY.omega_plt).*Spp,3))))./(r_plt.^2.*RR.^2),2);
-  grt = dthetaSFLdomega.^(-1) .* (gro - goo .* dthetaSFLdr ./ dthetaSFLdomega);
+  grt = dthetaSFLdomega.^(-1) .* (gro - goo .* dthetaSFLdr ./ dthetaSFLdomega) / LX.eps_val; % to be multiplied by R0
 
 
-  LY.M_SFL = grt./J_SFL;
+  LY.M_SFL = grt./J_SFL; % this is Mhat = M * R0;
   LY.Mm1 = mean( exp(1i * LY.theta_SFL(:,1:end-1)).* LY.M_SFL(:,1:end-1)  .* dthetaSFLdomega(:,1:end-1), 2);
   grr = LX.eps_val.^2.*((-(deltap.*LX.eps_val) + cos(LY.omega_plt) + LX.eps_val.^2.*Pp.*cos(LY.omega_plt) + LX.eps_val.*sum(cos((-1 + ms).*LY.omega_plt).*Sp,3)).^2 + (sin(LY.omega_plt) + LX.eps_val.^2.*Pp.*sin(LY.omega_plt) - LX.eps_val.*sum(sin((-1 + ms).*LY.omega_plt).*Sp,3)).^2);
   grr_SFL = grr + 2*gro.^2 ./ goo + grt.^2 ./ gtt;
@@ -219,7 +219,7 @@ ms).*LY.omega_plt).*Spp,3))))./(r_plt.^2.*RR.^2),2);
 
   % compute (j^\phi / B^\phi)_{-1}
   LY.JoverBm1 = mean( exp(-1i * LY.theta_SFL(:,1:end-1)).* LY.jphi(:,1:end-1) ./ sqrt(LY.BBt2(:,1:end-1)) .* dthetaSFLdomega(:,1:end-1), 2);
-
+  LY.JoverBm1_2 = -LX.eps_val * LX.qfun(r_plt) .* LX.kinetic_profiles.betap(r_plt);
   LY.prefacY0 = mean(J_SFL(:,1:end-1).*sqrt(LY.BBt2(:,1:end-1))./ RR(:,1:end-1) .* dthetaSFLdomega(:,1:end-1), 2) ./ r_plt ./ LY.N0;
 
   l1 = r_plt .* (1 ./ LX.qfun(r_plt)-1);
@@ -229,6 +229,9 @@ ms).*LY.omega_plt).*Spp,3))))./(r_plt.^2.*RR.^2),2);
   rs = r_plt(iq1);
   LY.Y0 = LY.prefacY0 .* (LX.eps_val * (LY.JoverBm1 - 1i .* LY.Mm1) .* l1  + ...
       LY.Nm1 .* l1p ) .* (r_plt < rs);
+  LY.Y0_2 = (-LX.qfun(r_plt) .* LX.kinetic_profiles.betap(r_plt) .* l1 ./ r_plt + ...
+      (1/2) * l1 .* (LY.deltapp + LY.deltap ./ r_plt + 1) + ...
+      l1p .* LY.deltap).* (r_plt < rs);
 
   % analytical result, Daniele Eq.(5.25)
   LY.N_ana = LX.eps_val * r_plt .* (1 + 2 * LX.eps_val * deltap .* cos(LY.theta_SFL) + ...
