@@ -22,8 +22,7 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
     R0 = 3.1923984520629225; B0 =  0.9367286560046748;
     P0 = LX.eps_val^2*B0^2/4./pi/1.0E-07;
     Lref = 3.1923984520629225; Bref =0.9617498446849172;
-    P0_vmec = 0.425/31830.921665582493;
-    eps_vmec=0.32;
+
 
     % added constants 
     T0 = 0.01999995793231724;
@@ -110,7 +109,7 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
     beta_poloidal = LX.qfun(r).^2 ./ r .^ 4 .* cumtrapz(r, r.^2 .* (-2 * LX.kinetic_profiles.betap(r)));
     [~, I] = min(sqrt((LX.qfun(r)-1).^2));
     beta_rs = beta_poloidal(I);
-    
+    fprintf('bp(rs) = %f, bp^2-13/144 = %f \n', beta_rs, beta_rs^2-13/144)
     li = 2*LX.qfun(r).^2 ./ r .^ 4 .* cumtrapz(r, r.^3 ./ LX.qfun(r).^2);
     
     deltap = interp1(LY.r_plt, LY.deltap, r, 'spline');

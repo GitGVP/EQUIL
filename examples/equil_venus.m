@@ -1,24 +1,20 @@
 
-%beta0=0.425;
 beta0=3;
-%beta0=0.35432;
-%beta0=0.000005;
-
-%beta0 = linspace(0., -1, 15)*4;
 
 % Match inputs
 q0 = 0.7795296521664806;
 q1 = 1.999;
 s0 = 2 * (q1/q0 -1);
 Sbc = [0 0 0];
-eps_val = 0.1;
+eps_val = 0.3;
 [L, LX] = equilSol('debug',4, 'Nb', 1, 'q0', q0,'s0' , s0, ...
     'beta',beta0, 'om_pts', 300, 'do_SFL',true);
 
 LX.eps_val = eps_val;LX.Sbc=Sbc;
-
-
-
+LY =equilY(L, LX);
+L.P.beta = 6;
+LX = equilX(L);
+LX.eps_val = eps_val;LX.Sbc=Sbc;LX.x = LY.x;
 LY =equilY(L, LX);
 
 r=LY.r_fine;
@@ -26,7 +22,8 @@ r=LY.r_fine;
 [~, J] = min(sqrt((LX.qfun(r)-2).^2));
 [X2_i, X2_ip] = solve_Xi_eq(r(1:I), 0, 1, LX.qfun, LX.qpfun);
 [X2_e, X2_ep] = solve_Xi_eq(r(I:J), 1, 0, LX.qfun, LX.qpfun);
-
+filename = "equileps001.h5";
+to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
 
 %%
 % increase beta
@@ -46,8 +43,7 @@ for betas = [L.P.beta]
     LY = equilY(L,LX);
 end
 %%
-filename = "equileps01.h5";
-to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
+
 
 
 
