@@ -1,4 +1,4 @@
-function [Xi_fine, Xip_fine] = solve_Xi_eq(r_fine, Xibc_left, Xibc_right, qfun, qpfun)
+function [Xi_fine, Xip_fine] = solve_Xi_eq(r_fine, Xibc_left, Xibc_right, qfun, qpfun, RHS)
 % Solve the ODE:
 %   d/dr [r^3*(2mu-1)^2 * dXi/dr] - 3*r*(2mu-1)^2 * Xi = 0
 % where mu(r) = 1/q(r)
@@ -13,7 +13,7 @@ function [Xi_fine, Xip_fine] = solve_Xi_eq(r_fine, Xibc_left, Xibc_right, qfun, 
 % OUTPUTS:
 %   Xi_fine     : solution xi(r) on r_fine
 %   Xip_fine    : derivative dxi/dr on r_fine
-
+if nargin < 6, RHS = @(r) 0; end
 % mu and its derivative
 mufun  = @(r)  1 ./ qfun(r);
 mupfun = @(r) -qpfun(r) ./ qfun(r).^2;
@@ -24,7 +24,7 @@ log_wp = @(r) 3/r + 4*mupfun(r) / (2*mufun(r) - 1);
 
 % ODE as first-order system: Y = [Xi; Xi']
 % Xi'' = -(w'/w)*Xi' + 3/r^2 * Xi   [since 3r(2mu-1)^2/w = 3/r^2]
-odefun = @(r, Y) [ Y(2); -log_wp(r) * Y(2) + (3 / r^2) * Y(1) ];
+odefun = @(r, Y) [ Y(2); -log_wp(r) * Y(2) + (3 / r^2) * Y(1) + RHS(r)];
 
 % Boundary conditions: Xi(r_left) = Xibc_left, Xi(r_right) = Xibc_right
 bcfun = @(Ya, Yb) [ Ya(1) - Xibc_left; Yb(1) - Xibc_right ];

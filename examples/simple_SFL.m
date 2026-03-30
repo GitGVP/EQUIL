@@ -1,8 +1,18 @@
 %% Simple circular case comparing theta_SFL grid vs. omega grid for (R,Z)
 [L, LX] = equilSol('debug',4, 'Nb', 1, 'do_SFL', true,'q0',0.8);
 LX.Sbc = zeros(L.P.Ns, 1);
-LX.eps_val=0.3;
+LX.eps_val=0.1;
 LY = equilY(L, LX);
+
+% Y0 
+
+figure;hold on;
+plot(LY.r_plt, real(LY.Y0), '.')
+plot(LY.r_plt, LX.eps_val * LY.Y0_LO, '.')
+grid on;
+xlabel('$\hat r$', 'Interpreter', 'latex', 'Fontsize',14)
+legend({'$Y_0$', 'LO'}, 'Interpreter', 'latex', 'Fontsize',14, 'Box','off')
+
 figure;
 tiledlayout(1,2,"TileSpacing","tight","Padding","tight")
 nexttile;hold on;
@@ -79,14 +89,7 @@ grid on;
 xlabel('$\hat r$', 'Interpreter', 'latex', 'Fontsize',14)
 legend({'$\Re{(N_{-1})}$','$\Re{(M_{-1})}$','$\Im{(N_{-1})}$','$\Im{(M_{-1})}$'}, 'Interpreter', 'latex', 'Fontsize',14, 'Box','off')
 
-% Y0 
 
-figure;hold on;
-plot(LY.r_plt, real(LY.Y0), '.')
-plot(LY.r_plt, LX.eps_val^2 * LY.Y0_2, '.')
-grid on;
-xlabel('$\hat r$', 'Interpreter', 'latex', 'Fontsize',14)
-legend({'$Y_0$', 'LO'}, 'Interpreter', 'latex', 'Fontsize',14, 'Box','off')
 
 % Mm1
 
@@ -106,3 +109,36 @@ xlabel('$\hat r$', 'Interpreter', 'latex', 'Fontsize',14)
 legend({'$\Re{(N_{-1})}$', 'LO'}, 'Interpreter', 'latex', 'Fontsize',14, 'Box','off')
 
 
+
+
+%% Solve for the upper-sideband
+
+r=LY.r_fine;
+[~, I] = min(sqrt((LX.qfun(r)-1).^2));
+[~, J] = min(sqrt((LX.qfun(r)-2).^2));
+[X2_i, X2_ip] = solve_Xi_eq(r(1:I), 0, 1, LX.qfun, LX.qpfun);
+[X2_e, X2_ep] = solve_Xi_eq(r(I:J), 1, 0, LX.qfun, LX.qpfun); 
+% TODO, solve this with Neumann outer BC
+
+V2_fun = @(rr) interp1(LY.r_plt, LY.V2, rr, 'spline');
+
+[X2_zeta, X2_zetap] = solve_Xi_eq(r(1:I), 0, 0, LX.qfun, LX.qpfun, V2_fun);
+A = (LY.dxidrjump + X2_zetap(end)) / (X2_ep(1) - X2_ip(end));
+xi_in = X2_zeta + A * X2_i;
+xi_out = A * X2_e;
+figure; hold on;
+plot(r(1:I), xi_in, '.')
+plot(r(I:J), xi_out, '.')
+
+% check that we do have that jump
+xi2ip = gradient(xi_in,r(1:I));
+figure; hold on;
+plot(r(1:I),  xi2ip-xi2ip(end))
+plot(r(I:J-100), gradient(xi_out(1:end-100),r(I:J-100))-xi2ip(end))
+plot(r, ones(size(r)) * LY.dxidrjump)
+
+
+figure; hold on;
+plot(r(1:I), X2_i, '.')
+plot(r(I:J), X2_e, '.')
+plot(r(1:I), X2_zeta, '.')

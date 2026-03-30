@@ -109,7 +109,7 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
     beta_poloidal = LX.qfun(r).^2 ./ r .^ 4 .* cumtrapz(r, r.^2 .* (-2 * LX.kinetic_profiles.betap(r)));
     [~, I] = min(sqrt((LX.qfun(r)-1).^2));
     beta_rs = beta_poloidal(I);
-    fprintf('bp(rs) = %f, bp^2-13/144 = %f \n', beta_rs, beta_rs^2-13/144)
+    
     li = 2*LX.qfun(r).^2 ./ r .^ 4 .* cumtrapz(r, r.^3 ./ LX.qfun(r).^2);
     
     deltap = interp1(LY.r_plt, LY.deltap, r, 'spline');
@@ -153,7 +153,7 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
 
     intrU       = (W + intUTC);
     growth_rate = pi / (rs^2 * s_shear * sqrt(3)) * intrU;
-
+    fprintf('bp(rs) = %f, bp^2-13/144 = %f, (gamma/omega_A) = %.1e, (gamma/omega_A)^2 = %.1e \n', beta_rs, beta_rs^2-13/144, growth_rate, growth_rate^2)
 
     %% POST PROCESSING
     
