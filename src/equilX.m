@@ -26,9 +26,6 @@ function LX = equilX(L)
 
  % betafun = @(r) L.P.beta * (1 - r.^2) .* r .^ 2;
 %  betapfun = @(r) -2 * L.P.beta * r.^3 + 2 * L.P.beta * (1 - r.^2) .* r;
-
-  LX.q_vec = LX.qfun(L.r_q);
-  LX.qp_vec = LX.qpfun(L.r_q);
   %LX.beta_vec = LX.betafun(L.r_q);
   %LX.betap_vec = LX.betapfun(L.r_q);
   %LX.Ah_vec = LX.Ahfun(L.r_q);

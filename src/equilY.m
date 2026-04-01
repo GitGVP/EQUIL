@@ -37,9 +37,9 @@ function LY = equilY(L, LX)
   for k = 1:L.P.nk
     %Compute residuals and Jacobian at quadrature points
     residuals = L.P.residuals_fun(L.r_q,x,LX.eps_val,L.omega,...
-        LX.kinetic_profiles,LX.q_vec,LX.qp_vec, L.P0,L.P1,L.P2,L.M_profiles,L.dof_count,L.P.Nb,LX.Sbc,L.P.equation_of_state);
+        LX.kinetic_profiles,LX.qfun(L.r_q),LX.qpfun(L.r_q), L.P0,L.P1,L.P2,L.M_profiles,L.dof_count,L.P.Nb,LX.Sbc,L.P.equation_of_state);
     J = L.P.jacobian_fun(L.r_q,x,LX.eps_val,L.omega,...
-        LX.kinetic_profiles,LX.q_vec,LX.qp_vec, L.P0, L.P1, L.P2,L.dof_count,L.P.Nb,LX.Sbc,L.P_templates, L.M_extended,L.P.equation_of_state);
+        LX.kinetic_profiles,LX.qfun(L.r_q),LX.qpfun(L.r_q), L.P0, L.P1, L.P2,L.dof_count,L.P.Nb,LX.Sbc,L.P_templates, L.M_extended,L.P.equation_of_state);
     update = J \ residuals;
     % try with damping
     x = x - L.P.damping*update;
