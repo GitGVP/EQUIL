@@ -116,9 +116,9 @@ function LY = equilPP_to_plot_grid(L, LX, LY, t2, t2p, delta, deltap, deltapp, .
   LY.dbetapardB0 = dbetapardB0;
   LY.t2      = t2;    LY.t2p  = t2p;
   LY.delta   = delta; LY.deltap = deltap; LY.deltapp = deltapp;
-  LY.P       = P_hat; LY.Pp   = Pp;
+  LY.P       = P_hat; LY.Pp   = Pp;       LY.Ppp = Ppp;
   LY.Bs      = Bs;    LY.Bsp  = Bsp;
-  LY.S       = S;     LY.Sp   = Sp;      LY.Spp = Spp;
+  LY.S       = S;     LY.Sp   = Sp;       LY.Spp = Spp;
 
   % ── Magnetic field components on plotting grid ────────────────────────
   ms  = reshape(linspace(2,L.P.Ns+1,L.P.Ns), [1,1,L.P.Ns]);
@@ -135,6 +135,7 @@ function LY = equilPP_to_plot_grid(L, LX, LY, t2, t2p, delta, deltap, deltapp, .
   psi       = cumtrapz(r_plt, (1 - dbetapardB0.*LX.eps_val.^2 + LX.eps_val^2 .* t2)./LX.qfun(r_plt) .* r_plt);
   LY.psi    = psi;
   LY.psiN   = (psi - psi(1)) / (psi(end) - psi(1));
+  LY.T = (1 - dbetapardB0.*LX.eps_val.^2 + LX.eps_val^2 .* t2);
 
   % ── rhotor ────────────────────────────────────────────────────────────
   toroidal_flux = 2*pi*mean(sqrt(LY.BBt2) .* LY.JoverR, 2);
@@ -159,7 +160,7 @@ function LY = equilPP_to_plot_grid(L, LX, LY, t2, t2p, delta, deltap, deltapp, .
 
   % ── SFL ───────────────────────────────────────────────────
   if L.P.do_SFL
-    LY = equil_SFL(LX, LY, r_plt, RR, ZZ, delta, deltap, deltapp, P_hat, Pp, Ppp, S, Sp, Spp, ms);
+    LY = equil_SFL(L, LX, LY, r_plt, RR, ZZ, delta, deltap, deltapp, P_hat, Pp, Ppp, S, Sp, Spp, ms);
   end
 end
 

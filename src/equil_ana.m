@@ -25,7 +25,12 @@ d2betapardrdB, ~, d2betapardrdR, ~, d3betapardrdB2, ...
 
 
   [LY.S2_fine, LY.S2p_fine] = solve_S_eq(r_fine, LX.Sbc(1),LX.qfun,LX.qpfun, 2);
-  [LY.S3_fine, LY.S3p_fine] = solve_S_eq(r_fine, LX.Sbc(2),LX.qfun,LX.qpfun, 3);
+  if L.P.Ns > 1
+    [LY.S3_fine, LY.S3p_fine] = solve_S_eq(r_fine, LX.Sbc(2),LX.qfun,LX.qpfun, 3);
+  else
+      LY.S3_fine = zeros(size(r_fine));
+      LY.S3p_fine = zeros(size(r_fine));
+  end
   LY.P_fine = -r_fine.^3/8 + LY.S2_fine .^2 ./ (2* r_fine) - r_fine .* LY.delta_fine / 2;  % todo: add other shaping
   LY.Pp_fine = -3*r_fine.^2/8 + 2 * LY.S2_fine .* LY.S2p_fine  ./ (2* r_fine) - LY.S2_fine.^2 ./ (2* r_fine.^2) -  LY.delta_fine / 2 - r_fine .* LY.deltap_fine / 2;
   LY.S2_ana = interp1(r_fine, LY.S2_fine, L.r_q, 'spline');
