@@ -12,6 +12,8 @@ function LY = equilY(L, LX)
   % Initial state
   x = LX.x;
   if L.P.debug > 10
+    [t2, ~, delta, ~, ~, ~, ~, ~, ~, ~, S, ~, ~] = ...
+          equil_unpack_state(x, L.dof_count, L.P.Nb, LX.Sbc, L.P0, L.P1, L.P2);  
     figure;
     tiledlayout(3,1,'TileSpacing','compact','Padding','compact');
     ax1 = nexttile(1);
@@ -24,11 +26,11 @@ function LY = equilY(L, LX)
     hold on;grid on;
     xlabel('$\hat r$', 'Interpreter','latex', 'FontSize',14)
     ylabel('$\hat S_2$', 'Interpreter','latex', 'FontSize',14)
-    plot(ax1, L.r_q, L.P0*x(1:size(L.P0,2)),'k--','LineWidth',3,...
+    plot(ax1, L.r_q, t2,'k--','LineWidth',3,...
         'DisplayName', sprintf('$k=%i$',0))
-    plot(ax2, L.r_q, L.P0*x(size(L.P0,2)+1: 2*size(L.P0,2)),'k--','LineWidth',3,...
+    plot(ax2, L.r_q, delta,'k--','LineWidth',3,...
         'DisplayName', sprintf('$k=%i$',0))
-    plot(ax3, L.r_q, L.P0*[x(size(L.P0,2)*(3+L.P.Nb)+1: size(L.P0,2)*(3+L.P.Nb+1)-1); LX.Sbc(1)],'k--','LineWidth',3,...
+    plot(ax3, L.r_q, S(:,:,1),'k--','LineWidth',3,...
         'DisplayName', sprintf('$k=%i$',0))
     drawnow;
   end
@@ -49,9 +51,11 @@ function LY = equilY(L, LX)
       fprintf('Iter %d, eps %.1e, |res| = %.4e, |Δx| = %.3e\n', ...
               k, LX.eps_val, res_norm, norm(update));
       if L.P.debug > 10
-            plot(ax1, L.r_q, L.P0*x(1:size(L.P0,2)), 'DisplayName', sprintf('$k=%i$',k))
-            plot(ax2, L.r_q, L.P0*x(size(L.P0,2)+1: 2*size(L.P0,2)), 'DisplayName', sprintf('$k=%i$',k))
-            plot(ax3, L.r_q, L.P0*[x(size(L.P0,2)*(3+L.P.Nb)+1: size(L.P0,2)*(3+L.P.Nb+1)-1); LX.Sbc(1)],'DisplayName', sprintf('$k=%i$',k))
+          [t2, ~, delta, ~, ~, ~, ~, ~, ~, ~, S, ~, ~] = ...
+          equil_unpack_state(x, L.dof_count, L.P.Nb, LX.Sbc, L.P0, L.P1, L.P2);  
+            plot(ax1, L.r_q, t2,'.', 'DisplayName', sprintf('$k=%i$',k))
+            plot(ax2, L.r_q, delta,'.', 'DisplayName', sprintf('$k=%i$',k))
+            plot(ax3, L.r_q, S(:,:,1),'.','DisplayName', sprintf('$k=%i$',k))
             drawnow;
       end
     end

@@ -1,34 +1,8 @@
 function LY = equilPP(L, LX, LY)
-  % ── 1. Unpack solution vector ──────────────────────────────────────────
-  idx = 0;
-  t2_c    = LY.x(1:L.dof_count); idx = idx + L.dof_count;
-  delta_c = LY.x(idx+1:idx+L.dof_count); idx = idx + L.dof_count;
-  P_c     = LY.x(idx+1:idx+L.dof_count); idx = idx + L.dof_count;
-  Bs_c    = reshape(LY.x(idx+1:idx+L.P.Nb*L.dof_count), [L.dof_count,1,L.P.Nb]); idx = idx + L.P.Nb*L.dof_count;
-  S_unkn  = reshape(LY.x(idx+1:end), [L.dof_count-1,1,L.P.Ns]);
-
-  S_c     = cat(1, S_unkn, reshape(LX.Sbc, [1,1,L.P.Ns]));
-  Bs_flat = reshape(Bs_c, size(Bs_c,1), []);
-  S_flat  = reshape(S_c,  size(S_c,1),  []);
-
-  ms = reshape(linspace(2,L.P.Ns+1,L.P.Ns), [1,1,L.P.Ns]);
-  mb = reshape(linspace(0,L.P.Nb-1,L.P.Nb), [1,1,L.P.Nb]);
-
-  t2      = L.P0 * t2_c;
-  t2p     = L.P1 * t2_c;
-  delta   = L.P0 * delta_c;
-  deltap  = L.P1 * delta_c;
-  deltapp = L.P2 * delta_c;
-  P_hat   = L.P0 * P_c;
-  Pp      = L.P1 * P_c;
-  Ppp     = L.P2 * P_c;
-
-  Bs      = reshape(L.P0 * Bs_flat, L.Nq, 1, []);
-  Bsp     = reshape(L.P1 * Bs_flat, L.Nq, 1, []);
-  S       = reshape(L.P0 * S_flat,  L.Nq, 1, []);
-  Sp      = reshape(L.P1 * S_flat,  L.Nq, 1, []);
-  Spp     = reshape(L.P2 * S_flat,  L.Nq, 1, []);
-
+    [t2, t2p, delta, deltap, deltapp, P_hat, Pp, Ppp, Bs, Bsp, S, Sp, Spp] = ...
+          equil_unpack_state(LY.x, L.dof_count, L.P.Nb, LX.Sbc, L.P0, L.P1, L.P2);
+   ms = reshape(linspace(2,L.P.Ns+1,L.P.Ns), [1,1,L.P.Ns]);
+   mb = reshape(linspace(0,L.P.Nb-1,L.P.Nb), [1,1,L.P.Nb]);
   % ── 2. Fields on quadrature grid (L.r_q x L.omega) ────────────────────
   RR_q = 1 - delta.*LX.eps_val.^2 + LX.eps_val.^3.*P_hat.*cos(L.omega) ...
            + LX.eps_val.*L.r_q.*cos(L.omega) ...
@@ -59,6 +33,11 @@ function LY = equilPP(L, LX, LY)
   LY.Ftt    = trapz(L.r_q, 2*pi*mean(BBt_q   .* JoverR_q,        2)); % to be multiplied by R0^2 * B0
   LY.Ft0    = trapz(L.r_q, 2*pi*mean(1./RR_q .* JoverR_q,        2)); % to be multiplied by R0^2 * B0
   LY.Ft     = LY.Ftt - LY.rBt * LY.Ft0;   % to be multiplied by R0^2 * B0
+
+  LY.bp = LY.Wk / LY.Ip^2 * LX.eps_val^2 * 4;
+  LY.bppar = LY.Wkpar / LY.Ip^2 * LX.eps_val^2 * 4;
+  LY.bpperp = LY.Wkperp / LY.Ip^2 * LX.eps_val^2 * 4;
+  LY.li = 2 * LY.Wp / LY.Ip^2;
 
   LY.gavg   = mean((BB_q.*(1 - dbetapardB0.*LX.eps_val.^2 + LX.eps_val.^2.*t2)) ...
                   ./(BB_q - dbetapardB_q.*LX.eps_val.^2), 2);
