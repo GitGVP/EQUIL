@@ -1,28 +1,9 @@
 function J = jacobian_noRepl(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1,P2,dof_count,Nb,Sbc,P_templates,M_extended,equation_of_state)
-	Nq = numel(r);
-	Ns = numel(Sbc);
-	nRes = 3+Nb+Ns;
-	t2_c    = x(1:dof_count);
-	delta_c = x(dof_count+1:2*dof_count);
-	P_c = x(2*dof_count+1:3*dof_count);
-	Bs_c    = reshape(x(3*dof_count+1:(3+Nb)*dof_count), [dof_count, 1, Nb]);
-	Bs_flat   = reshape(Bs_c, size(Bs_c,1), []);        % dof_count x Ns
-	S_unkn     = reshape(x((3+Nb)*dof_count+1:end), [dof_count-1, 1, Ns]);
-	S_c     = cat(1, S_unkn, reshape(Sbc, [1, 1, Ns]));
-	S_flat   = reshape(S_c, size(S_c,1), []);        % dof_count x Ns
-	t2      = P0 * t2_c;
-	t2p     = P1 * t2_c;
-	delta   = P0 * delta_c;
-	deltap  = P1 * delta_c;
-	deltapp = P2 * delta_c;
-	P   = P0 * P_c;
-	Pp  = P1 * P_c;
-	Ppp = P2 * P_c;
-	Bs       = reshape(P0 * Bs_flat, Nq, 1, []);
-	Bsp = reshape(P1 * Bs_flat, Nq, 1, []);
-	S       = reshape(P0 * S_flat, Nq, 1, []);
-	Sp = reshape(P1 * S_flat, Nq, 1, []);
-	Spp = reshape(P2 * S_flat, Nq, 1, []);
+    Nq = numel(r);
+    Ns = numel(Sbc);
+    nRes = 3+Nb+Ns;
+    [t2, t2p, delta, deltap, deltapp, P, Pp, Ppp, Bs, Bsp, S, Sp, Spp] = ...
+      equil_unpack_state(x, dof_count, Nb, Sbc, P0, P1, P2);
 	ms = reshape(linspace(2,Ns+1,Ns), [1,1,Ns]);
 	mb = reshape(0:(Nb-1), [1,1,Nb]);
 	BB = 1 + epsilon.*sum(Bs.*cos(mb.*omega),3);
@@ -184,7 +165,8 @@ function J = jacobian_noRepl(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1,P2,do
 		jacTotal(2, 3 + Nb + (kp - 1), rowsB, :) = reshape(j23kpB_FFT(:, mB+1).', [1,1,nmB, Nq]);
 	end
 	%% Construct J
-    totalDofs = dof_count * (3 + Nb) + (dof_count-1) *Ns;
+    %totalDofs = dof_count * (3 + Nb) + (dof_count-1) *Ns;
+    totalDofs = dof_count * (2 + Nb) + (dof_count-1) *(Ns+1);
     nCols = (3+ Nb + Ns)^2 * Nq;
     % precomputed: M_extended (totalDofs x nCols), P_templates{d} with fields i,j,v_template
     J = spalloc(totalDofs, totalDofs, 1 * nnz(M_extended));  % or a tighter nnz estimate
