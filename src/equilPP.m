@@ -39,6 +39,7 @@ function LY = equilPP(L, LX, LY)
   LY.bpperp = LY.Wkperp / LY.Ip^2 * LX.eps_val^2 * 4;
   LY.li = 2 * LY.Wp / LY.Ip^2;
 
+  % might be wrong, especially with dummy B residuals
   LY.gavg   = mean((BB_q.*(1 - dbetapardB0.*LX.eps_val.^2 + LX.eps_val.^2.*t2)) ...
                   ./(BB_q - dbetapardB_q.*LX.eps_val.^2), 2);
 
@@ -108,6 +109,9 @@ function LY = equilPP_to_plot_grid(L, LX, LY, t2, t2p, delta, deltap, deltapp, .
   LY.BBt2   = (1 - dbetapardB0.*LX.eps_val.^2 + LX.eps_val.^2.*t2).^2 ...
               ./ (LY.RR - (dbetapardB.*LX.eps_val.^2.*LY.RR)./(1 + LX.eps_val.*sum(Bs.*cos(mb.*LY.omega_plt),3))).^2;
   LY.BB2    = LY.BBt2 + LY.BBp2;
+  if func2str(L.P.residuals_fun) == "residuals_iso_static"
+      LY.BB = sqrt(LY.BB2); % catch case of dummy residuals
+  end
   LY.jphi   = compute_jphi(LX,r_plt,LY.omega_plt,RR,LX.eps_val,dbetapardB0,t2,t2p,deltap,deltapp,P_hat,Pp,Ppp,S,Sp,Spp,ms);
 
   % ── psiN ──────────────────────────────────────────────────────────────

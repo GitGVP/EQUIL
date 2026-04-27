@@ -30,6 +30,7 @@ function P = equilP(varargin)
  % input default parameters
  P.debug = 0;
  P.damping = 1;
+ P.NLtol = 5e-14;
  
  P.do_SFL = false;
  P.do_ana = true;

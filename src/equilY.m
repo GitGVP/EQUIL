@@ -60,7 +60,7 @@ function LY = equilY(L, LX)
       end
     end
     % Break if converged
-    if res_norm < 5e-14
+    if res_norm < L.P.NLtol
         LY.isconverged = true;
       break;
     end

@@ -2,11 +2,9 @@ function J = jacobian_iso_static(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1,P
 	Nq = numel(r);
 	Ns = numel(Sbc);
 	nRes = 3+Nb+Ns;
-	[t2, t2p, delta, deltap, deltapp, P, Pp, Ppp, Bs, ~, S, Sp, Spp] = ...
+	[t2, t2p, delta, deltap, deltapp, P, Pp, Ppp, ~, ~, S, Sp, Spp] = ...
       equil_unpack_state(x, dof_count, Nb, Sbc, P0, P1, P2);
 	ms = reshape(linspace(2,Ns+1,Ns), [1,1,Ns]);
-	mb = reshape(0:(Nb-1), [1,1,Nb]);
-	BB = 1 + epsilon.*sum(Bs.*cos(mb.*omega),3);
 	RR = 1 - delta.*epsilon.^2 + epsilon.^3.*P.*cos(omega) + epsilon.*r.*cos(omega) + epsilon.^2.*sum(cos((-1 + ms).*omega).*S,3);
     dbetapardr = kinetic_profiles.betap(r);
     Ntheta = numel(omega);
@@ -108,48 +106,13 @@ function J = jacobian_iso_static(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1,P
 	for kp = 2:(Ns+1)
 		jacTotal(1, 3 + Nb + (kp - 1), gamma, :) = mean((-(RR.*T37) + epsilon.*T20.*cos((-1 + kp).*omega).*1)./(epsilon.*RR.^2), 2);
 		jacTotal(2, 3 + Nb + (kp - 1), gamma, :) = mean((-(cos((-1 + kp).*omega).*1.*(temp3)) + 1.*sin((-1 + kp).*omega).*(temp6))./(epsilon.*RR), 2);
-	end
-
+    end
 	% --- resB modes ---
-	j11B = (-2.*epsilon.*(RBphi).*(q.^2 + epsilon.^2.*r.^2.*T3.*T4))./(q.^2.*RR.^2);
-	j11B_FFT = real(fft(j11B, [], 2)) / Ntheta;
-	jacTotal(1,1, rowsB, :) = reshape(j11B_FFT(:, mB+1).', [1,1,nmB, Nq]);
-
-	j12B = (-2.*epsilon.*(RBphi).^2.*(q.^2 + epsilon.^2.*r.^2.*T3.*T4))./(q.^2.*RR.^3);
-	j12B_FFT = real(fft(j12B, [], 2)) / Ntheta;
-	jacTotal(1,2, rowsB, :) = reshape(j12B_FFT(:, mB+1).', [1,1,nmB, Nq]);
-
-	j13B = (-2.*(epsilon + epsilon.^3.*t2).^2.*(epsilon.^3.*P.*r.^2.*RR.*T3 - q.^2.*cos(omega) + epsilon.*r.^2.*(r.*RR.*T3 - RR.*T4.*T6 - epsilon.^2.*Pp.*RR.*T4.*T6 - epsilon.*T3.*T4.*cos(omega) + deltap.*epsilon.*RR.*T4.*T6.*cos(omega) - epsilon.*RR.*T3.*cos(omega).*sum((-1 + ms).*cos((-1 + ms).*omega).*S,3) - epsilon.*RR.*T3.*sin(omega).*sum(-((-1 + ms).*S.*sin((-1 + ms).*omega)),3) - epsilon.*RR.*T4.*T6.*cos(omega).*sum(cos((-1 + ms).*omega).*Sp,3) + epsilon.*RR.*T4.*T6.*sin(omega).*sum(sin((-1 + ms).*omega).*Sp,3))))./(q.^2.*RR.^3);
-	j13B_FFT = real(fft(j13B, [], 2)) / Ntheta;
-	jacTotal(1,3, rowsB, :) = reshape(j13B_FFT(:, mB+1).', [1,1,nmB, Nq]);
-
-	j22B = (-2.*epsilon.^2.*r.^2.*(RBphi).^2.*T4.*T6.*(temp3))./(q.^2.*RR.^2);
-	j22B_FFT = real(fft(j22B, [], 2)) / Ntheta;
-	jacTotal(2,2, rowsB, :) = reshape(j22B_FFT(:, mB+1).', [1,1,nmB, Nq]);
-
-	j23B = (2.*epsilon.^3.*(r + epsilon.^2.*r.*t2).^2.*T4.*T6.*(epsilon.^2.*P + r - epsilon.*cos(omega).*sum((-1 + ms).*cos((-1 + ms).*omega).*S,3) - epsilon.*sin(omega).*sum(-((-1 + ms).*S.*sin((-1 + ms).*omega)),3)))./(q.^2.*RR.^2);
-	j23B_FFT = real(fft(j23B, [], 2)) / Ntheta;
-	jacTotal(2,3, rowsB, :) = reshape(j23B_FFT(:, mB+1).', [1,1,nmB, Nq]);
-
-	% derivatives wrt B_l (bundle)
+	% dummy residuals
 	for lp = 0:Nb-1
-		j13lpB = 2.*BB.*cos(lp.*omega);
+		j13lpB = epsilon.*cos(lp.*omega).*ones(Nq,1);
 		j13lpB_FFT = real(fft(j13lpB, [], 2)) / Ntheta;
 		jacTotal(1, 3+lp+1, rowsB, :) = reshape(j13lpB_FFT(:, mB+1).', [1,1,nmB, Nq]);
-	end
-
-	% derivatives wrt S_k (bundle), k=2..Ns+1
-	for kp = 2:(Ns+1)
-        T18 = cos((-1 + kp).*omega).*1.*(temp3) - 1.*sin((-1 + kp).*omega).*(temp6);
-	    T19 = -((-1 + kp).*cos((-1 + kp).*omega).*1.*(temp8)) - -((-1 + kp).*1.*sin((-1 + kp).*omega)).*(temp9);
-        T34 = -2.*((-1 + kp).*cos((-1 + kp).*omega).*1.*(temp3) + -((-1 + kp).*1.*sin((-1 + kp).*omega)).*(temp6));
-
-		j13kpB = (epsilon.*(RBphi).^2.*(epsilon.*r.^2.*RR.*(-(T3.*T34) + 2.*T19.*T4.*T6) + 2.*(q.^2 + epsilon.^2.*r.^2.*T3.*T4).*cos((-1 + kp).*omega).*1))./(q.^2.*RR.^3);
-		j13kpB_FFT = real(fft(j13kpB, [], 2)) / Ntheta;
-		jacTotal(1, 3 + Nb + (kp - 1), rowsB, :) = reshape(j13kpB_FFT(:, mB+1).', [1,1,nmB, Nq]);
-		j23kpB = (2.*epsilon.^2.*r.^2.*T18.*(RBphi).^2.*T4.*T6)./(q.^2.*RR.^2);
-		j23kpB_FFT = real(fft(j23kpB, [], 2)) / Ntheta;
-		jacTotal(2, 3 + Nb + (kp - 1), rowsB, :) = reshape(j23kpB_FFT(:, mB+1).', [1,1,nmB, Nq]);
 	end
 	%% Construct J
     totalDofs = dof_count * (2 + Nb) + (dof_count-1) *(Ns+1);
