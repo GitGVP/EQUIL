@@ -1,33 +1,18 @@
 function J = jacobian_LO(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1,P2,dof_count,Nb,Sbc,P_templates,M_extended,equation_of_state)
-	Nq = numel(r);
-	Ns = numel(Sbc);
-	nRes = 3+Nb+Ns;
-	t2_c    = x(1:dof_count);
-	delta_c = x(dof_count+1:2*dof_count);
-	P_c = x(2*dof_count+1:3*dof_count);
-	Bs_c    = reshape(x(3*dof_count+1:(3+Nb)*dof_count), [dof_count, 1, Nb]);
-	Bs_flat   = reshape(Bs_c, size(Bs_c,1), []);        % dof_count x Ns
-	S_unkn     = reshape(x((3+Nb)*dof_count+1:end), [dof_count-1, 1, Ns]);
-	S_c     = cat(1, S_unkn, reshape(Sbc, [1, 1, Ns]));
-	S_flat   = reshape(S_c, size(S_c,1), []);        % dof_count x Ns
-	t2      = P0 * t2_c;
-	t2p     = P1 * t2_c;
-	delta   = P0 * delta_c;
-	deltap  = P1 * delta_c;
-	deltapp = P2 * delta_c;
-	P   = P0 * P_c;
-	Pp  = P1 * P_c;
-	Ppp = P2 * P_c;
-	Bs       = reshape(P0 * Bs_flat, Nq, 1, []);
-	Bsp = reshape(P1 * Bs_flat, Nq, 1, []);
-	S       = reshape(P0 * S_flat, Nq, 1, []);
-	Sp = reshape(P1 * S_flat, Nq, 1, []);
+    Nq = numel(r);
+    Ns = numel(Sbc);
+    nRes = 3+Nb+Ns;
+    [t2, t2p, delta, deltap, deltapp, P, Pp, Ppp, Bs, Bsp, S, Sp, Spp] = ...
+      equil_unpack_state(x, dof_count, Nb, Sbc, P0, P1, P2);
 	ms = reshape(linspace(2,Ns+1,Ns), [1,1,Ns]);
 	mb = reshape(0:(Nb-1), [1,1,Nb]);
-[~, ...
-        dbetapardr, dbetapardB, ~, ...
-        ~, d2betapardrdB, ~,~,~,...
-		~,~,~,~,~] = equation_of_state(kinetic_profiles,r,ones(Nq,numel(omega)),ones(Nq,numel(omega)));
+	BB = 1 + epsilon.*sum(Bs.*cos(mb.*omega),3);
+	RR = 1 - delta.*epsilon.^2 + epsilon.^3.*P.*cos(omega) + epsilon.*r.*cos(omega) + epsilon.^2.*sum(cos((-1 + ms).*omega).*S,3);
+[dbetapardB0, ...
+        dbetapardr, dbetapardB, ~, ... % dbetapardR not used
+        d2betapardB2, d2betapardrdB, d2betapardRdB,d2betapardrdR,~,... %d2betapardR2 not used
+		d3betapardrdB2,d3betapardB3,d3betapardBdR2,d3betapardB2dR,d3betapardrdRdB] = equation_of_state(kinetic_profiles,r,RR,BB);
+    d2betapardrdR=0;
     Ntheta = numel(omega);
     mF   = [0,1,2:(Ns+1)];
     rowsF = [1,2,(2 + Nb + (2:(Ns+1)))];
@@ -96,7 +81,7 @@ function J = jacobian_LO(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1,P2,dof_co
 	end
 
 	%% Construct J
-    totalDofs = dof_count * (3 + Nb) + (dof_count-1) *Ns;
+    totalDofs = dof_count * (2 + Nb) + (dof_count-1) *(Ns+1);
     nCols = (3+ Nb + Ns)^2 * Nq;
     % precomputed: M_extended (totalDofs x nCols), P_templates{d} with fields i,j,v_template
     J = spalloc(totalDofs, totalDofs, 1 * nnz(M_extended));  % or a tighter nnz estimate
