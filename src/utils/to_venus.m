@@ -1,28 +1,19 @@
-function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
+function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep, xi2in, xi2out, growth_rate2, xikp1in, xikp1out)
 %
-% Prepares inputs for the stability problem to be solved by VENUS-MHD
-% Inputs:
-%   LX: EQUIL input structure
-%   LY: EQUIL output structure
-%   filename: string of the HDF5 file to be created
-% Things TODO/check:
-% 1. Check that derivatives like dqds, dPds that are output by venus-mhd
-% are the same as the ones from EQUIL
-% 2. Check conversion factors for pressure
-% 3. Check meaning of g and compute it from EQUIL
-% 4. Check meaning of T, rho etc. which are necessary for VENUS-MHD
-% 5. Check the angular variable (i.e. straight field line coordinates conversion)
-% 6. Check sizes (currently L.P.om_pts =299 to have Ntheta=300)
-    
+ 
     if exist(filename, 'file')
         delete(filename)
     end
     
     Nr = numel(LY.r_plt); Ntheta = numel(LY.omega_plt)-1;
-    R0 = 3.1923984520629225; B0 =  0.9367286560046748;
+    %R0 = 3.1923984520629225; B0 =  6.9617498446849172;
+    %R0 = 1; B0 = 1;
+    R0 = 3.1923984520629225; B0 =  0.9617498446849172;
     P0 = LX.eps_val^2*B0^2/4./pi/1.0E-07;
-    Lref = 3.1923984520629225; Bref =0.9617498446849172;
-
+    Lref = 1/LX.eps_val^2; Bref =1;
+    %Lref = 100; Bref =50;
+    %Lref = 1; Bref =1;
+    rho0=1;
 
     % added constants 
     T0 = 0.01999995793231724;
@@ -47,7 +38,6 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
     h5create(filename, '/normalisation/Bref', 1);
     h5write(filename, '/normalisation/Bref', Bref);
     
-    % epsilon^2 * B0^2 / mu0
     h5create(filename, '/normalisation/P0', 1);
     h5write(filename, '/normalisation/P0', P0);
     
@@ -59,7 +49,11 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
     
     %% PROFILES
     F = -R0*B0*(1 + LX.eps_val.^2.*LY.t2);
-    g = F./LX.qfun(LY.r_plt)*LX.eps_val;
+    g = R0*F./LX.qfun(LY.r_plt)*LX.eps_val^2;
+
+%     q = [LX.qfun(LY.r_plt(2)); LX.qfun(LY.r_plt(2:end))];
+%     g = R0*F./q*LX.eps_val^2;
+
     %g =  -2* LY.psi(end) * ones(Nr,1); 
     h5create(filename, '/profiles/F',Nr);
     h5write(filename, '/profiles/F', F);
@@ -69,24 +63,24 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
     
     % try to match VENUS radial coordinate sqrt(psi)
     h5create(filename, '/profiles/h', Nr);
-    h5write(filename, '/profiles/h', LY.r_plt); 
-    %h5write(filename, '/profiles/h', sqrt(LY.psiN)); %LY.r_plt
+    h5write(filename, '/profiles/h', LY.r_plt);
     
     h5create(filename, '/profiles/q', Nr);
+%     h5write(filename, '/profiles/q', q);
     h5write(filename, '/profiles/q', LX.qfun(LY.r_plt));
 
     h5create(filename, '/profiles/P', Nr);
-    h5write(filename, '/profiles/P', LX.kinetic_profiles.beta(LY.r_plt)*LX.eps_val^2/4./pi/1.0E-07*Bref^2)%/LX.eps_val^2);
+    h5write(filename, '/profiles/P', LX.kinetic_profiles.beta(LY.r_plt)*LX.eps_val^2/4./pi/1.0E-07*B0^2)%/LX.eps_val^2);
     
     h5create(filename, '/profiles/Prot', [Nr, Ntheta]);
     h5write(filename, '/profiles/Prot', LX.kinetic_profiles.beta(LY.r_plt).*ones(Nr, Ntheta)/LX.eps_val^2);
     
     h5create(filename, '/profiles/rho', Nr);
     %h5write(filename, '/profiles/rho', 1-LY.psiN);
-    h5write(filename, '/profiles/rho', ones(Nr, 1));
+    h5write(filename, '/profiles/rho', rho0*ones(Nr, 1));
 
     h5create(filename, '/profiles/rhorot', [Nr, Ntheta]);
-    h5write(filename, '/profiles/rhorot', 1*ones(Nr, Ntheta)); % careful
+    h5write(filename, '/profiles/rhorot', rho0*ones(Nr, Ntheta)); % careful
     
     h5create(filename, '/profiles/T', Nr);
     h5write(filename, '/profiles/T', T0*ones(Nr,1));
@@ -112,10 +106,10 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
     
     li = 2*LX.qfun(r).^2 ./ r .^ 4 .* cumtrapz(r, r.^3 ./ LX.qfun(r).^2);
     
-    deltap = interp1(LY.r_plt, LY.deltap, r, 'spline');
-    deltapp = interp1(LY.r_plt, LY.deltapp, r, 'spline');
-    %deltap=LY.deltap_fine;
-    %deltapp = 1 - 2 * LX.qfun(LY.r_fine).^2 .* LX.kinetic_profiles.betap(LY.r_fine) ./ LY.r_fine - LY.deltap_fine .* (3 ./LY.r_fine - 2 * LX.qpfun(LY.r_fine)./LX.qfun(LY.r_fine));
+%     deltap = interp1(LY.r_plt, LY.deltap, r, 'spline');
+%     deltapp = interp1(LY.r_plt, LY.deltapp, r, 'spline');
+    deltap=LY.deltap_fine;
+    deltapp = 1 - 2 * LX.qfun(LY.r_fine).^2 .* LX.kinetic_profiles.betap(LY.r_fine) ./ LY.r_fine - LY.deltap_fine .* (3 ./LY.r_fine - 2 * LX.qpfun(LY.r_fine)./LX.qfun(LY.r_fine));
 
     rs = LY.r_fine(I);
     s_shear=rs*LX.qpfun(rs);
@@ -153,20 +147,39 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
 
     intrU       = (W + intUTC);
     growth_rate = pi / (rs^2 * s_shear * sqrt(3)) * intrU;
-    fprintf('bp(rs) = %f, bp^2-13/144 = %f, (gamma/omega_A) = %.1e, (gamma/omega_A)^2 = %.1e \n', beta_rs, beta_rs^2-13/144, growth_rate, growth_rate^2)
+%     fprintf('bp(rs) = %f, bp^2-13/144 = %f, (gamma/omega_A) = %.1e, (gamma/omega_A)^2 = %.1e, (gamma/omega_A)new = %.1e \n', beta_rs, beta_rs^2-13/144, growth_rate, growth_rate^2, growth_rate2*LX.eps_val^2)
+    fprintf('bp(rs) = %f, rs = %f, (gamma/omega_A) = %.1e, (gamma/omega_A)^2 = %.1e, (gamma/omega_A)new = %.1e \n', beta_rs, r(I), growth_rate, growth_rate^2, growth_rate2*LX.eps_val^2)
 
     %% POST PROCESSING
     
     
     h5create(filename, '/postprocessing/eps', 1);
     h5write(filename, '/postprocessing/eps', LX.eps_val);
+
+    h5create(filename, '/postprocessing/S2bc', 1);
+    h5write(filename, '/postprocessing/S2bc', LX.Sbc(1));
+
+    h5create(filename, '/postprocessing/S3bc', 1);
+    h5write(filename, '/postprocessing/S3bc', LX.Sbc(2));
+
+    h5create(filename, '/postprocessing/beta_poloidal', numel(beta_poloidal));
+    h5write(filename, '/postprocessing/beta_poloidal', beta_poloidal);
     
     h5create(filename, '/postprocessing/betap_rs', 1);
     h5write(filename, '/postprocessing/betap_rs', beta_rs);
 
+    h5create(filename, '/postprocessing/kappa', 1);
+    h5write(filename, '/postprocessing/kappa', LY.kappa(end));
+
+    h5create(filename, '/postprocessing/deltatrig', 1);
+    h5write(filename, '/postprocessing/deltatrig', LY.deltatrig(end));
+
     h5create(filename, '/postprocessing/betap', Nr);
     h5write(filename, '/postprocessing/betap', LX.kinetic_profiles.betap(LY.r_plt));
     
+    h5create(filename, '/postprocessing/psiN', numel(LY.psiN));
+    h5write(filename, '/postprocessing/psiN', LY.psiN);
+
     h5create(filename, '/postprocessing/deltap', numel(LY.r_fine));
     h5write(filename, '/postprocessing/deltap', deltap);
     
@@ -187,31 +200,76 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep)
     
     h5create(filename, '/postprocessing/X2_ep', numel(X2_e));
     h5write(filename, '/postprocessing/X2_ep', X2_ep);
+
+    h5create(filename, '/postprocessing/new_xi2in', numel(xi2in));
+    h5write(filename, '/postprocessing/new_xi2in', xi2in);
+
+    h5create(filename, '/postprocessing/new_xi2out', numel(xi2out));
+    h5write(filename, '/postprocessing/new_xi2out', xi2out);
+
+    h5create(filename, '/postprocessing/xikin', numel(xikp1in));
+    h5write(filename, '/postprocessing/xikin', xikp1in);
+
+    h5create(filename, '/postprocessing/xikout', numel(xikp1out));
+    h5write(filename, '/postprocessing/xikout', xikp1out);
     
     h5create(filename, '/postprocessing/r_fine', numel(LY.r_fine));
     h5write(filename, '/postprocessing/r_fine', LY.r_fine);
 
-    h5create(filename, '/postprocessing/gamma_ana', numel(growth_rate));
+    h5create(filename, '/postprocessing/gamma_ana', 1);
     h5write(filename, '/postprocessing/gamma_ana', growth_rate);
 
-    h5create(filename, '/postprocessing/Nreal', numel(LY.Nm1));
-    h5write(filename, '/postprocessing/Nreal', real(LY.Nm1));
+    h5create(filename, '/postprocessing/newgamma_ana', 1);
+    h5write(filename, '/postprocessing/newgamma_ana', growth_rate2*LX.eps_val^2);
 
-    h5create(filename, '/postprocessing/Nimag', numel(LY.Nm1));
-    h5write(filename, '/postprocessing/Nimag', imag(LY.Nm1));
+%     h5create(filename, '/postprocessing/L1', numel(LY.L1));
+%     h5write(filename, '/postprocessing/L1', real(LY.L1));
 
-    h5create(filename, '/postprocessing/Mreal', numel(LY.Mm1));
-    h5write(filename, '/postprocessing/Mreal', real(LY.Mm1));
+%     h5create(filename, '/postprocessing/N0', numel(LY.N0));
+%     h5write(filename, '/postprocessing/N0', LY.N0);
+% 
+%     h5create(filename, '/postprocessing/Nm1', numel(LY.Nm1));
+%     h5write(filename, '/postprocessing/Nm1', real(LY.Nm1));
+% 
+%     h5create(filename, '/postprocessing/Nimag', numel(LY.Nm1));
+%     h5write(filename, '/postprocessing/Nimag', imag(LY.Nm1));
 
-    h5create(filename, '/postprocessing/Mimag', numel(LY.Mm1));
-    h5write(filename, '/postprocessing/Mimag', imag(LY.Mm1));
+%     h5create(filename, '/postprocessing/Mreal', numel(LY.Mm1));
+%     h5write(filename, '/postprocessing/Mreal', real(LY.Mm1));
+% 
+%     h5create(filename, '/postprocessing/Mm1', numel(LY.Mm1));
+%     h5write(filename, '/postprocessing/Mm1', imag(LY.Mm1));
+    
+    h5create(filename, '/postprocessing/JoverBm1', numel(LY.JoverBm1));
+    h5write(filename, '/postprocessing/JoverBm1', real(LY.JoverBm1));
+
+%     h5create(filename, '/postprocessing/oneoverB1', numel(LY.oneoverB1));
+%     h5write(filename, '/postprocessing/oneoverB1', real(LY.oneoverB1));
+% 
+%     h5create(filename, '/postprocessing/JoverB1', numel(LY.JoverB1));
+%     h5write(filename, '/postprocessing/JoverB1', real(LY.JoverB1));
+
+    h5create(filename, '/postprocessing/Y0_ana', numel(LY.Y0_ana));
+    h5write(filename, '/postprocessing/Y0_ana', real(LY.Y0_ana));
+
+    h5create(filename, '/postprocessing/Y0', numel(LY.Y0));
+    h5write(filename, '/postprocessing/Y0', real(LY.Y0));
+
+    h5create(filename, '/postprocessing/Y1', numel(-LY.l1p));
+    h5write(filename, '/postprocessing/Y1', real(-LY.l1p));
+
+    h5create(filename, '/postprocessing/Z1', numel(LY.l1));
+    h5write(filename, '/postprocessing/Z1', imag(LY.l1));
     
 %     h5create(filename, '/postprocessing/g22', [Nr, Ntheta]);
-%     h5write(filename, '/postprocessing/g22', LY.gtt(:,1:end-1)*R0^2);
+%     h5write(filename, '/postprocessing/g22', LY.gtt(:,1:end-1));
 % 
 %     h5create(filename, '/postprocessing/g12', [Nr, Ntheta]);
 %     h5write(filename, '/postprocessing/g12', LY.grt(:,1:end-1));
 % 
+%     h5create(filename, '/postprocessing/g11', [Nr, Ntheta]);
+%     h5write(filename, '/postprocessing/g11', LY.grr(:,1:end-1));
+
 %     h5create(filename, '/postprocessing/Ja', [Nr, Ntheta]);
 %     h5write(filename, '/postprocessing/Ja', LY.J_SFL(:,1:end-1)./LY.r_plt*R0^2);
    

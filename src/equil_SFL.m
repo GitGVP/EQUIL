@@ -46,8 +46,10 @@ function LY = equil_SFL(L, LX, LY, r_plt, RR, ZZ, delta, deltap, deltapp, P_hat,
   LY.prefacY0 = mean(J_SFL(:,1:end-1).*sqrt(LY.BBt2(:,1:end-1))./ RR(:,1:end-1) .* dthetaSFLdomega(:,1:end-1), 2) ./ r_plt ./ LY.N0;
 
   l1 = r_plt .* (1 ./ LX.qfun(r_plt)-1);
+  LY.l1=l1;
   l1p = -1 + (1./LX.qfun(r_plt)) - r_plt .* LX.qpfun(r_plt) ./ LX.qfun(r_plt).^2;
-  
+  LY.l1p=l1p;
+
   [~ ,iq1] = min(abs(LX.qfun(r_plt)-1));
   rs = r_plt(iq1);
   %Z1 = 1i *l1;
@@ -67,7 +69,10 @@ function LY = equil_SFL(L, LX, LY, r_plt, RR, ZZ, delta, deltap, deltapp, P_hat,
 
   % Only for quadratic profiles!!
   betapp = -2*L.P.beta;
-  qpp = L.P.q0 * L.P.s0;
+%   qpp = L.P.q0 * L.P.s0;
+  dq0=0.06;
+  qpp = (8*(-1 + dq0)*(24 + 12*L.r_q.^2 - 156*L.r_q.^4 + 208*L.r_q.^6 - 108*L.r_q.^8 + 21*L.r_q.^10))./(-4 + 6*L.r_q.^2 - 4*L.r_q.^4 + L.r_q.^6).^3;
+
   LY.dW0 = - trapz(L.r_q, (L.r_q < rs) .*(pi.*L.r_q.*(LX.kinetic_profiles.betap(L.r_q).^2.*LX.qfun(L.r_q).^6 + LY.deltap_ana.*LX.qpfun(L.r_q).*(1 + ...
 LY.deltap_ana.*LX.qpfun(L.r_q)).*L.r_q.^2 + LX.qfun(L.r_q).^3.*L.r_q.*(-((1 + ...
 betapp).*LY.deltap_ana) + LX.kinetic_profiles.betap(L.r_q).*(2 - 5.*LY.deltap_ana.*LX.qpfun(L.r_q)) + L.r_q) + ...
