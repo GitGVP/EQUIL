@@ -39,9 +39,11 @@ function LY = equil_SFL(L, LX, LY, r_plt, RR, ZZ, delta, deltap, deltapp, P_hat,
   LY.L_SFL = grr_SFL ./ J_SFL * LX.eps_val^(-2);
   L1 = mean( exp(-1i * LY.theta_SFL(:,1:end-1)).* LY.L_SFL(:,1:end-1)  .* dthetaSFLdomega(:,1:end-1), 2);
   LY.L1 = L1;
+  LY.Lm1 = mean( exp(1i * LY.theta_SFL(:,1:end-1)).* LY.L_SFL(:,1:end-1)  .* dthetaSFLdomega(:,1:end-1), 2);
   LY.L0 =  mean(LY.L_SFL(:,1:end-1)  .* dthetaSFLdomega(:,1:end-1), 2);
   % compute (j^\phi / B^\phi)_{-1}
-  LY.JoverBm1 = mean( exp(-1i * LY.theta_SFL(:,1:end-1)).* LY.jphi(:,1:end-1) ./ sqrt(LY.BBt2(:,1:end-1)) .* dthetaSFLdomega(:,1:end-1), 2);
+  LY.JoverBm1 = mean( exp(1i * LY.theta_SFL(:,1:end-1)).* LY.jphi(:,1:end-1) ./ sqrt(LY.BBt2(:,1:end-1)) .* dthetaSFLdomega(:,1:end-1), 2);
+  LY.oneoverBm1 = mean( exp(1i * LY.theta_SFL(:,1:end-1)).* RR(:,1:end-1) ./ sqrt(LY.BBt2(:,1:end-1)) .* dthetaSFLdomega(:,1:end-1), 2);
   LY.JoverBm1_2 = -LX.eps_val * LX.qfun(r_plt) .* LX.kinetic_profiles.betap(r_plt);
   LY.prefacY0 = mean(J_SFL(:,1:end-1).*sqrt(LY.BBt2(:,1:end-1))./ RR(:,1:end-1) .* dthetaSFLdomega(:,1:end-1), 2) ./ r_plt ./ LY.N0;
 
