@@ -217,17 +217,16 @@ A0 = 3;
                          'jacobian_fun', @jacobian_noRepl, 'Ns', 3,'Nb',10,...
                          'equation_of_state',@biMaxwellian,'A0',A0,'Bc0',0.98,...
                          'hot_restart', true,'damping',0.7);
-eps_val = 0.37225;
 LX2.eps_val = eps_val;
-LX2.Sbc(1) = 0;  LX2.Sbc(2) = 0; 
+LX2.Sbc(1:2) = 0; 
 LX2.qfun = LXe.qfun;
 LX2.qpfun = LXe.qpfun;
 LX2.x = LYe.x;
-LX2.kinetic_profiles.beta = @(r) LXe.kinetic_profiles.beta(r)/A0*1.5;
-LX2.kinetic_profiles.betap = @(r) LXe.kinetic_profiles.betap(r)/A0*1.5;
+LX2.kinetic_profiles.beta = @(r) LXe.kinetic_profiles.beta(r)/A0*1.4; %*1.5
+LX2.kinetic_profiles.betap = @(r) LXe.kinetic_profiles.betap(r)/A0*1.4;
 LY2 = equilY(L2, LX2);
-
-LX2.x = LY2.x;L2.P.do_shift_NLO = true;
+LX2.x = LY2.x;
+L2.P.do_shift_NLO = true;
 LY2 = equilY(L2, LX2);
 L2.P.damping =1;
 
@@ -274,9 +273,8 @@ H1_error_all(1) = norm(t2p_ana - t2_num(1,:).');
  
 deltap_num(1,:) = LY0.deltap(2:end-1);
 
-% set previous LY for warm-start in next iterations
 LY_prev = LY0;
-LX = LX0; L = L0; L.P.hot_restart = true; L.P.do_shift_NLO = false;                     
+LX = LX0; L = L0; L.P.do_shift_NLO = false;                     
 for ii = 1:nsim-1
     eps_val = values_eps(end-ii);    % like original script: decreasing eps
     LX.eps_val = eps_val;
@@ -284,8 +282,8 @@ for ii = 1:nsim-1
     % run solver
     LY = equilY(L, LX);
 
-    fprintf('Run %d/%d, eps = %.1e, |res| = %.4e, bp_LIU = %.1f, li_LIU = %.1f\n', ...
-            ii+1, nsim, LX.eps_val, LY.res_norms(end), LY.bp_liu, LY.li_liu);
+    fprintf('Run %d/%d, eps = %.1e, |res| = %.4e, bp = %.1f, li = %.1f\n', ...
+            ii+1, nsim, LX.eps_val, LY.res_norms(end), LY.bp, LY.li);
 
     LY_prev = LY;
 
@@ -381,3 +379,39 @@ plot_profile_panel(L0.r_q,S2_1_ana, S2_1_num, cmap, col_inds, '$\hat \Delta_1$ p
 delete(ax.Title)
 legend( {'$\textrm{analytical}$'}, 'Interpreter','latex','FontSize',12,'Box','off', 'Location', 'Southwest')
 axis(ax,'tight'); set(ax,'LooseInset',get(ax,'TightInset'));
+
+
+%% Contour plots
+figure;
+tiledlayout(1,2,'TileSpacing','compact','Padding','none')
+colormap nebula
+% Compute common color limits for the last two plots
+clim_common = [min([LY2.betapar(:); LY2.betaperp(:)]), max([LY2.betapar(:); LY2.betaperp(:)])];
+
+% --- Plot 1 ---
+nexttile; hold on;
+contourf(LY2.RR, LY2.ZZ, LY2.BB, 'LineColor', 'none');
+for i=floor(linspace(1,numel(LY2.r_plt),7)); plot(LY2.RR(i,:), LY2.ZZ(i,:),'--','Color', [1,1,1,0.7],'LineWidth',0.5); end
+contour(LY2.RR, LY2.ZZ, LY2.BB, [L2.P.Bc0 L2.P.Bc0], 'Color', [0.2,0.8,0.2], 'LineWidth',1.5);
+plot(LY2.RR(end,:), LY2.ZZ(end,:), 'k', 'LineWidth',4)
+cb1 = colorbar;
+axis equal;
+xlabel('$R/R_0$','Interpreter','latex','FontSize',14);
+ylabel('$Z/R_0$','Interpreter','latex','FontSize',14);
+title('$B/B_0$','Interpreter','latex','FontSize',14); 
+xlim(xlim + [-0.01 0.01])
+ylim(ylim + [-0.01 0.01])
+% --- Plot 2 ---
+nexttile; hold on;
+contourf(LY2.RR, LY2.ZZ, LY2.betaperp.*ones(size(LY2.ZZ)), 'LineColor', 'none');
+for i=floor(linspace(1,numel(LY2.r_plt),7)); plot(LY2.RR(i,:), LY2.ZZ(i,:),'--','Color', [1,1,1,0.7],'LineWidth',0.5); end
+plot(LY2.RR(end,:), LY2.ZZ(end,:), 'k', 'LineWidth',4)
+contour(LY2.RR, LY2.ZZ, LY2.BB, [L2.P.Bc0 L2.P.Bc0], 'Color', [0.2,0.8,0.2], 'LineWidth',1.5);
+cb3 = colorbar;
+caxis(clim_common); % apply common limits
+axis equal;
+xlabel('$R/R_0$','Interpreter','latex','FontSize',14);
+ylabel('$Z/R_0$','Interpreter','latex','FontSize',14);
+title('$\beta_\perp$','Interpreter','latex','FontSize',14); 
+xlim(xlim + [-0.01 0.01])
+ylim(ylim + [-0.01 0.01])
