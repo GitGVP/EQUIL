@@ -17,3 +17,7 @@ The discretization part is in `src/utils` and consists in `assemble_FE_matrices_
 - Jacobian assembly matrices (`M_extended`, `P_templates`, `P_extended`), matrices that are built from $M$ and $P_i$ above but with some operations to adjust their sizes etc. for the jacobain assembly. See jacobian equation in the article for more explanations, and also the last parts of `jacobian_noREpl.m` in `src/residuals_jacobians/` to understand how these are used, note that in the notation of the paper `jacTotal` is $\mathcal J_q^{\alpha,\gamma,(d)}$.
 
 
+## Terms of Use
+
+EQUIL is a scientific code under MIT license. If you use this code in a publication, please cite the associated paper:
+Van Parys et al., "Investigation of finite aspect ratio effects in axisymmetric magnetic equilibria with toroidal rotation and pressure anisotropy" (submitted to PPCF).
