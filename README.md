@@ -17,7 +17,28 @@ This branch is a frozen snapshot associated with the paper. The scripts in `Arti
 
 The figure scripts are self-contained and can be run directly from MATLAB after adding the repository to the path.
 
-## Terms of Use
+A typical session is:
 
-EQUIL is a scientific code under MIT license. If you use this code in a publication, please cite the associated paper:
-Van Parys et al., "Investigation of finite aspect ratio effects in axisymmetric magnetic equilibria with toroidal rotation and pressure anisotropy" (submitted to PPCF).
+```matlab
+addpath(genpath('src'))
+addpath(genpath('ArticleResults'))
+```
+Then run the desired script from `ArticleResults/`.
+
+The main reproduction scripts are:
+
+- `ArticleResults/numerical_convergence.m`: Fig. 1
+- `ArticleResults/Solovev.m`: Fig. 2
+- `ArticleResults/isotropic_1.m`: Figs. 3–5
+- `ArticleResults/parallel_rotating_1.m`: Figs. 6–7
+- `ArticleResults/perp_anisotropic.m`: Figs. 8–10
+
+Each script contains a short header indicating which section and figures it reproduces.
+
+## Citation
+
+If you use this code, please cite the associated paper above.
+
+## License
+
+This code is released under the MIT License. See LICENSE.
