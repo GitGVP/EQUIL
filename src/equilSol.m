@@ -44,6 +44,7 @@ function P = equilP(varargin)
  P.Bc0 = 1+0.3; 
  P.mach20 = 0;
  P.gamma0 = 1;
+ P.Theta0 = 0;
  
  % overwrites
  for k = 1:2:length(varargin)

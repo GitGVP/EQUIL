@@ -10,7 +10,7 @@ function LY = equilPP(L, LX, LY)
 
   BB_q = 1 + LX.eps_val.*sum(Bs.*cos(mb.*L.omega),3);
 
-  [dbetapardB0, ~, dbetapardB_q, ~, ~, ...
+  [dbetapardB0, ~, dbetapardB_q, dbetapardR_q, ~, ...
    ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, betapar_q, betaperp_q] = ...
       L.P.equation_of_state(LX.kinetic_profiles, L.r_q, RR_q, BB_q);
 
@@ -28,6 +28,7 @@ function LY = equilPP(L, LX, LY)
   LY.Wk     = 2*pi*trapz(L.r_q, 2*pi*mean((betapar_q + betaperp_q)/2 .* JoverR_q .* RR_q, 2)); % to be multiplied by R0^3 * P0
   LY.Wkpar  = 2*pi*trapz(L.r_q, 2*pi*mean(betapar_q  .* JoverR_q .* RR_q, 2)); % to be multiplied by R0^3 * P0
   LY.Wkperp = 2*pi*trapz(L.r_q, 2*pi*mean(betaperp_q .* JoverR_q .* RR_q, 2)); % to be multiplied by R0^3 * P0
+  LY.Wkrot  = 2*pi*trapz(L.r_q, 2*pi*mean(dbetapardR_q .* JoverR_q .* RR_q, 2)); % to be multiplied by R0^3 * P0
   LY.Wp     = 2*pi*trapz(L.r_q, 2*pi*mean(BBp2_q     .* JoverR_q .* RR_q, 2)); % to be multiplied by R0^3 * B0^2 /2 /mu0
   LY.Ip     = trapz(L.r_q, 2*pi*mean(jphi_q  .* JoverR_q,        2)); % to be multiplied by R0 * B0 /mu0
   LY.Ftt    = trapz(L.r_q, 2*pi*mean(BBt_q   .* JoverR_q,        2)); % to be multiplied by R0^2 * B0
@@ -35,9 +36,11 @@ function LY = equilPP(L, LX, LY)
   LY.Ft     = LY.Ftt - LY.rBt * LY.Ft0;   % to be multiplied by R0^2 * B0
 
   LY.bp = LY.Wk / LY.Ip^2 * LX.eps_val^2 * 4;
-  LY.bppar = LY.Wkpar / LY.Ip^2 * LX.eps_val^2 * 4;
-  LY.bpperp = LY.Wkperp / LY.Ip^2 * LX.eps_val^2 * 4;
+  LY.bppar = LY.Wkpar / LY.Ip^2 * LX.eps_val^2 * 4 /2; % factor 1/2 to get back bp
+  LY.bpperp = LY.Wkperp / LY.Ip^2 * LX.eps_val^2 * 4 /2; % factor 1/2 to get back bp
+  LY.bprot = LY.Wkrot / LY.Ip^2 * LX.eps_val^2 * 4 / 3; % fact 1/3 so that delta(end) = bpli2 + C
   LY.li = 2 * LY.Wp / LY.Ip^2;
+  LY.bpli2 = (LY.bppar + LY.bpperp + LY.bprot) + LY.li/2;
 
   % might be wrong, especially with dummy B residuals
   LY.gavg   = mean((BB_q.*(1 - dbetapardB0.*LX.eps_val.^2 + LX.eps_val.^2.*t2)) ...
