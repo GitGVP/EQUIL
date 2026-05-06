@@ -96,6 +96,11 @@ LX.kinetic_profiles.betap(L.r_q).*(1 + 2.*LX.qpfun(L.r_q).*L.r_q))))./LX.qfun(L.
   
   LY.jacBphiup =  mean(sqrt(LY.BBt2(:,1:end-1)) ./ RR(:,1:end-1) .* J_SFL(:,1:end-1) .* dthetaSFLdomega(:,1:end-1), 2);
 
+
+  % Compute contravariant components of the equilibrium current (in SFL coordinates, r, \phi are the same)
+  % for now on full plotting grid.
+  LY.Juptheta = dthetaSFLdr .* LY.Jupr + LY.Jupomega .* dthetaSFLdomega;
+  
   % %% Compute dMdr, dNdr, d(1/B_0^\phi)/dr, d(J_0^\phi/B_0^\phi)dr
   % % Let's try finite differences for now, even though that is not very
   % % clean
