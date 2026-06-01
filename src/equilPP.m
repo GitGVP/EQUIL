@@ -95,7 +95,7 @@ function LY = equilPP_to_plot_grid(L, LX, LY, t2, t2p, delta, deltap, deltapp, .
 
   P_c = LY.x(2*L.dof_count:3*L.dof_count-1);
   Pppp = L.P3 * P_c;
-  LY.Pppp = [0; Pppp; Pppp(end)];
+  LY.Pppp = [(Ppp(2)-Ppp(1))/(r_plt(2)-r_plt(1)); Pppp; Pppp(end)];
 
   % ── Geometry ──────────────────────────────────────────────────────────
   LY.BB  = 1 + LX.eps_val .* sum(Bs .* cos(reshape(linspace(0,L.P.Nb-1,L.P.Nb),[1,1,L.P.Nb]) .* LY.omega_plt), 3);
