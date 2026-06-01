@@ -1,4 +1,4 @@
-function [Nval, N1, N2] = bspline_eval_all(T, p, x)
+function [Nval, N1, N2, N3] = bspline_eval_all(T, p, x)
     x = x(:)';                     % row vector
     nx = numel(x);
     K = length(T);
@@ -86,5 +86,56 @@ function [Nval, N1, N2] = bspline_eval_all(T, p, x)
         end
     else
         N2 = zeros(nb, nx);
+    end
+    if p >= 3
+        % First derivative of degree p-2
+        D1 = zeros(nb, nx);
+        for i = 1:nb
+            a = T(i+p-2) - T(i);
+            b = T(i+p-1) - T(i+1);
+            t1 = zeros(1,nx);
+            t2 = zeros(1,nx);
+            if a > 0
+                t1 = ((p-2) / a) * N(i, :, p-2);
+            end
+            if b > 0 && (i+1) <= nb
+                t2 = ((p-2) / b) * N(i+1, :, p-2);
+            end
+            D1(i, :) = t1 - t2;
+        end
+    
+        % Second derivative of degree p-1
+        D2 = zeros(nb, nx);
+        for i = 1:nb
+            a = T(i+p-1) - T(i);
+            b = T(i+p)   - T(i+1);
+            t1 = zeros(1,nx);
+            t2 = zeros(1,nx);
+            if a > 0
+                t1 = ((p-1) / a) * D1(i, :);
+            end
+            if b > 0 && (i+1) <= nb
+                t2 = ((p-1) / b) * D1(i+1, :);
+            end
+            D2(i, :) = t1 - t2;
+        end
+    
+        % Third derivative of degree p
+        N3 = zeros(nb, nx);
+        for i = 1:nb
+            a = T(i+p)   - T(i);
+            b = T(i+p+1) - T(i+1);
+            t1 = zeros(1,nx);
+            t2 = zeros(1,nx);
+            if a > 0
+                t1 = (p / a) * D2(i, :);
+            end
+            if b > 0 && (i+1) <= nb
+                t2 = (p / b) * D2(i+1, :);
+            end
+            N3(i, :) = t1 - t2;
+        end
+    else
+        N3 = zeros(nb, nx);
     end
 end

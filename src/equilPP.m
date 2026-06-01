@@ -75,13 +75,27 @@ function LY = equilPP_to_plot_grid(L, LX, LY, t2, t2p, delta, deltap, deltapp, .
   deltap  = [0;      deltap;  deltap(end)];
   t2p     = [t2(2)/(r_plt(2)-r_plt(1));  t2p;      t2p(end)];
   deltapp = [deltap(2)/(r_plt(2)-r_plt(1)); deltapp; deltapp(end)];
-  Ppp     = [Pp(2)/(r_plt(2)-r_plt(1));  Ppp;      Ppp(end)];
+  Ppp     = [0;  Ppp;      Ppp(end)];
 
   S   = cat(1, zeros(1,1,L.P.Ns), S,   reshape(LX.Sbc,        [1,1,L.P.Ns]));
   Sp  = cat(1, zeros(1,1,L.P.Ns), Sp,  Sp(end,:,:) .*ones(1,1,L.P.Ns));
   Spp = cat(1, zeros(1,1,L.P.Ns), Spp, Spp(end,:,:).*ones(1,1,L.P.Ns));
   Bs  = cat(1, zeros(1,1,L.P.Nb), Bs,  Bs(end,:,:));
   Bsp = cat(1, zeros(1,1,L.P.Nb), Bsp, Bsp(end,:,:));
+
+  % Add higher derivatives for stability problem
+  delta_c = LY.x(1+L.dof_count:1+2*L.dof_count-2);
+  delta_cf = [0; delta_c];
+  deltappp = L.P3 * delta_cf;
+  LY.deltappp = [0; deltappp; deltappp(end)];
+
+  t2_c = LY.x(1:1+L.dof_count-1);
+  t2pp     = L.P2 * t2_c;
+  LY.t2pp = [0; t2pp; t2pp(end)];
+
+  P_c = LY.x(2*L.dof_count:3*L.dof_count-1);
+  Pppp = L.P3 * P_c;
+  LY.Pppp = [0; Pppp; Pppp(end)];
 
   % ── Geometry ──────────────────────────────────────────────────────────
   LY.BB  = 1 + LX.eps_val .* sum(Bs .* cos(reshape(linspace(0,L.P.Nb-1,L.P.Nb),[1,1,L.P.Nb]) .* LY.omega_plt), 3);

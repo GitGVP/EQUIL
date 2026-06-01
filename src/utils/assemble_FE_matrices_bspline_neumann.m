@@ -1,5 +1,5 @@
 function [r_q, ...
-          P0_full, P1_full, P2_full,...
+          P0_full, P1_full, P2_full,P3_full,...
           M_profiles, M_extended, P_templates, P_extended, ...
           A_global, profile_lengths, profile_starts, P0_end, ...
           ML2, ML2_q] = ...
@@ -20,6 +20,7 @@ est_nnz = Nq * (p+1);
 P0_i = zeros(est_nnz,1); P0_j = zeros(est_nnz,1); P0_v = zeros(est_nnz,1);
 P1_i = zeros(est_nnz,1); P1_j = zeros(est_nnz,1); P1_v = zeros(est_nnz,1);
 P2_i = zeros(est_nnz,1); P2_j = zeros(est_nnz,1); P2_v = zeros(est_nnz,1);
+P3_i = zeros(est_nnz,1); P3_j = zeros(est_nnz,1); P3_v = zeros(est_nnz,1);
 M_i  = zeros(est_nnz,1); M_j  = zeros(est_nnz,1); M_v  = zeros(est_nnz,1);
 
 idx = 1;
@@ -37,7 +38,8 @@ for e = 1:m_s
     elem_len = r1 - r0;
 
     r_eval_e = r0 + elem_len * gauss_pts(:)';
-    [Nall_e, N1all_e, N2all_e] = bspline_eval_all(T, p, r_eval_e);
+    %[Nall_e, N1all_e, N2all_e] = bspline_eval_all(T, p, r_eval_e);
+    [Nall_e, N1all_e, N2all_e, N3all_e] = bspline_eval_all(T, p, r_eval_e);
 
     for q = 1:nq
         q_global = (e-1)*nq + q;
@@ -54,6 +56,7 @@ for e = 1:m_s
             P0_i(idx) = q_global; P0_j(idx) = col; P0_v(idx) = phi_iq;
             P1_i(idx) = q_global; P1_j(idx) = col; P1_v(idx) = dphi_iq;
             P2_i(idx) = q_global; P2_j(idx) = col; P2_v(idx) = d2phi_iq;
+            P3_i(idx) = q_global; P3_j(idx) = col; P3_v(idx) = N3all_e(node_global, q);
             M_i(idx)  = col;      M_j(idx)  = q_global; M_v(idx) = elem_len * phi_iq * gauss_wts(q);
             idx = idx + 1;
         end
@@ -64,6 +67,7 @@ valid = 1:idx-1;
 P0_full = sparse(P0_i(valid), P0_j(valid), P0_v(valid), Nq, dof_count);
 P1_full = sparse(P1_i(valid), P1_j(valid), P1_v(valid), Nq, dof_count);
 P2_full = sparse(P2_i(valid), P2_j(valid), P2_v(valid), Nq, dof_count);
+P3_full = sparse(P3_i(valid), P3_j(valid), P3_v(valid), Nq, dof_count);
 M_full  = sparse(M_i(valid),  M_j(valid),  M_v(valid),  dof_count, Nq);
 
 % S-block: right Dirichlet BC removes last DOF
