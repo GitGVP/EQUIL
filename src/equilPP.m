@@ -91,7 +91,7 @@ function LY = equilPP_to_plot_grid(L, LX, LY, t2, t2p, delta, deltap, deltapp, .
 
   t2_c = LY.x(1:1+L.dof_count-1);
   t2pp     = L.P2 * t2_c;
-  LY.t2pp = [0; t2pp; t2pp(end)];
+  LY.t2pp = [(t2p(2)-t2p(1))/(r_plt(2)-r_plt(1)); t2pp; t2pp(end)];
 
   P_c = LY.x(2*L.dof_count:3*L.dof_count-1);
   Pppp = L.P3 * P_c;
