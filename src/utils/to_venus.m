@@ -70,10 +70,16 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep, xi2in, xi2out, gro
     h5write(filename, '/profiles/q', LX.qfun(LY.r_plt));
 
     h5create(filename, '/profiles/P', Nr);
-    h5write(filename, '/profiles/P', LX.kinetic_profiles.beta(LY.r_plt)*LX.eps_val^2/4./pi/1.0E-07*B0^2)%/LX.eps_val^2);
+    h5write(filename, '/profiles/P', LX.kinetic_profiles.beta(LY.r_plt)*LX.eps_val^2/4./pi/1.0E-07*B0^2)
     
+    h5create(filename, '/profiles/Pperp', [Nr, Ntheta]);
+    h5write(filename, '/profiles/Pperp', LY.betaperp_sfl(:,1:end-1)*LX.eps_val^2/4./pi/1.0E-07*B0^2)
+
+    h5create(filename, '/profiles/Ppar', [Nr, Ntheta]);
+    h5write(filename, '/profiles/Ppar', LY.betapar_sfl(:,1:end-1)*LX.eps_val^2/4./pi/1.0E-07*B0^2)
+
     h5create(filename, '/profiles/Prot', [Nr, Ntheta]);
-    h5write(filename, '/profiles/Prot', LX.kinetic_profiles.beta(LY.r_plt).*ones(Nr, Ntheta)/LX.eps_val^2);
+    h5write(filename, '/profiles/Prot', LX.kinetic_profiles.beta(LY.r_plt).*ones(Nr, Ntheta)*LX.eps_val^2);
     
     h5create(filename, '/profiles/rho', Nr);
     %h5write(filename, '/profiles/rho', 1-LY.psiN);
@@ -100,7 +106,10 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep, xi2in, xi2out, gro
 
     %% Calculations for post processing
     r=LY.r_fine;
-    beta_poloidal = LX.qfun(r).^2 ./ r .^ 4 .* cumtrapz(r, r.^2 .* (-2 * LX.kinetic_profiles.betap(r)));
+    dbetapardr = mean(LY.dbetapardr,2).';
+    d2betapardrdB = mean(LY.d2betapardrdB,2).';
+
+    beta_poloidal = LX.qfun(r).^2 ./ r .^ 4 .* cumtrapz(r_fine, r_fine.^2 .* (-2 * dbetapardr + d2betapardrdB));
     [~, I] = min(sqrt((LX.qfun(r)-1).^2));
     beta_rs = beta_poloidal(I);
     
@@ -221,6 +230,9 @@ function to_venus(LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep, xi2in, xi2out, gro
 
     h5create(filename, '/postprocessing/newgamma_ana', 1);
     h5write(filename, '/postprocessing/newgamma_ana', growth_rate2*LX.eps_val^2);
+
+%     h5create(filename, '/postprocessing/gamma_bussac', 1);
+%     h5write(filename, '/postprocessing/gamma_bussac', growthrate_bussac*LX.eps_val^2);
 
 %     h5create(filename, '/postprocessing/L1', numel(LY.L1));
 %     h5write(filename, '/postprocessing/L1', real(LY.L1));
