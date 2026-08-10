@@ -1,4 +1,9 @@
 function scan_eps_from_equilibrium(L0,LX0,LY0,varargin)
+    if ~isfield(L0.P,'Nb')
+        scan_eps_from_variational_equilibrium(L0,LX0,LY0,varargin{:});
+        return
+    end
+
     % defaults
     nsim_default = 10;
     skip_default = [0,0,0,0,0];

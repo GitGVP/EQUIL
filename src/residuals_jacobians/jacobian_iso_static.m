@@ -115,7 +115,7 @@ function J = jacobian_iso_static(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1,P
 		jacTotal(1, 3+lp+1, rowsB, :) = reshape(j13lpB_FFT(:, mB+1).', [1,1,nmB, Nq]);
 	end
 	%% Construct J
-    totalDofs = dof_count * (2 + Nb) + (dof_count-1) *(Ns+1);
+    totalDofs = numel(x);
     nCols = (3+ Nb + Ns)^2 * Nq;
     % precomputed: M_extended (totalDofs x nCols), P_templates{d} with fields i,j,v_template
     J = spalloc(totalDofs, totalDofs, 1 * nnz(M_extended));  % or a tighter nnz estimate

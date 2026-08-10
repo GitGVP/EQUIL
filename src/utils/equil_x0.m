@@ -65,7 +65,13 @@ function x = equil_x0(L, LX, profiles_q)
     end
     base_offset = (L.P.Nb + 3) * L.Nq;
     for i = 1:L.P.Ns
-        profiles_q(base_offset + (1:L.Nq)) = profiles_q(base_offset + (1:L.Nq)) - LX.Sbc(i) * L.P0_end;
+        if isvector(L.P0_end)
+            fixed_S = L.P0_end;
+        else
+            fixed_S = L.P0_end(:,i);
+        end
+        profiles_q(base_offset + (1:L.Nq)) = ...
+            profiles_q(base_offset + (1:L.Nq)) - LX.Sbc(i) * fixed_S;
         base_offset = base_offset + L.Nq;
     end
     rhs = L.M_profiles * profiles_q;

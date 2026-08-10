@@ -84,17 +84,29 @@ function LY = equilPP_to_plot_grid(L, LX, LY, t2, t2p, delta, deltap, deltapp, .
   Bsp = cat(1, zeros(1,1,L.P.Nb), Bsp, Bsp(end,:,:));
 
   % Add higher derivatives for stability problem
-  delta_c = LY.x(1+L.dof_count:1+2*L.dof_count-2);
-  delta_cf = [0; delta_c];
-  deltappp = L.P3 * delta_cf;
+  if iscell(L.P3)
+      delta_rows = L.profile_starts(2) + (0:L.profile_lengths(2)-1);
+      delta_c = LY.x(delta_rows);
+      deltappp = L.P3{2} * delta_c;
+  else
+      delta_c = LY.x(1+L.dof_count:1+2*L.dof_count-2);
+      delta_cf = [0; delta_c];
+      deltappp = L.P3 * delta_cf;
+  end
   LY.deltappp = [0; deltappp; deltappp(end)];
 
-  t2_c = LY.x(1:1+L.dof_count-1);
-  t2pp     = L.P2 * t2_c;
+  t2_rows = L.profile_starts(1) + (0:L.profile_lengths(1)-1);
+  t2_c = LY.x(t2_rows);
+  if iscell(L.P2), t2pp = L.P2{1} * t2_c;
+  else,            t2pp = L.P2 * t2_c;
+  end
   LY.t2pp = [(t2p(2)-t2p(1))/(r_plt(2)-r_plt(1)); t2pp; t2pp(end)];
 
-  P_c = LY.x(2*L.dof_count:3*L.dof_count-1);
-  Pppp = L.P3 * P_c;
+  P_rows = L.profile_starts(3) + (0:L.profile_lengths(3)-1);
+  P_c = LY.x(P_rows);
+  if iscell(L.P3), Pppp = L.P3{3} * P_c;
+  else,            Pppp = L.P3 * P_c;
+  end
   LY.Pppp = [(Ppp(2)-Ppp(1))/(r_plt(2)-r_plt(1)); Pppp; Pppp(end)];
 
   % ── Geometry ──────────────────────────────────────────────────────────

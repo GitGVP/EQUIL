@@ -188,7 +188,7 @@ function J = jacobian_noRepl(r,x,epsilon,omega,kinetic_profiles,q,qp,P0,P1,P2,do
 	end
 	%% Construct J
     %totalDofs = dof_count * (3 + Nb) + (dof_count-1) *Ns;
-    totalDofs = dof_count * (2 + Nb) + (dof_count-1) *(Ns+1);
+    totalDofs = numel(x);
     nCols = (3+ Nb + Ns)^2 * Nq;
     % precomputed: M_extended (totalDofs x nCols), P_templates{d} with fields i,j,v_template
     J = spalloc(totalDofs, totalDofs, 1 * nnz(M_extended));  % or a tighter nnz estimate
