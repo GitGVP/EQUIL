@@ -110,7 +110,7 @@ legend('Location','northwest','Box','off');
 
 function xnew = transfer_state(Lold,Lnew,xold)
     xnew = zeros(Lnew.total_dofs,1);
-    nprofiles = 3+Lnew.P.Ns+Lnew.P.Nh;
+    nprofiles = 3+Lnew.P.Ns+Lnew.P.Na;
     for profile = 1:nprofiles
         old_rows = Lold.profile_starts(profile) ...
             +(0:Lold.profile_lengths(profile)-1);

@@ -87,24 +87,37 @@ function [residual, fields] = equil_variational_assemble(L, LX, state, B)
         residual(row) = residual(row)/state.epsilon^4;
     end
 
-    % Up-down asymmetric V_n variations: delta R=sin(n*omega)*v and
-    % delta Z=-cos(n*omega)*v after dividing out the common epsilon^2.
-    for iv = 1:L.P.Nh
-        n = iv;
+    % Up-down asymmetric A_m variations, n=m-1: delta R=sin(n*omega)*v
+    % and delta Z=+cos(n*omega)*v after dividing out epsilon^2.
+    for ia = 1:L.P.Na
+        n = L.P.A_modes(ia)-1;
         cn = cos(n*omega);
         sn = sin(n*omega);
         deltaJ_value = state.JoverR.*sn + state.R.*( ...
-            n*state.Rr.*sn-n*state.Zr.*cn);
-        deltaJ_derivative = state.R.*(state.Zw.*sn+state.Rw.*cn);
-        delta_goo_value = 2*n*(state.Rw.*cn+state.Zw.*sn);
+            -n*state.Rr.*sn-n*state.Zr.*cn);
+        deltaJ_derivative = state.R.*(state.Zw.*sn-state.Rw.*cn);
+        delta_goo_value = 2*n*(state.Rw.*cn-state.Zw.*sn);
 
         shape_value = coeff_J.*deltaJ_value+coeff_R.*sn ...
                     +coeff_goo.*delta_goo_value;
         shape_derivative = coeff_J.*deltaJ_derivative;
-        profile = 3+L.P.Ns+iv;
+        profile = 3+L.P.Ns+ia;
         row = block_rows(L,profile);
         residual(row) = L.B0{profile}'*(w.*mean(shape_value,2)) ...
                       +L.B1{profile}'*(w.*mean(shape_derivative,2));
+        residual(row) = residual(row)/state.epsilon^4;
+    end
+
+    % Optional vertical-center variation: delta R=0, delta Z=v(r).
+    % It supplies the missing mean-Z boundary degree of freedom without
+    % entering (or changing) the symmetric formulation when disabled.
+    if L.P.vertical_shift
+        deltaJ_derivative = -state.R.*state.Rw;
+        shape_derivative = coeff_J.*deltaJ_derivative;
+        profile = 4+L.P.Ns+L.P.Na;
+        row = block_rows(L,profile);
+        residual(row) = L.B1{profile}'*( ...
+            w.*mean(shape_derivative,2));
         residual(row) = residual(row)/state.epsilon^4;
     end
 

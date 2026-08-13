@@ -1,8 +1,25 @@
-function basis = assemble_variational_bspline_axis_regular(m,nq,p,Ns,Nh)
+function basis = assemble_variational_bspline_axis_regular( ...
+        m,nq,p,Ns,Na,A_modes,A_leading_powers,vertical_shift)
 % B-splines with the regular polar Taylor class enforced on the axis span.
 
-if m < 2 || m ~= round(m) || p < max([3,Ns,Nh])
-    error('Use m >= 2 and spline_p >= max(3,Ns,Nh).');
+if nargin < 6 || isempty(A_modes)
+    A_modes = 2:(Na+1);
+end
+if nargin < 7 || isempty(A_leading_powers)
+    A_leading_powers = A_modes-1;
+end
+if nargin < 8 || isempty(vertical_shift)
+    vertical_shift = false;
+end
+if numel(A_modes) ~= Na
+    error('A_modes must have Na entries.');
+end
+angular_modes = A_modes-1;
+if numel(A_leading_powers) ~= Na
+    error('A_leading_powers must have Na entries.');
+end
+if m < 2 || m ~= round(m) || p < max([3,Ns,A_leading_powers])
+    error('Use m >= 2 and spline_p >= max(3,Ns,A_leading_powers).');
 end
 
 knots = [zeros(1,p+1),(1:m-1)/m,ones(1,p+1)];
@@ -23,22 +40,24 @@ end
 [E0,E1] = bspline_eval_all(knots,p,[0,1]);
 axis_derivatives = first_span_derivatives(knots,p,m,nb);
 
-nprofiles = 3+Ns+Nh;
+nshapes = Ns+Na+double(vertical_shift);
+nprofiles = 3+nshapes;
 % The linear P coefficient is the radial-normalization gauge.  Its
 % geometrical remainder has the regular first-harmonic powers r^3,r^5,...
-leading_power = [2,2,1,1:Ns,1:Nh];
+leading_power = [2,2,1,1:Ns,A_leading_powers, ...
+    2*ones(1,double(vertical_shift))];
 basis.B0 = cell(nprofiles,1);
 basis.B1 = cell(nprofiles,1);
 basis.B0_axis = cell(nprofiles,1);
 basis.B1_axis = cell(nprofiles,1);
 basis.B0_edge = cell(nprofiles,1);
 basis.B1_edge = cell(nprofiles,1);
-basis.lift0 = cell(Ns+Nh,1);
-basis.lift1 = cell(Ns+Nh,1);
-basis.lift0_axis = zeros(Ns+Nh,1);
-basis.lift1_axis = zeros(Ns+Nh,1);
-basis.lift0_edge = ones(Ns+Nh,1);
-basis.lift1_edge = zeros(Ns+Nh,1);
+basis.lift0 = cell(nshapes,1);
+basis.lift1 = cell(nshapes,1);
+basis.lift0_axis = zeros(nshapes,1);
+basis.lift1_axis = zeros(nshapes,1);
+basis.lift0_edge = ones(nshapes,1);
+basis.lift1_edge = zeros(nshapes,1);
 basis.profile_lengths = zeros(1,nprofiles);
 
 edge_lift = zeros(nb,1);

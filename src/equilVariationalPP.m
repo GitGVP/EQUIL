@@ -6,7 +6,7 @@ function LY = equilVariationalPP(L, LX, LY, cache)
     end
     state = cache.state;
     epsilon = LX.eps_val;
-    nprofiles = 3+L.P.Ns+L.P.Nh;
+    nprofiles = 3+L.P.Ns+L.P.Na+double(L.P.vertical_shift);
 
     qvalues = cell(nprofiles,1);
     qderivatives = cell(nprofiles,1);
@@ -48,18 +48,33 @@ function LY = equilVariationalPP(L, LX, LY, cache)
         Sr(:,:,is) = extend_profile(axis_Sr,quad_Sr,edge_Sr);
     end
 
-    V = zeros(numel(r_plt),1,L.P.Nh);
-    Vr = zeros(numel(r_plt),1,L.P.Nh);
-    for iv = 1:L.P.Nh
-        profile = 3+L.P.Ns+iv;
-        axis_V = axis_values{profile}+L.Vbc0_axis(iv)*LX.Vbc(iv);
-        axis_Vr = axis_derivatives{profile}+L.Vbc1_axis(iv)*LX.Vbc(iv);
-        quad_V = qvalues{profile}+L.Vbc0{iv}*LX.Vbc(iv);
-        quad_Vr = qderivatives{profile}+L.Vbc1{iv}*LX.Vbc(iv);
-        edge_V = edge_values{profile}+L.Vbc0_edge(iv)*LX.Vbc(iv);
-        edge_Vr = edge_derivatives{profile}+L.Vbc1_edge(iv)*LX.Vbc(iv);
-        V(:,:,iv) = extend_profile(axis_V,quad_V,edge_V);
-        Vr(:,:,iv) = extend_profile(axis_Vr,quad_Vr,edge_Vr);
+    A = zeros(numel(r_plt),1,L.P.Na);
+    Ar = zeros(numel(r_plt),1,L.P.Na);
+    for ia = 1:L.P.Na
+        profile = 3+L.P.Ns+ia;
+        axis_A = axis_values{profile}+L.Abc0_axis(ia)*LX.Abc(ia);
+        axis_Ar = axis_derivatives{profile}+L.Abc1_axis(ia)*LX.Abc(ia);
+        quad_A = qvalues{profile}+L.Abc0{ia}*LX.Abc(ia);
+        quad_Ar = qderivatives{profile}+L.Abc1{ia}*LX.Abc(ia);
+        edge_A = edge_values{profile}+L.Abc0_edge(ia)*LX.Abc(ia);
+        edge_Ar = edge_derivatives{profile}+L.Abc1_edge(ia)*LX.Abc(ia);
+        A(:,:,ia) = extend_profile(axis_A,quad_A,edge_A);
+        Ar(:,:,ia) = extend_profile(axis_Ar,quad_Ar,edge_Ar);
+    end
+
+    Zshift = zeros(numel(r_plt),1);
+    Zshiftr = zeros(numel(r_plt),1);
+    if L.P.vertical_shift
+        profile = 4+L.P.Ns+L.P.Na;
+        axis_Zshift = axis_values{profile}+L.Zbc0_axis*LX.Zbc;
+        axis_Zshiftr = axis_derivatives{profile}+L.Zbc1_axis*LX.Zbc;
+        quad_Zshift = qvalues{profile}+L.Zbc0*LX.Zbc;
+        quad_Zshiftr = qderivatives{profile}+L.Zbc1*LX.Zbc;
+        edge_Zshift = edge_values{profile}+L.Zbc0_edge*LX.Zbc;
+        edge_Zshiftr = edge_derivatives{profile}+L.Zbc1_edge*LX.Zbc;
+        Zshift = extend_profile(axis_Zshift,quad_Zshift,edge_Zshift);
+        Zshiftr = extend_profile( ...
+            axis_Zshiftr,quad_Zshiftr,edge_Zshiftr);
     end
 
     modes = reshape(1:L.P.Ns,1,1,[]);
@@ -79,16 +94,20 @@ function LY = equilVariationalPP(L, LX, LY, cache)
         -epsilon^3*gaugeP.*s1;
     Zw = epsilon*r_plt.*c1-epsilon^2*sum(modes.*S.*cm,3) ...
         +epsilon^3*gaugeP.*c1;
-    if L.P.Nh > 0
-        vmodes = reshape(1:L.P.Nh,1,1,[]);
-        svm = sin(vmodes.*omega_plt);
-        cvm = cos(vmodes.*omega_plt);
-        R = R+epsilon^2*sum(V.*svm,3);
-        Z = Z-epsilon^2*sum(V.*cvm,3);
-        Rr = Rr+epsilon^2*sum(Vr.*svm,3);
-        Zr = Zr-epsilon^2*sum(Vr.*cvm,3);
-        Rw = Rw+epsilon^2*sum(vmodes.*V.*cvm,3);
-        Zw = Zw+epsilon^2*sum(vmodes.*V.*svm,3);
+    if L.P.Na > 0
+        angular_modes = reshape(L.P.A_modes-1,1,1,[]);
+        sam = sin(angular_modes.*omega_plt);
+        cam = cos(angular_modes.*omega_plt);
+        R = R+epsilon^2*sum(A.*sam,3);
+        Z = Z+epsilon^2*sum(A.*cam,3);
+        Rr = Rr+epsilon^2*sum(Ar.*sam,3);
+        Zr = Zr+epsilon^2*sum(Ar.*cam,3);
+        Rw = Rw+epsilon^2*sum(angular_modes.*A.*cam,3);
+        Zw = Zw-epsilon^2*sum(angular_modes.*A.*sam,3);
+    end
+    if L.P.vertical_shift
+        Z = Z+epsilon^2*Zshift;
+        Zr = Zr+epsilon^2*Zshiftr;
     end
     JoverR = Rr.*Zw-Rw.*Zr;
     J = R.*JoverR;
@@ -117,6 +136,31 @@ function LY = equilVariationalPP(L, LX, LY, cache)
     Pi_perp = [axis_pressure.Pperp*ones(1,numel(omega_plt)); ...
                local.pressure.Pperp];
 
+    % Legacy-normalized surface and volume diagnostics.  Pressure is
+    % stored internally as Pi=mu0*p/B0^2=epsilon^2*beta, whereas Wk uses
+    % the historical beta normalization and is multiplied by R0^3*P0 by
+    % dimensional callers.  Gauss weights are used on the solve grid.
+    beta_parallel_q = cache.fields.pressure.Pi/epsilon^2;
+    beta_perp_q = cache.fields.pressure.Pperp/epsilon^2;
+    beta_R_q = cache.fields.pressure.PR/epsilon^2;
+    J_q = state.J;
+    volume_integral = @(field) ...
+        (2*pi)^2*sum(L.w_r.*mean(field.*J_q,2));
+    Wkpar = volume_integral(beta_parallel_q);
+    Wkperp = volume_integral(beta_perp_q);
+    Wk = 0.5*(Wkpar+Wkperp);
+    % The legacy Wkrot convention integrates d(beta_parallel)/dR rather
+    % than a kinetic energy density; retain that compatibility meaning.
+    Wkrot = volume_integral(beta_R_q);
+    Wp = volume_integral(state.Bp2);
+    edge_current = epsilon*state.edge.psir.*state.edge.goo./state.edge.J;
+    Ip = 2*pi*mean(edge_current);
+    rBt = state.edge.T;
+    Ftt = 2*pi*sum(L.w_r.*mean( ...
+        cache.local.Bphi.*state.JoverR,2));
+    Ft0 = 2*pi*sum(L.w_r.*mean(state.JoverR./state.R,2));
+    Ft = Ftt-rBt*Ft0;
+
     psi = cumtrapz(r_plt,r_plt.*T./(q*state.a0));
     psiN = (psi-psi(1))/(psi(end)-psi(1));
 
@@ -132,8 +176,10 @@ function LY = equilVariationalPP(L, LX, LY, cache)
     LY.Pp = gaugePr;
     LY.S = S;
     LY.Sp = Sr;
-    LY.V = V;
-    LY.Vp = Vr;
+    LY.A = A;
+    LY.Ap = Ar;
+    LY.Zshift = Zshift;
+    LY.Zshiftp = Zshiftr;
     LY.RR = R;
     LY.ZZ = Z;
     LY.J = J;
@@ -144,6 +190,10 @@ function LY = equilVariationalPP(L, LX, LY, cache)
     LY.Bp2 = Bp2;
     LY.Bphi2 = Bphi.^2;
     LY.B2 = B.^2;
+    % Compatibility aliases used by legacy postprocessing scripts.
+    LY.BBp2 = LY.Bp2;
+    LY.BBt2 = LY.Bphi2;
+    LY.BB2 = LY.B2;
     LY.sigma = sigma;
     LY.GB = GB;
     LY.firehose_margin = min(1-sigma(:));
@@ -160,11 +210,30 @@ function LY = equilVariationalPP(L, LX, LY, cache)
     LY.q = q;
     LY.a0 = state.a0;
     LY.sigma0 = state.sigma0;
+    LY.dbetapardB0 = state.sigma0/epsilon^2;
+    LY.rBt = rBt;
+    LY.Wk = Wk;
+    LY.Wkpar = Wkpar;
+    LY.Wkperp = Wkperp;
+    LY.Wkrot = Wkrot;
+    LY.Wp = Wp;
+    LY.Ip = Ip;
+    LY.Ftt = Ftt;
+    LY.Ft0 = Ft0;
+    LY.Ft = Ft;
+    LY.bp = 4*epsilon^2*Wk/Ip^2;
+    LY.bppar = 2*epsilon^2*Wkpar/Ip^2;
+    LY.bpperp = 2*epsilon^2*Wkperp/Ip^2;
+    LY.bprot = (4/3)*epsilon^2*Wkrot/Ip^2;
+    LY.li = 2*Wp/Ip^2;
+    LY.bpli2 = LY.bppar+LY.bpperp+LY.bprot+LY.li/2;
+    LY.gavg = mean(state.R.*cache.local.Bphi,2);
     LY.gauge_error = cache.fields.gauge;
     LY.local_B_residual = max(LY.local_B_residual,local.max_abs_G);
     scaled_J = J(2:end,:)./(epsilon^2*r_plt(2:end));
-    LY.min_J = min(J(2:end,:),[],'all');
-    LY.min_J_over_eps2r = min(scaled_J,[],'all');
+    interior_J = J(2:end,:);
+    LY.min_J = min(interior_J(:));
+    LY.min_J_over_eps2r = min(scaled_J(:));
     LY.min_edge_J_over_eps2 = min(J(end,:))/epsilon^2;
 
     toroidal_flux = mean(abs(Bphi).*JoverR,2);
@@ -187,6 +256,11 @@ function LY = equilVariationalPP(L, LX, LY, cache)
     LY.deltal(1) = 0;
     LY.deltau(1) = 0;
     LY.deltatrig(1) = 0;
+
+    [LY.theta_SFL,LY.RR_sfl,LY.ZZ_sfl, ...
+        LY.dthetaSFLdomega,LY.theta_SFL_periodicity_error] = ...
+        straight_field_line_geometry( ...
+            R,Z,J,sigma,state.a0,epsilon,r_plt,omega_plt);
 end
 
 function value = extend_profile(axis_value,quadrature_value,edge_value)
@@ -196,4 +270,40 @@ end
 function rows = block_rows(L,profile)
     first = L.profile_starts(profile);
     rows = first:first+L.profile_lengths(profile)-1;
+end
+
+function [theta,R_sfl,Z_sfl,dtheta,periodicity_error] = ...
+        straight_field_line_geometry( ...
+            R,Z,J,sigma,a0,epsilon,r,omega)
+%STRAIGHT_FIELD_LINE_GEOMETRY Integrate and invert the exact SFL angle.
+% dtheta/domega = a0*J/[epsilon^2*r*R^2*(1-sigma)].
+    dtheta = a0*J./(epsilon^2*r.*R.^2.*(1-sigma));
+    dtheta(1,:) = 1;
+    theta = cumtrapz(omega,dtheta,2);
+    theta(1,:) = omega;
+    periodicity_error = 2*pi*mean(dtheta(:,1:end-1),2)-2*pi;
+    % The discrete gauge constraint uses the solver's periodic angular
+    % quadrature, which can differ slightly from cumulative trapezoidal
+    % integration.  Normalize so the remapping is exactly 2*pi-periodic.
+    theta(2:end,:) = theta(2:end,:).* ...
+        (2*pi./theta(2:end,end));
+
+    nr = numel(r);
+    nomega = numel(omega);
+    theta_uniform = linspace(0,2*pi,nomega);
+    R_sfl = ones(nr,nomega);
+    Z_sfl = zeros(nr,nomega);
+    for ir = 2:nr
+        theta_extended = [theta(ir,end)-2*pi,theta(ir,:), ...
+            theta(ir,1)+2*pi];
+        R_extended = [R(ir,end),R(ir,:),R(ir,1)];
+        Z_extended = [Z(ir,end),Z(ir,:),Z(ir,1)];
+        [theta_extended,unique_indices] = unique(theta_extended);
+        R_extended = R_extended(unique_indices);
+        Z_extended = Z_extended(unique_indices);
+        R_sfl(ir,:) = interp1( ...
+            theta_extended,R_extended,theta_uniform,'spline');
+        Z_sfl(ir,:) = interp1( ...
+            theta_extended,Z_extended,theta_uniform,'spline');
+    end
 end

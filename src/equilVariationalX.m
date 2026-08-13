@@ -1,8 +1,8 @@
 function LX = equilVariationalX(L)
 %EQUILVARIATIONALX Normalized profiles and fixed-boundary data.
-%   R0, a and B0 never enter separately. eps_val=a/R0 is the only length
-%   normalization. Sbc and Vbc contain the symmetric and asymmetric
-%   normalized outer shaping values, respectively.
+%   Sbc and Abc contain the cosine and sine-quadrature
+%   normalized outer shaping values, respectively. Zbc is the optional
+%   fixed vertical-center displacement.
 
     LX.eps_val = 0.3;
     LX.Sbc = zeros(L.P.Ns, 1);
@@ -10,7 +10,8 @@ function LX = equilVariationalX(L)
     if L.P.Ns > 1
         LX.Sbc(2) = 0.3;
     end
-    LX.Vbc = zeros(L.P.Nh, 1);
+    LX.Abc = zeros(L.P.Na, 1);
+    LX.Zbc = 0;
 
     LX.qfun = @(r) L.P.q0 * (1 + 0.5*L.P.s0*r.^2);
     LX.qpfun = @(r) L.P.q0 * L.P.s0*r;

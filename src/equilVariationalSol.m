@@ -1,7 +1,9 @@
 function [L, LX, LY] = equilVariationalSol(varargin)
 %EQUILVARIATIONALSOL Variational EQUIL proof-of-principle solver.
 %   The global unknowns are [t2, Delta, P, S_2, ..., S_(Ns+1),
-%   V_2, ..., V_(Nh+1)]. Magnetic field strength is eliminated locally.
+%   A_m, m in A_modes, optional Zshift].  A_m is the sine quadrature of
+%   S_m, not Fitzpatrick's V_m family. Magnetic field strength is
+%   eliminated locally.
 
     setup_variational_paths();
     P = variational_parameters(varargin{:});
@@ -21,7 +23,10 @@ function P = variational_parameters(varargin)
     P.spline_p = 4;
     P.om_pts = 96;
     P.Ns = 3;
-    P.Nh = 0;
+    P.Na = 0;
+    P.A_modes = [];
+    P.A_leading_powers = [];
+    P.vertical_shift = false;
 
     P.equation_of_state = @isotropic;
     P.beta = 0.3;
@@ -60,13 +65,45 @@ function P = variational_parameters(varargin)
     if isfield(P, 'Mach20')
         P.mach20 = P.Mach20;
     end
+    if ~(islogical(P.vertical_shift) && isscalar(P.vertical_shift)) ...
+            && ~(isnumeric(P.vertical_shift) ...
+            && isscalar(P.vertical_shift) ...
+            && any(P.vertical_shift == [0 1]))
+        error('vertical_shift must be a logical scalar.');
+    end
+    P.vertical_shift = logical(P.vertical_shift);
+    if isempty(P.A_modes)
+        P.A_modes = 2:(P.Na+1);
+    else
+        P.A_modes = P.A_modes(:).';
+        if any(P.A_modes < 2) || any(P.A_modes ~= round(P.A_modes)) ...
+                || numel(unique(P.A_modes)) ~= numel(P.A_modes)
+            error('A_modes must contain distinct integers greater than or equal to 2.');
+        end
+        P.Na = numel(P.A_modes);
+    end
+    angular_modes = P.A_modes-1;
+    if isempty(P.A_leading_powers)
+        P.A_leading_powers = angular_modes;
+    else
+        P.A_leading_powers = P.A_leading_powers(:).';
+        if numel(P.A_leading_powers) ~= P.Na ...
+                || any(P.A_leading_powers < angular_modes) ...
+                || any(P.A_leading_powers ~= round(P.A_leading_powers)) ...
+                || any(mod(P.A_leading_powers-angular_modes,2) ~= 0)
+            error(['A_leading_powers must contain one integer per A_m, ', ...
+                'each no smaller than m-1 and of the same parity.']);
+        end
+    end
+    P.spline_p = max([P.spline_p,3,P.Ns,P.A_leading_powers]);
 end
 
 function L = variational_discretization(P)
     L.r_nodes = linspace(0, 1, P.m + 1);
     L.omega = (0:P.om_pts-1) * (2*pi/P.om_pts);
     basis = assemble_variational_bspline_axis_regular( ...
-        P.m,P.nq,P.spline_p,P.Ns,P.Nh);
+        P.m,P.nq,P.spline_p,P.Ns,P.Na,P.A_modes, ...
+        P.A_leading_powers,P.vertical_shift);
     L.r_q = basis.r;
     L.w_r = basis.w;
     L.B0 = basis.B0;
@@ -83,13 +120,29 @@ function L = variational_discretization(P)
     L.Sbc1_axis = basis.lift1_axis(1:P.Ns);
     L.Sbc0_edge = basis.lift0_edge(1:P.Ns);
     L.Sbc1_edge = basis.lift1_edge(1:P.Ns);
-    shape = P.Ns+(1:P.Nh);
-    L.Vbc0 = basis.lift0(shape);
-    L.Vbc1 = basis.lift1(shape);
-    L.Vbc0_axis = basis.lift0_axis(shape);
-    L.Vbc1_axis = basis.lift1_axis(shape);
-    L.Vbc0_edge = basis.lift0_edge(shape);
-    L.Vbc1_edge = basis.lift1_edge(shape);
+    shape = P.Ns+(1:P.Na);
+    L.Abc0 = basis.lift0(shape);
+    L.Abc1 = basis.lift1(shape);
+    L.Abc0_axis = basis.lift0_axis(shape);
+    L.Abc1_axis = basis.lift1_axis(shape);
+    L.Abc0_edge = basis.lift0_edge(shape);
+    L.Abc1_edge = basis.lift1_edge(shape);
+    if P.vertical_shift
+        zshape = P.Ns+P.Na+1;
+        L.Zbc0 = basis.lift0{zshape};
+        L.Zbc1 = basis.lift1{zshape};
+        L.Zbc0_axis = basis.lift0_axis(zshape);
+        L.Zbc1_axis = basis.lift1_axis(zshape);
+        L.Zbc0_edge = basis.lift0_edge(zshape);
+        L.Zbc1_edge = basis.lift1_edge(zshape);
+    else
+        L.Zbc0 = [];
+        L.Zbc1 = [];
+        L.Zbc0_axis = [];
+        L.Zbc1_axis = [];
+        L.Zbc0_edge = [];
+        L.Zbc1_edge = [];
+    end
     L.Nq = numel(L.r_q);
     L.dof_count = L.profile_lengths(1);
     L.total_dofs = sum(L.profile_lengths);

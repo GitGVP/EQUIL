@@ -116,7 +116,7 @@ function LY = equilVariationalY(L, LX)
     LY.local_B_residual = final_cache.local.max_abs_G;
     LY.local_B_quadrature = final_cache.local.B;
     LY.effective_NLtol = effective_tol;
-    nprofiles = 3+L.P.Ns+L.P.Nh;
+    nprofiles = 3+L.P.Ns+L.P.Na+double(L.P.vertical_shift);
     LY.residual_block_norms = zeros(nprofiles,1);
     LY.residual_block_names = cell(nprofiles,1);
     LY.residual_block_names(1:3) = {'t2','Delta','P'};
@@ -126,9 +126,13 @@ function LY = equilVariationalY(L, LX)
         LY.residual_block_norms(profile) = norm(LY.residual(rows));
         if profile > 3 && profile <= 3+L.P.Ns
             LY.residual_block_names{profile} = sprintf('S%d',profile-2);
-        elseif profile > 3+L.P.Ns
+        elseif profile > 3+L.P.Ns ...
+                && profile <= 3+L.P.Ns+L.P.Na
+            mode = L.P.A_modes(profile-(3+L.P.Ns));
             LY.residual_block_names{profile} = ...
-                sprintf('V%d',profile-(2+L.P.Ns));
+                sprintf('A%d',mode);
+        elseif L.P.vertical_shift
+            LY.residual_block_names{profile} = 'Zshift';
         end
     end
     if norm(LY.residual) < effective_tol

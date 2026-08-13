@@ -30,10 +30,16 @@ function x = equil_variational_x0(L, LX)
         target = target-L.Sbc0{is}*LX.Sbc(is);
         x(block_rows(L,profile)) = L.B0{profile}\target;
     end
-    for iv = 1:L.P.Nh
-        profile = 3+L.P.Ns+iv;
-        target = LX.Vbc(iv)*r.^iv;
-        target = target-L.Vbc0{iv}*LX.Vbc(iv);
+    for ia = 1:L.P.Na
+        profile = 3+L.P.Ns+ia;
+        leading_power = L.P.A_leading_powers(ia);
+        target = LX.Abc(ia)*r.^leading_power;
+        target = target-L.Abc0{ia}*LX.Abc(ia);
+        x(block_rows(L,profile)) = L.B0{profile}\target;
+    end
+    if L.P.vertical_shift
+        profile = 4+L.P.Ns+L.P.Na;
+        target = LX.Zbc*r.^2-L.Zbc0*LX.Zbc;
         x(block_rows(L,profile)) = L.B0{profile}\target;
     end
 end

@@ -8,18 +8,21 @@ function state = equil_variational_state(L, LX, x)
         error('Sbc must have one entry for each of the %d S_m profiles.', ...
               L.P.Ns);
     end
-    if numel(LX.Vbc) ~= L.P.Nh
-        error('Vbc must have one entry for each of the %d V_n profiles.', ...
-              L.P.Nh);
+    if numel(LX.Abc) ~= L.P.Na
+        error('Abc must have one entry for each of the %d A_m profiles.', ...
+              L.P.Na);
+    end
+    if L.P.vertical_shift && (~isscalar(LX.Zbc) || ~isfinite(LX.Zbc))
+        error('Zbc must be one finite scalar when vertical_shift is enabled.');
     end
 
     state.r = L.r_q(:);
     state.omega = L.omega(:).';
     state.epsilon = LX.eps_val;
     state.Sbc = LX.Sbc(:);
-    state.Vbc = LX.Vbc(:);
+    state.Abc = LX.Abc(:);
 
-    nprofiles = 3+L.P.Ns+L.P.Nh;
+    nprofiles = 3+L.P.Ns+L.P.Na+double(L.P.vertical_shift);
     values = cell(nprofiles, 1);
     derivatives = cell(nprofiles, 1);
     edge_values = cell(nprofiles, 1);
@@ -54,18 +57,30 @@ function state = equil_variational_state(L, LX, x)
             +L.Sbc1_edge(is)*state.Sbc(is);
     end
 
-    state.V = zeros(L.Nq, 1, L.P.Nh);
-    state.Vr = zeros(L.Nq, 1, L.P.Nh);
-    edge_V = zeros(1, 1, L.P.Nh);
-    edge_Vr = zeros(1, 1, L.P.Nh);
-    for iv = 1:L.P.Nh
-        profile = 3+L.P.Ns+iv;
-        state.V(:,:,iv) = values{profile}+L.Vbc0{iv}*state.Vbc(iv);
-        state.Vr(:,:,iv) = derivatives{profile}+L.Vbc1{iv}*state.Vbc(iv);
-        edge_V(:,:,iv) = edge_values{profile} ...
-            +L.Vbc0_edge(iv)*state.Vbc(iv);
-        edge_Vr(:,:,iv) = edge_derivatives{profile} ...
-            +L.Vbc1_edge(iv)*state.Vbc(iv);
+    state.A = zeros(L.Nq, 1, L.P.Na);
+    state.Ar = zeros(L.Nq, 1, L.P.Na);
+    edge_A = zeros(1, 1, L.P.Na);
+    edge_Ar = zeros(1, 1, L.P.Na);
+    for ia = 1:L.P.Na
+        profile = 3+L.P.Ns+ia;
+        state.A(:,:,ia) = values{profile}+L.Abc0{ia}*state.Abc(ia);
+        state.Ar(:,:,ia) = derivatives{profile}+L.Abc1{ia}*state.Abc(ia);
+        edge_A(:,:,ia) = edge_values{profile} ...
+            +L.Abc0_edge(ia)*state.Abc(ia);
+        edge_Ar(:,:,ia) = edge_derivatives{profile} ...
+            +L.Abc1_edge(ia)*state.Abc(ia);
+    end
+
+    state.Zshift = zeros(L.Nq,1);
+    state.Zshiftr = zeros(L.Nq,1);
+    edge_Zshift = 0;
+    edge_Zshiftr = 0;
+    if L.P.vertical_shift
+        profile = 4+L.P.Ns+L.P.Na;
+        state.Zshift = values{profile}+L.Zbc0*LX.Zbc;
+        state.Zshiftr = derivatives{profile}+L.Zbc1*LX.Zbc;
+        edge_Zshift = edge_values{profile}+L.Zbc0_edge*LX.Zbc;
+        edge_Zshiftr = edge_derivatives{profile}+L.Zbc1_edge*LX.Zbc;
     end
 
     axis_pressure = equil_variational_pressure(L, LX, 0, 1, 1);
@@ -96,16 +111,22 @@ function state = equil_variational_state(L, LX, x)
         - epsilon^3*state.P.*s1;
     state.Zw = epsilon*r.*c1 - epsilon^2*sum(modes.*state.S.*cm, 3) ...
         + epsilon^3*state.P.*c1;
-    if L.P.Nh > 0
-        vmodes = reshape(1:L.P.Nh, 1, 1, []);
-        svm = sin(vmodes.*omega);
-        cvm = cos(vmodes.*omega);
-        state.R = state.R+epsilon^2*sum(state.V.*svm,3);
-        state.Z = state.Z-epsilon^2*sum(state.V.*cvm,3);
-        state.Rr = state.Rr+epsilon^2*sum(state.Vr.*svm,3);
-        state.Zr = state.Zr-epsilon^2*sum(state.Vr.*cvm,3);
-        state.Rw = state.Rw+epsilon^2*sum(vmodes.*state.V.*cvm,3);
-        state.Zw = state.Zw+epsilon^2*sum(vmodes.*state.V.*svm,3);
+    if L.P.Na > 0
+        angular_modes = reshape(L.P.A_modes-1, 1, 1, []);
+        sam = sin(angular_modes.*omega);
+        cam = cos(angular_modes.*omega);
+        state.R = state.R+epsilon^2*sum(state.A.*sam,3);
+        state.Z = state.Z+epsilon^2*sum(state.A.*cam,3);
+        state.Rr = state.Rr+epsilon^2*sum(state.Ar.*sam,3);
+        state.Zr = state.Zr+epsilon^2*sum(state.Ar.*cam,3);
+        state.Rw = state.Rw+epsilon^2*sum( ...
+            angular_modes.*state.A.*cam,3);
+        state.Zw = state.Zw-epsilon^2*sum( ...
+            angular_modes.*state.A.*sam,3);
+    end
+    if L.P.vertical_shift
+        state.Z = state.Z+epsilon^2*state.Zshift;
+        state.Zr = state.Zr+epsilon^2*state.Zshiftr;
     end
 
     state.JoverR = state.Rr.*state.Zw-state.Rw.*state.Zr;
@@ -131,14 +152,16 @@ function state = equil_variational_state(L, LX, x)
         edge_values{1}, edge_derivatives{1}, ...
         edge_values{2}, edge_derivatives{2}, ...
         edge_values{3}, edge_derivatives{3}, edge_S, edge_Sr, ...
-        edge_V, edge_Vr, LX.qfun(1));
+        edge_A, edge_Ar, L.P.A_modes,edge_Zshift,edge_Zshiftr, ...
+        LX.qfun(1));
     state.edge.sigma0 = state.sigma0;
     state.edge.a0 = state.a0;
     state.edge.epsilon = epsilon;
 end
 
 function edge = make_geometry(r, omega, epsilon, a0, t2, t2r, ...
-        delta, deltar, P, Pr, S, Sr, V, Vr, q)
+        delta, deltar, P, Pr, S, Sr, A, Ar, A_modes, ...
+        Zshift,Zshiftr,q)
     Ns = size(S, 3);
     modes = reshape(1:Ns, 1, 1, []);
     cm = cos(modes.*omega);
@@ -156,8 +179,10 @@ function edge = make_geometry(r, omega, epsilon, a0, t2, t2r, ...
     edge.Pr = Pr;
     edge.S = S;
     edge.Sr = Sr;
-    edge.V = V;
-    edge.Vr = Vr;
+    edge.A = A;
+    edge.Ar = Ar;
+    edge.Zshift = Zshift;
+    edge.Zshiftr = Zshiftr;
     edge.R = 1+epsilon*r.*c1-epsilon^2*delta ...
         +epsilon^2*sum(S.*cm,3)+epsilon^3*P.*c1;
     edge.Z = epsilon*r.*s1-epsilon^2*sum(S.*sm,3)+epsilon^3*P.*s1;
@@ -168,18 +193,20 @@ function edge = make_geometry(r, omega, epsilon, a0, t2, t2r, ...
         -epsilon^3*P.*s1;
     edge.Zw = epsilon*r.*c1-epsilon^2*sum(modes.*S.*cm,3) ...
         +epsilon^3*P.*c1;
-    Nh = size(V,3);
-    if Nh > 0
-        vmodes = reshape(1:Nh,1,1,[]);
-        svm = sin(vmodes.*omega);
-        cvm = cos(vmodes.*omega);
-        edge.R = edge.R+epsilon^2*sum(V.*svm,3);
-        edge.Z = edge.Z-epsilon^2*sum(V.*cvm,3);
-        edge.Rr = edge.Rr+epsilon^2*sum(Vr.*svm,3);
-        edge.Zr = edge.Zr-epsilon^2*sum(Vr.*cvm,3);
-        edge.Rw = edge.Rw+epsilon^2*sum(vmodes.*V.*cvm,3);
-        edge.Zw = edge.Zw+epsilon^2*sum(vmodes.*V.*svm,3);
+    Na = size(A,3);
+    if Na > 0
+        angular_modes = reshape(A_modes-1,1,1,[]);
+        sam = sin(angular_modes.*omega);
+        cam = cos(angular_modes.*omega);
+        edge.R = edge.R+epsilon^2*sum(A.*sam,3);
+        edge.Z = edge.Z+epsilon^2*sum(A.*cam,3);
+        edge.Rr = edge.Rr+epsilon^2*sum(Ar.*sam,3);
+        edge.Zr = edge.Zr+epsilon^2*sum(Ar.*cam,3);
+        edge.Rw = edge.Rw+epsilon^2*sum(angular_modes.*A.*cam,3);
+        edge.Zw = edge.Zw-epsilon^2*sum(angular_modes.*A.*sam,3);
     end
+    edge.Z = edge.Z+epsilon^2*Zshift;
+    edge.Zr = edge.Zr+epsilon^2*Zshiftr;
     edge.JoverR = edge.Rr.*edge.Zw-edge.Rw.*edge.Zr;
     edge.J = edge.R.*edge.JoverR;
     edge.goo = edge.Rw.^2+edge.Zw.^2;
