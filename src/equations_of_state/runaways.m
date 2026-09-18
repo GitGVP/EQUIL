@@ -1,7 +1,7 @@
 function [dbetapardB0, dbetapardr, dbetapardB, dbetapardR, d2betapardB2, ...
     d2betapardrdB, d2betapardRdB, d2betapardrdR, d2betapardR2, d3betapardrdB2, ...
     d3betapardB3, d3betapardBdR2, d3betapardB2dR, d3betapardrdRdB, ...
-    d3betapardrdR2, betapar, betaperp] = runaways(kinetic_profiles,r,RR,BB)
+    d3betapardrdR2, betapar, betaperp] = runaways(kinetic_profiles,r,RR,BB,varargin)
     beta = kinetic_profiles.beta(r);
     betap = kinetic_profiles.betap(r);
     gamma = kinetic_profiles.gamma(r);
@@ -13,6 +13,15 @@ function [dbetapardB0, dbetapardr, dbetapardB, dbetapardR, d2betapardB2, ...
     d2betapardrdB = gammap;
     d2betapardRdB = zeros(size(RR));
     dbetapardB0 = dbetapardB(1,1);
+    if nargin > 4
+        betapar = beta+BB.*gamma;
+        betaperp = beta;
+        dbetapardB0 = variational_pressure_output( ...
+            betapar,dbetapardr,dbetapardR,dbetapardB, ...
+            d2betapardB2,d2betapardrdB,d2betapardRdB, ...
+            zeros(size(RR)),zeros(size(RR)),betaperp);
+        return
+    end
     if nargout > 7 % Jacobian computation
         d2betapardrdR = zeros(size(RR));
         d2betapardR2 = zeros(size(RR));

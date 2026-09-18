@@ -6,7 +6,7 @@ function pressure = equil_variational_pressure(L, LX, r, R, B)
 
     if isfield(LX, 'pressure_map') && ~isempty(LX.pressure_map)
         pressure = LX.pressure_map(r, R, B);
-        required = {'Pi','Pr','PR','PB','PBB'};
+        required = {'Pi','Pr','PR','PB','PBB','PrB','PRB','PrR','PRR'};
         for k = 1:numel(required)
             if ~isfield(pressure, required{k})
                 error('pressure_map did not return field %s.', required{k});
@@ -20,21 +20,37 @@ function pressure = equil_variational_pressure(L, LX, r, R, B)
     end
 
     eos = L.P.equation_of_state;
-    [~, beta_r, beta_B, beta_R, beta_BB, beta_rB, beta_RB, ...
-     beta_rR, beta_RR, ~, ~, ~, ~, ~, ~, beta_parallel, beta_perp] = ...
-        eos(LX.kinetic_profiles, r, R, B);
-
+    try
+        pressure = eos(LX.kinetic_profiles,r,R,B,'variational');
+    catch exception
+        if strcmp(exception.identifier,'MATLAB:TooManyInputs')
+            error('equilVariational:PressureDerivativeInterface', ...
+                ['The equation of state must accept the request ', ...
+                 '''variational'' and return the named pressure ', ...
+                 'derivative interface through second order.']);
+        end
+        rethrow(exception)
+    end
+    required = {'Pi','Pr','PR','PB','PBB','PrB','PRB','PrR','PRR'};
+    if ~isstruct(pressure)
+        error('equilVariational:PressureDerivativeInterface', ...
+            'The variational equation-of-state output must be a struct.');
+    end
+    for k = 1:numel(required)
+        if ~isfield(pressure,required{k})
+            error('equilVariational:PressureDerivativeInterface', ...
+                'The variational pressure output is missing field %s.', ...
+                required{k});
+        end
+    end
+    if ~isfield(pressure,'Pperp')
+        pressure.Pperp = pressure.Pi-B.*pressure.PB;
+    end
+    names = fieldnames(pressure);
     scale = LX.eps_val^2;
-    pressure.Pi = scale*beta_parallel;
-    pressure.Pr = scale*beta_r;
-    pressure.PR = scale*beta_R;
-    pressure.PB = scale*beta_B;
-    pressure.PBB = scale*beta_BB;
-    pressure.PrB = scale*beta_rB;
-    pressure.PRB = scale*beta_RB;
-    pressure.PrR = scale*beta_rR;
-    pressure.PRR = scale*beta_RR;
-    pressure.Pperp = scale*beta_perp;
+    for k = 1:numel(names)
+        pressure.(names{k}) = scale*pressure.(names{k});
+    end
     pressure = expand_pressure_fields(pressure, size(R));
     pressure.Pperp = pressure.Pi-B.*pressure.PB;
 end

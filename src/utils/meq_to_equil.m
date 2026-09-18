@@ -63,6 +63,7 @@ function [L,X,Y,info] = meq_to_equil(meq_L,meq_Y,varargin)
         'Ns',options.Ns,'A_modes',A_modes, ...
         'vertical_shift',vertical_shift,'m',options.m,'nq',options.nq, ...
         'spline_p',options.spline_p,'om_pts',options.om_pts, ...
+        'radial_discretization',options.radial_discretization, ...
         'debug',options.debug};
     [L,X] = equilVariationalSol(solver_arguments{:});
     epsilon = gamma_minus1;
@@ -208,14 +209,18 @@ function [L,X,Y,info] = meq_to_equil(meq_L,meq_Y,varargin)
     info.A_modes = A_modes;
     info.auto_A = classification;
     info.vertical_shift = vertical_shift;
+    info.radial_discretization = L.P.radial_discretization;
     info.boundary_RMS_over_R0 = curve_rms( ...
         boundary_R,boundary_Z,R0*Y.RR(end,:),Z0+R0*Y.ZZ(end,:))/R0;
+    [info.flux_surface_RMS,info.flux_surface_max] = ...
+        flux_surface_error(meq_L,meq_Y,R0,Z0,psiN,Y);
     assert(info.success, ...
         ['MEQ-to-EQUIL conversion did not reach the scale tolerance: ', ...
          'F_epsilon=%.3e.'],info.F_epsilon)
     fprintf(['MEQ->EQUIL matched psi_N<=%.4f: F_epsilon %.2e, ', ...
-        'F_R %.2e, boundary RMS/R0 %.2e.\n'], ...
-        psiN,info.F_epsilon,info.F_R,info.boundary_RMS_over_R0)
+        'F_R %.2e, boundary RMS/R0 %.2e, flux RMS %.2e.\n'], ...
+        psiN,info.F_epsilon,info.F_R,info.boundary_RMS_over_R0, ...
+        info.flux_surface_RMS)
 end
 
 
@@ -228,6 +233,7 @@ function options = conversion_options(varargin)
     options.nq = 6;
     options.spline_p = 4;
     options.om_pts = 96;
+    options.radial_discretization = 'axis_regular';
     options.q_fit_order = 10;
     options.pressure_fit_order = 14;
     options.max_epsilon_step = 0.05;
@@ -463,4 +469,30 @@ function rms = curve_rms(R1,Z1,R2,Z2)
         bsxfun(@minus,Z1,Z2.').^2;
     values = [min(distance2,[],2);min(distance2,[],1).'];
     rms = sqrt(mean(values));
+end
+
+function [rms_error,max_error] = flux_surface_error( ...
+        meq_L,meq_Y,R0,Z0,psiN,Y)
+% Compare the MEQ flux label at each EQUIL surface with its target label.
+    normalized_flux = (meq_Y.Fx-meq_Y.FA)/(meq_Y.FB-meq_Y.FA);
+    R = R0*Y.RR;
+    Z = Z0+R0*Y.ZZ;
+    sampled_flux = interp2( ...
+        meq_L.rrx,meq_L.zzx,normalized_flux,R,Z,'linear');
+    target_flux = psiN*bsxfun( ...
+        @times,Y.psiN(:),ones(1,size(sampled_flux,2)));
+    if size(sampled_flux,1) > 2
+        rows = 2:size(sampled_flux,1)-1;
+    else
+        rows = 1:size(sampled_flux,1);
+    end
+    error_values = sampled_flux(rows,:)-target_flux(rows,:);
+    error_values = error_values(isfinite(error_values));
+    if isempty(error_values)
+        rms_error = NaN;
+        max_error = NaN;
+    else
+        rms_error = sqrt(mean(error_values.^2));
+        max_error = max(abs(error_values));
+    end
 end

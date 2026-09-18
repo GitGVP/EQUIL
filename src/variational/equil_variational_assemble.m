@@ -124,7 +124,7 @@ function [residual, fields] = equil_variational_assemble(L, LX, state, B)
     % Exact anisotropic SFL periodicity constraint.  Division by epsilon^2
     % follows the normalized paper convention and improves row scaling.
     gauge = mean(state.J./(state.R.^2.*(1-sigma)), 2) ...
-            /state.epsilon^2-state.r/state.a0;
+            /state.epsilon^2-state.r./state.one_minus_sigma_cyl;
     row = block_rows(L, 3);
     residual(row) = L.B0{3}'*(w.*gauge)/state.epsilon;
 

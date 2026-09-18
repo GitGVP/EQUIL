@@ -83,8 +83,10 @@ function state = equil_variational_state(L, LX, x)
         edge_Zshiftr = edge_derivatives{profile}+L.Zbc1_edge*LX.Zbc;
     end
 
-    axis_pressure = equil_variational_pressure(L, LX, 0, 1, 1);
-    state.sigma0 = axis_pressure.PB;
+    cylindrical_reference = ...
+        equil_variational_cylindrical_anisotropy( ...
+            L,LX,[0;state.r;1]);
+    state.sigma0 = cylindrical_reference.sigma(1);
     state.a0 = 1-state.sigma0;
     if ~isfinite(state.a0) || state.a0 <= L.P.min_one_minus_sigma
         error('Invalid on-axis anisotropy: 1-sigma0 = %.4e.', state.a0);
@@ -142,13 +144,19 @@ function state = equil_variational_state(L, LX, x)
     end
     state.T = state.a0 + epsilon^2*state.t2;
     state.Tr = epsilon^2*state.t2r;
-    state.psir = epsilon*r.*state.T./(state.q*state.a0);
+    state.sigma_cyl = cylindrical_reference.sigma(2:end-1);
+    state.one_minus_sigma_cyl = ...
+        cylindrical_reference.one_minus_sigma(2:end-1);
+    state.psir = epsilon*r.*state.T./( ...
+        state.q.*state.one_minus_sigma_cyl);
 
     % J is formed with d/d(rhat).  The physical-normalized radial
     % Jacobian is J/epsilon.
     state.Bp2 = (epsilon*state.psir).^2.*state.goo./state.J.^2;
 
     state.edge = make_geometry(1, state.omega, epsilon, state.a0, ...
+        cylindrical_reference.sigma(end), ...
+        cylindrical_reference.one_minus_sigma(end), ...
         edge_values{1}, edge_derivatives{1}, ...
         edge_values{2}, edge_derivatives{2}, ...
         edge_values{3}, edge_derivatives{3}, edge_S, edge_Sr, ...
@@ -159,7 +167,8 @@ function state = equil_variational_state(L, LX, x)
     state.edge.epsilon = epsilon;
 end
 
-function edge = make_geometry(r, omega, epsilon, a0, t2, t2r, ...
+function edge = make_geometry(r, omega, epsilon, a0, ...
+        sigma_cyl,one_minus_sigma_cyl,t2, t2r, ...
         delta, deltar, P, Pr, S, Sr, A, Ar, A_modes, ...
         Zshift,Zshiftr,q)
     Ns = size(S, 3);
@@ -213,7 +222,9 @@ function edge = make_geometry(r, omega, epsilon, a0, t2, t2r, ...
     edge.q = q;
     edge.T = a0+epsilon^2*t2;
     edge.Tr = epsilon^2*t2r;
-    edge.psir = epsilon*r.*edge.T/(q*a0);
+    edge.sigma_cyl = sigma_cyl;
+    edge.one_minus_sigma_cyl = one_minus_sigma_cyl;
+    edge.psir = epsilon*r.*edge.T./(q.*one_minus_sigma_cyl);
     edge.Bp2 = (epsilon*edge.psir).^2.*edge.goo./edge.J.^2;
     if any(edge.R(:) <= 0) || any(edge.J(:) <= 0)
         error('The trial state has a non-positive edge R or Jacobian.');

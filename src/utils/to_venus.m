@@ -72,7 +72,7 @@ function to_venus(L, LX, LY, filename, X2_i, X2_ip, X2_e, X2_ep, xi2in, xi2out, 
     h5create(filename, '/profiles/P', Nr);
     h5write(filename, '/profiles/P', LX.kinetic_profiles.beta(LY.r_plt)*LX.eps_val^2/4./pi/1.0E-07*B0^2);
     
-    if size(LY.betapar, 1) > 1 && size(LY.betapar, 2) > 1
+    if size(LY.betapar, 1) > 1 && size(LY.betapar, 2) > 1 && false
         LY.betaperp_sfl(1,2:end)=LY.betaperp_sfl(2,2:end);
         h5create(filename, '/profiles/Pperp', [Nr, Ntheta]);
         h5write(filename, '/profiles/Pperp', LY.betaperp_sfl(:,2:end)*LX.eps_val^2/4./pi/1.0E-07*B0^2);

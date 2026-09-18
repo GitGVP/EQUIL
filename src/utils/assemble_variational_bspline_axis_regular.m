@@ -1,5 +1,5 @@
 function basis = assemble_variational_bspline_axis_regular( ...
-        m,nq,p,Ns,Na,A_modes,A_leading_powers,vertical_shift)
+        m,nq,p,Ns,Na,A_modes,A_leading_powers,vertical_shift,second_derivatives)
 % B-splines with the regular polar Taylor class enforced on the axis span.
 
 if nargin < 6 || isempty(A_modes)
@@ -11,10 +11,12 @@ end
 if nargin < 8 || isempty(vertical_shift)
     vertical_shift = false;
 end
+if nargin < 9 || isempty(second_derivatives)
+    second_derivatives = false;
+end
 if numel(A_modes) ~= Na
     error('A_modes must have Na entries.');
 end
-angular_modes = A_modes-1;
 if numel(A_leading_powers) ~= Na
     error('A_leading_powers must have Na entries.');
 end
@@ -36,8 +38,13 @@ for element = 1:m
     wr(rows) = w/m;
 end
 
-[N0,N1] = bspline_eval_all(knots,p,r);
-[E0,E1] = bspline_eval_all(knots,p,[0,1]);
+if second_derivatives
+    [N0,N1,N2] = bspline_eval_all(knots,p,r);
+    [E0,E1,E2] = bspline_eval_all(knots,p,[0,1]);
+else
+    [N0,N1] = bspline_eval_all(knots,p,r);
+    [E0,E1] = bspline_eval_all(knots,p,[0,1]);
+end
 axis_derivatives = first_span_derivatives(knots,p,m,nb);
 
 nshapes = Ns+Na+double(vertical_shift);
@@ -58,6 +65,14 @@ basis.lift0_axis = zeros(nshapes,1);
 basis.lift1_axis = zeros(nshapes,1);
 basis.lift0_edge = ones(nshapes,1);
 basis.lift1_edge = zeros(nshapes,1);
+if second_derivatives
+    basis.B2 = cell(nprofiles,1);
+    basis.B2_axis = cell(nprofiles,1);
+    basis.B2_edge = cell(nprofiles,1);
+    basis.lift2 = cell(nshapes,1);
+    basis.lift2_axis = zeros(nshapes,1);
+    basis.lift2_edge = zeros(nshapes,1);
+end
 basis.profile_lengths = zeros(1,nprofiles);
 
 edge_lift = zeros(nb,1);
@@ -72,6 +87,11 @@ for profile = 1:nprofiles
     basis.B1_axis{profile} = sparse(E1(:,1).'*transform);
     basis.B0_edge{profile} = sparse(E0(:,2).'*transform);
     basis.B1_edge{profile} = sparse(E1(:,2).'*transform);
+    if second_derivatives
+        basis.B2{profile} = sparse(N2.'*transform);
+        basis.B2_axis{profile} = sparse(E2(:,1).'*transform);
+        basis.B2_edge{profile} = sparse(E2(:,2).'*transform);
+    end
     basis.profile_lengths(profile) = size(transform,2);
     if fixed_edge
         shape = profile-3;
@@ -81,6 +101,11 @@ for profile = 1:nprofiles
         basis.lift1_axis(shape) = E1(:,1).'*edge_lift;
         basis.lift0_edge(shape) = E0(:,2).'*edge_lift;
         basis.lift1_edge(shape) = E1(:,2).'*edge_lift;
+        if second_derivatives
+            basis.lift2{shape} = sparse(N2.'*edge_lift);
+            basis.lift2_axis(shape) = E2(:,1).'*edge_lift;
+            basis.lift2_edge(shape) = E2(:,2).'*edge_lift;
+        end
     end
 end
 

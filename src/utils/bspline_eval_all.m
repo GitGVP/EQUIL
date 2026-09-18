@@ -54,6 +54,12 @@ function [Nval, N1, N2, N3] = bspline_eval_all(T, p, x)
         N1(i, :) = term1 - term2;
     end
 
+    if nargout < 3
+        N2 = [];
+        N3 = [];
+        return
+    end
+
     % second derivative via N'_{i,p-1}
     if p >= 2
         Np1 = zeros(nb, nx); % N' for degree p-1
@@ -86,6 +92,10 @@ function [Nval, N1, N2, N3] = bspline_eval_all(T, p, x)
         end
     else
         N2 = zeros(nb, nx);
+    end
+    if nargout < 4
+        N3 = [];
+        return
     end
     if p >= 3
         % First derivative of degree p-2

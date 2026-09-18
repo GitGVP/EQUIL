@@ -110,7 +110,7 @@ function to_venus_infani(filename, L, LX, qpp, m, n, deltapress, deltapressp, db
     h5write(filename, '/profiles/deltapressp', deltapressp);
 
 
-    fprintf('Done :)')
+    fprintf('Done :)\n')
 
 
 
